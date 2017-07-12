@@ -1,24 +1,26 @@
 (jbuild_version 1)
 
 (library
- ((name    mccs)
-  (cxx_names (changed_criteria
-              constraint_generation
-              count_criteria
-              cudf
-              cudf_hash_table
-              cudf.l
-              cudf_reductions
-              cudf.tab
-              cudf_tools
-              lexagregate_combiner
-              lp_solver
-              new_criteria
-              notuptodate_criteria
-              removed_criteria))
-  (cxx_flags (:standard -I .))
-  (flags     (-cclib -lstdc++))
-  (wrapped true)))
+ ((name              mccs)
+  (cxx_names         (changed_criteria
+                      constraint_generation
+                      count_criteria
+                      cudf_hash_table
+                      cudf.l
+                      cudf_reductions
+                      cudf.tab
+                      cudf_tools
+                      lexagregate_combiner
+                      lp_solver
+                      new_criteria
+                      notuptodate_criteria
+                      removed_criteria
+                      mccscudf
+                      mccs_stubs))
+  (public_name       mccs)
+  (cxx_flags         (:standard -I . -O6))
+  (c_library_flags   (:standard -lstdc++))
+  (wrapped           false)))
 
 (rule
  ((targets (cudf.l.cpp))
@@ -29,7 +31,3 @@
  ((targets (cudf.tab.cpp cudf.tab.h))
   (deps (cudf.ypp))
   (action (run bison --name-prefix=cudf --defines=cudf.tab.h --file-prefix=cudf ${<}))))
-
-(executable
- ((name      mccsMain)
-  (libraries (mccs))))
