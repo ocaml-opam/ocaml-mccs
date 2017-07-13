@@ -18,7 +18,7 @@
                       mccscudf
                       mccs_stubs))
   (public_name       mccs)
-  (cxx_flags         (:standard -I . -O6))
+  (cxx_flags         (:standard -I .))
   (c_library_flags   (:standard -lstdc++))
   (wrapped           false)))
 

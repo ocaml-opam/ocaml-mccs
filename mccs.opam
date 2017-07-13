@@ -1,3 +1,9 @@
-opam-version: "2.0"
+opam-version: "1.2"
+version: "1.1"
+maintainer: "Louis Gesbert <louis.gesbert@ocamlpro.com>"
+authors: ["Claude Michel <claude.michel@unice.fr>"]
+homepage: "http://www.i3s.unice.fr/~cpjm/misc/"
+license: "modified BSD"
+dev-repo: "https://github.com/AltGr/ocaml-mccs.git"
 build: ["jbuilder" "build" "-p" name]
-depends: "jbuilder"
+depends: "jbuilder" {build}
