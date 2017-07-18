@@ -20,8 +20,11 @@
                       mccs_stubs))
   (public_name       mccs)
   (cxx_flags         (:standard -I .))
-  (c_library_flags   (:standard -lstdc++))
-  (wrapped           false)))
+;; for dynlink version:  (c_library_flags   (:standard -lglpk -lstdc++))
+  (c_library_flags   (:standard -lz -lltdl))
+  (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
+  (wrapped           false)
+  (no_dynlink)))
 
 (rule
  ((targets (cudf.l.cpp))
