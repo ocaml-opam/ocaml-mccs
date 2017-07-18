@@ -10,6 +10,7 @@
                       cudf_reductions
                       cudf.tab
                       cudf_tools
+                      glpk_solver
                       lexagregate_combiner
                       lp_solver
                       new_criteria
