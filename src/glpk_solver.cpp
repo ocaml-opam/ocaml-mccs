@@ -6,6 +6,7 @@
 /*******************************************************/
 
 
+#include <unistd.h>
 #include <math.h>
 #include <glpk_solver.h>
 
@@ -58,7 +59,13 @@ int glpk_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); ret
 int glpk_solver::solve() {
   int status = 0, nb_objectives = objectives.size();
   glp_iocp mip_params;
+  int save_stdout = 1;
     
+  if (verbosity == 0) {
+    save_stdout = dup(1);
+    close(1);
+  }
+
   glp_init_iocp(&mip_params);
   mip_params.gmi_cuts = GLP_ON;
   mip_params.mir_cuts = GLP_ON;
@@ -66,9 +73,10 @@ int glpk_solver::solve() {
   mip_params.clq_cuts = GLP_ON;
   mip_params.presolve = GLP_ON;
   mip_params.binarize = GLP_ON;
+  if (verbosity <= 1)
+    mip_params.msg_lev  = GLP_MSG_OFF; // one of GLP_MSG_OFF GLP_MSG_ERR GLP_MSG_ON GLP_MSG_ALL
 
   for (int k = 0; k < nb_objectives; k++) {
-    
     glp_cpx_basis(lp);
   
     if (status == 0) status = glp_intopt(lp, &mip_params);
@@ -94,6 +102,10 @@ int glpk_solver::solve() {
 
       if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs1.lp");
     }
+  }
+  if (verbosity == 0) {
+    dup2(save_stdout, 1);
+    close(save_stdout);
   }
   if (status == 0)  return 1; else return 0;
 }
