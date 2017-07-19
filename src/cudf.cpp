@@ -17,7 +17,7 @@
 
 // underlying solver declaration
 // allows using solvers withour having to include the whole solver classes
-extern abstract_solver *new_lp_solver(char *lpsolver);
+// extern abstract_solver *new_lp_solver(char *lpsolver);
 /* extern abstract_solver *new_pblib_solver(char *pbsolver); */
 //extern abstract_solver *new_ampl_solver(char *amplsolver);
 #ifdef USECPLEX 
@@ -424,18 +424,18 @@ int main(int argc, char *argv[]) {
 	exit(-1);
       } else if (strcmp(argv[i], "-nosolve") == 0) {
 	nosolve = true;
-      } else if (strcmp(argv[i], "-lp") == 0) {
-	if (++i < argc) {
-	  struct stat sts;
-	  if (stat(argv[i], &sts) == -1 && errno == ENOENT) {
-	    fprintf(stderr, "ERROR: -lp option require a lp solver: -lp <lpsolver> and %s does not exist.\n", argv[i]);
-	    exit(-1);
-	  } else
-	    solver = new_lp_solver(argv[i]);
-	} else {
-	  fprintf(stderr, "ERROR: -lp option require a lp solver: -lp <lpsolver>\n");
-	  exit(-1);
-	}
+      // } else if (strcmp(argv[i], "-lp") == 0) {
+      //   if (++i < argc) {
+      //     struct stat sts;
+      //     if (stat(argv[i], &sts) == -1 && errno == ENOENT) {
+      //       fprintf(stderr, "ERROR: -lp option require a lp solver: -lp <lpsolver> and %s does not exist.\n", argv[i]);
+      //       exit(-1);
+      //     } else
+      //       solver = new_lp_solver(argv[i]);
+      //   } else {
+      //     fprintf(stderr, "ERROR: -lp option require a lp solver: -lp <lpsolver>\n");
+      //     exit(-1);
+      //   }
       /* } else if (strcmp(argv[i], "-pblib") == 0) {
        *   if (++i < argc) {
        *     struct stat sts;

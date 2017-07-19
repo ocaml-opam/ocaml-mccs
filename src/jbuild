@@ -12,7 +12,7 @@
                       cudf_tools
                       glpk_solver
                       lexagregate_combiner
-                      lp_solver
+;;                      lp_solver
                       new_criteria
                       notuptodate_criteria
                       removed_criteria
