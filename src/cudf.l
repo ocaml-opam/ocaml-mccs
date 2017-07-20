@@ -136,5 +136,10 @@ req-checksum:[^\n]*    /* Ignore */
 
 %%
 
-
-
+int cudfparse_string(char * str) {
+  int retval;
+  YY_BUFFER_STATE buf = cudf_scan_string(str);
+  retval = cudfparse();
+  yy_delete_buffer(buf);
+  return retval;
+}

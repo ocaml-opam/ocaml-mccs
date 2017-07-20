@@ -795,3 +795,20 @@ int parse_cudf(FILE *input_file) {
   return retval;
 }
 
+extern int cudfparse_string(char * str);
+
+int parse_cudf_string(char * str) {
+  int retval;
+
+  cudfparse_string(str);
+
+  if (the_problem == (CUDFproblem *)NULL)
+    the_problem = current_problem = new CUDFproblem(); 
+  the_problem->properties = &properties;
+  the_problem->all_packages = &all_packages;
+  the_problem->installed_packages = &installed_packages;
+  the_problem->uninstalled_packages = &uninstalled_packages;
+  the_problem->all_virtual_packages = &all_virtual_packages;
+
+  return retval;
+}

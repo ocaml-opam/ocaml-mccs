@@ -255,6 +255,8 @@ extern CUDFVirtualPackageList all_virtual_packages;
 // parse the CUDF problem from input_file
 extern int parse_cudf(FILE *input_file);
 
+/* // parse the CUDF problem from a string */
+extern int parse_cudf_string(char *str);
 
 // operations to compare a package version to another one
 extern bool op_none_comp(CUDFVersion v1, CUDFVersion v2);

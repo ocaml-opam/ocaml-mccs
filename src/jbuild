@@ -24,6 +24,7 @@
   (c_library_flags   (:standard -lz -lltdl))
   (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
   (wrapped           false)
+  (libraries         (cudf))
   (no_dynlink)))
 
 (rule
