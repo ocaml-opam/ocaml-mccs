@@ -41,6 +41,18 @@ CUDFPackageOp ml2c_relop(value relop)
   }
 }
 
+CUDFKeepOp ml2c_keepop(value op)
+{
+  if (relop == hash_variant("Keep_feature")) return keep_feature;
+  else if (relop == hash_variant("Keep_none")) return keep_none;
+  else if (relop == hash_variant("Keep_package")) return keep_package;
+  else if (relop == hash_variant("Keep_version")) return keep_version;
+  else {
+    fprintf(stderr, "ERROR: Invalid keep_op");
+    return keep_none;
+  }
+}
+
 vpkg ml2c_vpkg(value ml_vpkg)
 {
   char * name = Field(ml_vpkg, 0);
@@ -48,7 +60,7 @@ vpkg ml2c_vpkg(value ml_vpkg)
   value constr_opt = Field(ml_vpkg, 1);
   if (constr_opt == Val_none) return new CUDFVpkg(virt, op_none, 0);
   else {
-    value constr = Field(constr_opt, 0);
+    value constr = Some_val(constr_opt);
     return new CUDFVpkg(virt, o2c_relop(Field(constr,0)), Int_val(Field(constr,1)));
   }
 }
@@ -73,20 +85,22 @@ CUDFVpkgFormula ml2c_vpkgformula(value ml_vpkgformula)
   return form;
 }
 
-CUDFKeepOp ml2c_keepop(value op)
+
+
+CUDFPropertyValue ml2c_property(value ml_prop)
 {
-  if (relop == hash_variant("Keep_feature")) return keep_feature;
-  else if (relop == hash_variant("Keep_none")) return keep_none;
-  else if (relop == hash_variant("Keep_package")) return keep_package;
-  else if (relop == hash_variant("Keep_version")) return keep_version;
-  else {
-    fprintf(stderr, "ERROR: Invalid keep_op");
-    return keep_none;
-  }
+  char * property_name = String_val(Field(ml_prop,0));
+  CudfProperty prop = properties.find(property_name);
+  value v = Field(ml_prop,1);
+  int tag = Tag(v);
+  assert(prop != properties.end());
+  if (tag == hash_variant("Int"))
+    return new CUDFPropertyValue(prop, Int_val(Field(
+  CUDFPropertyValue 
 }
 
 
-// FIXME: two globals, this one and the package hashtable: pass them along
+// FIXME: three globals: defined properties, this one and the package hashtable: pass them along
 int versioned_package_rank = 0;
 
 CUDFVersionedPackage ml2c_package(value ml_package)
