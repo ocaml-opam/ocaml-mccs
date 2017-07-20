@@ -162,7 +162,7 @@ typedef map<string, CUDFProperty *> CUDFProperties;
 typedef CUDFProperties::iterator  CUDFPropertiesIterator;
 
 // all user defined properties
-extern CUDFProperties properties;
+// extern CUDFProperties properties;
 
 // Types allowed for properties
 enum CUDFPropertyType { pt_none,
@@ -239,22 +239,24 @@ public:
 };
 
 // current CUDF problem
-extern CUDFproblem *the_problem;
+/* extern CUDFproblem *the_problem;
+ * 
+ * // list of all the versioned packages of the initial configuration  
+ * extern CUDFVersionedPackageList all_packages;
+ * // list of all installed versioned packages in the initial configuration
+ * extern CUDFVersionedPackageList installed_packages;
+ * // list of all uninstalled versioned packages in the inital configuration
+ * extern CUDFVersionedPackageList uninstalled_packages; */
 
-// list of all the versioned packages of the initial configuration  
-extern CUDFVersionedPackageList all_packages;
-// list of all installed versioned packages in the initial configuration
-extern CUDFVersionedPackageList installed_packages;
-// list of all uninstalled versioned packages in the inital configuration
-extern CUDFVersionedPackageList uninstalled_packages;
-
-// list of all the virtual packages in the initial configuration
-extern CUDFVirtualPackageList all_virtual_packages;
+// // list of all the virtual packages in the initial configuration
+// extern CUDFVirtualPackageList all_virtual_packages;
 
 
 // parse the CUDF problem from input_file
 extern int parse_cudf(FILE *input_file);
 
+/* // parse the CUDF problem from a string */
+extern int parse_cudf_string(char *str);
 
 // operations to compare a package version to another one
 extern bool op_none_comp(CUDFVersion v1, CUDFVersion v2);

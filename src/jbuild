@@ -5,10 +5,10 @@
   (cxx_names         (changed_criteria
                       constraint_generation
                       count_criteria
-                      cudf_hash_table
-                      cudf.l
+;;                      cudf_hash_table
+;;                      cudf.l
                       cudf_reductions
-                      cudf.tab
+;;                      cudf.tab
                       cudf_tools
                       glpk_solver
                       lexagregate_combiner
@@ -24,14 +24,15 @@
   (c_library_flags   (:standard -lz -lltdl))
   (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
   (wrapped           false)
+  (libraries         (cudf))
   (no_dynlink)))
 
-(rule
- ((targets (cudf.l.cpp))
-  (deps (cudf.l))
-  (action (run flex -f -8 --prefix=cudf --outfile=${@} -i ${<}))))
+;; (rule
+;;  ((targets (cudf.l.cpp))
+;;   (deps (cudf.l))
+;;   (action (run flex -f -8 --prefix=cudf --outfile=${@} -i ${<}))))
 
-(rule
- ((targets (cudf.tab.cpp cudf.tab.h))
-  (deps (cudf.ypp))
-  (action (run bison --name-prefix=cudf --defines=cudf.tab.h --file-prefix=cudf ${<}))))
+;; (rule
+;;  ((targets (cudf.tab.cpp cudf.tab.h))
+;;   (deps (cudf.ypp))
+;;   (action (run bison --name-prefix=cudf --defines=cudf.tab.h --file-prefix=cudf ${<}))))
