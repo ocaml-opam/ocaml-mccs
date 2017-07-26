@@ -381,7 +381,7 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
   cpb->all_virtual_packages = tbl.all();
 
   pb->pb_cudf_problem = compute_reduced_CUDF(cpb);
-  // if (pb->pb_cudf_problem != cpb) delete cpb; todo check
+  if (pb->pb_cudf_problem != cpb) delete cpb;
 
   if (Val_emptylist != Field(ml_request, 3)) {
     fprintf(stderr, "WARNING: extra request field not supported\n");
@@ -405,12 +405,9 @@ extern "C" value call_solver(value ml_criteria, value ml_problem, value ml_outfi
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
-  // restore_globals(pb);
-
   ret = call_mccs(GLPK, criteria, cpb);
   if (ret.success == 0) caml_failwith(ret.error);
   out = fopen(outfile, "w");
-  fprintf(stderr, "S\n");
 
   if (ret.solution == NULL) {
     fprintf(out, "FAIL\n");
@@ -423,14 +420,11 @@ extern "C" value call_solver(value ml_criteria, value ml_problem, value ml_outfi
       fprintf(out, "\n\n");
     }
     for (CUDFVersionedPackageListIterator ipkg = cpb->all_packages->begin(); ipkg != cpb->all_packages->end(); ipkg++) {
-      fprintf(stderr, "solution: package %s.%d\n", (*ipkg)->name, (*ipkg)->version);
       if (ret.solution->get_solution(*ipkg))
         print_versioned_package_as_installed(out, (*ipkg), true);
     }
   }
   fclose(out);
-  fprintf(stderr, "DONE\n");
 
-  // store_globals(pb);
   CAMLreturn (Val_unit);
 }
