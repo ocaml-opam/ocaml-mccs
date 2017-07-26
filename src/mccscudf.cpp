@@ -281,8 +281,8 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
   return process_criteria(crit_descr, pos, first_level, criteria_with_property);
 }
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem, int verbose) {
-  CUDFproblem *problem;
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem) {
+  // CUDFproblem *problem;
   vector<abstract_criteria *> criteria_with_property;
   CriteriaList *criteria;
   abstract_solver *solver = (abstract_solver *)NULL;
@@ -290,7 +290,6 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   stringstream solution;
   Solver_return ret = { 0, "", NULL };
 
-  verbosity = verbose;
   criteria = get_criteria(criteria_arg, false, &criteria_with_property);
   if (criteria->size() == 0) {
     ret.error = "invalid criteria";
@@ -325,19 +324,23 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   // if whished, print out the read problem
   if (verbosity > 2) {
     fprintf(stdout, "================================================================\n");
-    if (properties.size() > 0) {
+    if (the_problem->properties->size() > 0) {
       fprintf(stdout, "preamble:\n");
-      print_properties(stdout, &properties);
+      print_properties(stdout, the_problem->properties);
       fprintf(stdout, "\n");
     }
-    fprintf(stdout, "# %d versioned packages:\n\n", (int)all_packages.size());
-    for (CUDFVersionedPackageListIterator ipkg = all_packages.begin(); ipkg != all_packages.end(); ipkg++)
+    fprintf(stdout, "# %d versioned packages:\n\n", (int)the_problem->all_packages->size());
+    for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin();
+         ipkg != the_problem->all_packages->end();
+         ipkg++)
       print_versioned_package(stdout, *ipkg, false);
     print_problem(stdout, the_problem);
 
     fprintf(stdout, "================================================================\n");
-    fprintf(stdout, "%d virtual packages:\n\n", (int)all_virtual_packages.size());
-    for (CUDFVirtualPackageListIterator vpkg = all_virtual_packages.begin(); vpkg != all_virtual_packages.end(); vpkg++)
+    fprintf(stdout, "%d virtual packages:\n\n", (int)the_problem->all_virtual_packages->size());
+    for (CUDFVirtualPackageListIterator vpkg = the_problem->all_virtual_packages->begin();
+         vpkg != the_problem->all_virtual_packages->end();
+         vpkg++)
       print_virtual_package(stdout, *vpkg);
     fprintf(stdout, "================================================================\n");
   }
@@ -346,19 +349,19 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   for (vector<abstract_criteria *>::iterator icrit = criteria_with_property.begin(); icrit != criteria_with_property.end(); icrit++)
     (*icrit)->check_property(the_problem);
 
-  if (combiner->can_reduce()) {
-    if (verbosity > 0) fprintf(stdout, "Can reduce graph.\n");
-  } else {
-    use_reduced = false;
-    if (verbosity > 0) fprintf(stdout, "Can NOT reduce graph.\n");
-  }
-  problem = compute_reduced_CUDF(the_problem);
+  // if (combiner->can_reduce()) {
+  //   if (verbosity > 0) fprintf(stdout, "Can reduce graph.\n");
+  // } else {
+  //   use_reduced = false;
+  //   if (verbosity > 0) fprintf(stdout, "Can NOT reduce graph.\n");
+  // }
+  // problem = compute_reduced_CUDF(the_problem);
 
   // combiner initialization
-  combiner->initialize(problem, solver);
+  combiner->initialize(the_problem, solver);
   
   // generate the constraints, solve the problem and print out the solutions
-  if ((problem->all_packages->size() > 0) && (generate_constraints(problem, *solver, *combiner) == 0) && (solver->solve())) {
+  if ((the_problem->all_packages->size() > 0) && (generate_constraints(the_problem, *solver, *combiner) == 0) && (solver->solve())) {
 
     solver->init_solutions();
 
@@ -367,7 +370,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
       fprintf(stdout, "================================================================\n");
       printf("Objective value: %f\n", obj);
 
-      for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++)
+      for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin(); ipkg != the_problem->all_packages->end(); ipkg++)
 	printf("%s = "CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
       
       fprintf(stdout, "================================================================\n");
@@ -375,7 +378,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
      }
 
     ret.success = 1;
-    ret.solution = problem;
+    ret.solution = solver;
     return ret;
   } else {
     if (verbosity > 0) {
@@ -604,22 +607,22 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
 //     int nb_installed = 0;
 //     int nb_removed = 0;
 //     int nb_newinstalled = 0;
-//     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
-//       if (solver->get_solution(*ipkg)) { 
-// 	nb_installed++; 
-// 	if (! (*ipkg)->installed) { 
-// 	  nb_newinstalled++; 
-// 	  if (output_installed != (FILE *)NULL) print_versioned_package_as_installed(output_installed, (*ipkg), true); 
-// 	}
-// 	print_versioned_package_as_installed(output_file, (*ipkg), true); 
-//       } else {
-// 	if (fulloutput) print_versioned_package_with_install(output_file, (*ipkg), 0, true);
-// 	if ((*ipkg)->installed) { 
-// 	  nb_removed++; 
-// 	  if (output_removed != (FILE *)NULL) print_versioned_package(output_removed, (*ipkg), true); 
-// 	}
-//       }
+// for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
+//   if (solver->get_solution(*ipkg)) { 
+//     nb_installed++; 
+//     if (! (*ipkg)->installed) { 
+//       nb_newinstalled++; 
+//       if (output_installed != (FILE *)NULL) print_versioned_package_as_installed(output_installed, (*ipkg), true); 
 //     }
+//     print_versioned_package_as_installed(output_file, (*ipkg), true); 
+//   } else {
+//     if (fulloutput) print_versioned_package_with_install(output_file, (*ipkg), 0, true);
+//     if ((*ipkg)->installed) { 
+//       nb_removed++; 
+//       if (output_removed != (FILE *)NULL) print_versioned_package(output_removed, (*ipkg), true); 
+//     }
+//   }
+//  }
 
 //     if (verbosity > 2) {
 //       fclose(output_installed);
