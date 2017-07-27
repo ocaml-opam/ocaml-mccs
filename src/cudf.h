@@ -70,6 +70,8 @@ class CUDFPackage {
   char *versioned_name;    // internal name of the package
 
   bool in_reduced;
+
+  ~CUDFPackage();
 };
 
 
@@ -99,6 +101,7 @@ public:
   CUDFVirtualPackage *virtual_package; // pointer to the virtual package the package belongs to
 
   CUDFVersionedPackage(const char *pkg_name, int my_rank);  // constructor
+  ~CUDFVersionedPackage();
 
   void set_version(CUDFVersion pkg_version); // allows to set the package version (not always known at package creation)
 };
@@ -139,6 +142,7 @@ public:
   CUDFVersion highest_installed_provider_version;    // highest installed version of the providers
 
   CUDFVirtualPackage(const char *pkg_name, int my_rank);   // constructor
+  ~CUDFVirtualPackage();
 };
 
 
@@ -185,6 +189,8 @@ class CUDFPropertyValue {
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkg *the_value);        // constructor for vpkg valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgList *the_value);    // constructor for vpkglist valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgFormula *the_value); // constructor for vpkgformula valued properties
+
+  ~CUDFPropertyValue();
 };
 
 // Class to describe user defined properties
@@ -207,6 +213,8 @@ class CUDFProperty {
   CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault);
   CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault);
   CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault);
+
+  ~CUDFProperty();
 
 };
 

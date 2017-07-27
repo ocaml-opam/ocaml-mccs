@@ -12,11 +12,17 @@
 int verbosity = 0;
 
 // List of all the user declared properties
-CUDFProperties properties;
+// CUDFProperties properties;
 
 // True and false for Vpkg
 CUDFVpkg *vpkg_true = new CUDFVpkg((CUDFVirtualPackage *)NULL, op_none, 0);
 CUDFVpkg *vpkg_false = new CUDFVpkg((CUDFVirtualPackage *)NULL, op_none, 0);
+
+CUDFPackage::~CUDFPackage() {
+  free(name);
+  if (versioned_name != NULL && versioned_name != name)
+    free(versioned_name);
+}
 
 // Versioned package constructor
 // requires package name and unique package ident (i.e. simplex column number)
@@ -44,6 +50,29 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
   rank = my_rank;
 
   in_reduced = false;
+}
+
+CUDFVersionedPackage::~CUDFVersionedPackage() {
+  if (depends != NULL) {
+    for (auto it = depends->begin(); it != depends->end(); it++) {
+      for (auto it2 = (*it)->begin(); it2 != (*it)->end(); it2++)
+        delete (*it2);
+      delete (*it);
+    }
+    delete depends;
+  }
+  if (conflicts != NULL) {
+    for (auto it = conflicts->begin(); it != conflicts->end(); it++)
+      delete (*it);
+    delete conflicts;
+  }
+  if (provides != NULL) {
+    for (auto it = provides->begin(); it != provides->end(); it++)
+      delete (*it);
+    delete provides;
+  }
+  for (auto it = properties.begin(); it != properties.end(); it++)
+    delete (*it);
 }
 
 // Set the version of a package
@@ -79,6 +108,10 @@ CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {
   rank = my_rank;
 
   in_reduced = false;
+}
+
+CUDFVirtualPackage::~CUDFVirtualPackage() {
+  ;
 }
 
 // User property constructor
@@ -132,6 +165,15 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
   default_value = new CUDFPropertyValue(this, tdefault);
 }
 
+CUDFProperty::~CUDFProperty() {
+  free(name);
+  if (type_id == pt_enum) {
+    for (auto it = enuml->begin(); it != enuml->end(); it++)
+      free(*it);
+    delete enuml;
+  }
+  delete default_value;
+}
 
 // User property constructor
 // requires property name, type of the property (must be a string subtype) and string default value
@@ -282,6 +324,15 @@ CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgFormula
   vpkgformula = the_value;
 }
 
+CUDFPropertyValue::~CUDFPropertyValue() {
+  switch (property->type_id) {
+  case pt_string: free(strval); break;
+  case pt_vpkg: case pt_veqpkg: delete vpkg; break;
+  case pt_vpkglist: case pt_veqpkglist: delete vpkglist; break;
+  case pt_vpkgformula: delete vpkgformula; break;
+  default: ;
+  }
+}
 
 // Operators to compare two version
 // requires the two version to compare

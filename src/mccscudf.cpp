@@ -362,6 +362,8 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   
   // generate the constraints, solve the problem and print out the solutions
   if ((the_problem->all_packages->size() > 0) && (generate_constraints(the_problem, *solver, *combiner) == 0) && (solver->solve())) {
+    delete combiner;
+    delete criteria;
 
     solver->init_solutions();
 
@@ -381,6 +383,9 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
     ret.solution = solver;
     return ret;
   } else {
+    delete combiner;
+    delete criteria;
+
     if (verbosity > 0) {
       fprintf(stdout, "================================================================\n");
       fprintf(stdout, "No solution found.\n");

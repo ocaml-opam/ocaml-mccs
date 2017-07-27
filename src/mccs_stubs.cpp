@@ -68,9 +68,6 @@ public:
   }
 
   ~Virtual_packages() {
-    fprintf (stderr, "DELETING Virtual_packages !!\n");
-    for (auto it = tbl->begin(); it != tbl->end(); it++)
-      delete (it->second);
     delete tbl;
   }
 };
@@ -152,10 +149,10 @@ CUDFPropertyType ml2c_propertytype(value pt)
   }
 }
 
-CUDFVpkg * ml2c_vpkg(Virtual_packages &tbl, value ml_vpkg)
+CUDFVpkg * ml2c_vpkg(Virtual_packages * tbl, value ml_vpkg)
 {
   char * name = String_val(Field(ml_vpkg, 0));
-  CUDFVirtualPackage * virt = tbl.get(name);
+  CUDFVirtualPackage * virt = tbl->get(name);
   value constr_opt = Field(ml_vpkg, 1);
   if (constr_opt == Val_none) return new CUDFVpkg(virt, op_none, 0);
   else {
@@ -174,7 +171,7 @@ value c2ml_vpkg(CUDFVpkg * vpkg)
       Val_some (Val_pair (c2ml_relop(vpkg->op), Val_int(vpkg->version)))));
 }
 
-CUDFVpkgList * ml2c_vpkglist(Virtual_packages &tbl, value ml_vpkglist)
+CUDFVpkgList * ml2c_vpkglist(Virtual_packages * tbl, value ml_vpkglist)
 {
   CUDFVpkgList * lst = new CUDFVpkgList;
   for (value l = ml_vpkglist; l != Val_emptylist; l = Field(l, 1))
@@ -192,7 +189,7 @@ value c2ml_vpkglist(CUDFVpkgList * vpkgl)
   CAMLreturn (r);
 }
 
-CUDFVpkgFormula * ml2c_vpkgformula(Virtual_packages &tbl, value ml_vpkgformula)
+CUDFVpkgFormula * ml2c_vpkgformula(Virtual_packages * tbl, value ml_vpkgformula)
 {
   CUDFVpkgFormula * form = NULL;
   if (ml_vpkgformula == Val_emptylist) return NULL;
@@ -213,7 +210,7 @@ value c2ml_vpkgformula(CUDFVpkgFormula * form)
   CAMLreturn (r);
 }
 
-CUDFPropertyValue * ml2c_property(Virtual_packages &tbl, CUDFProperties * properties, value ml_prop)
+CUDFPropertyValue * ml2c_property(Virtual_packages * tbl, CUDFProperties * properties, value ml_prop)
 {
   char * base_prop_name = String_val(Field(ml_prop,0));
   char property_name[strlen(base_prop_name)+2] = "";
@@ -290,12 +287,11 @@ value c2ml_property (CUDFPropertyValue * prop)
   CAMLreturn (Val_pair (ml_prop_name, pval));
 }
 
-CUDFPropertyValueList * ml2c_propertylist(Virtual_packages &tbl, CUDFProperties * properties, value ml_plist)
+void ml2c_propertylist
+  (CUDFPropertyValueList &plist, Virtual_packages * tbl, CUDFProperties * properties, value ml_plist)
 {
-  CUDFPropertyValueList * plist = new CUDFPropertyValueList;
   for (value l = ml_plist; l != Val_emptylist; l = Field(l, 1))
-    plist->push_back(ml2c_property(tbl, properties, Field(l, 0)));
-  return plist;
+    plist.push_back(ml2c_property(tbl, properties, Field(l, 0)));
 }
 
 value c2ml_propertylist (CUDFPropertyValueList * plist)
@@ -311,13 +307,13 @@ value c2ml_propertylist (CUDFPropertyValueList * plist)
 
 //extern int versioned_package_rank;
 
-CUDFVersionedPackage * ml2c_package(Virtual_packages &tbl, CUDFProperties * properties, int &max_rank, value ml_package)
+CUDFVersionedPackage * ml2c_package(Virtual_packages * tbl, CUDFProperties * properties, int &max_rank, value ml_package)
 {
   char * package = String_val(Field(ml_package, 0));
   unsigned int version = Int_val(Field(ml_package, 1));
   bool installed = Bool_val(Field(ml_package, 5));
 
-  CUDFVirtualPackage * virtual_package = tbl.get(package);
+  CUDFVirtualPackage * virtual_package = tbl->get(package);
   CUDFVersionedPackage * pkg = new CUDFVersionedPackage(package, max_rank++);
   virtual_package->all_versions.insert(pkg);
   if (version > virtual_package->highest_version)
@@ -333,7 +329,7 @@ CUDFVersionedPackage * ml2c_package(Virtual_packages &tbl, CUDFProperties * prop
   pkg->installed = installed;
   pkg->wasinstalled = Bool_val(Field(ml_package, 6));
   pkg->keep = ml2c_keepop(Field(ml_package, 7));
-  pkg->properties = *ml2c_propertylist(tbl, properties, Field(ml_package, 8));
+  ml2c_propertylist(pkg->properties, tbl, properties, Field(ml_package, 8));
 
   return pkg;
 }
@@ -351,13 +347,13 @@ value c2ml_package(CUDFVersionedPackage * pkg)
   Field(ml_package, 4) = c2ml_vpkglist(pkg->provides); // provides
   Field(ml_package, 5) = Val_bool(pkg->installed); // installed
   Field(ml_package, 6) = Val_bool(pkg->wasinstalled); // was_installed
-  Field(ml_package, 7) = caml_hash_variant("Keep_none"); // keep
+  Field(ml_package, 7) = c2ml_keepop(pkg->keep); // keep
   Field(ml_package, 8) = c2ml_propertylist(&pkg->properties); // pkg_extra
 
   CAMLreturn(ml_package);
 }
 
-CUDFProperty * ml2c_propertydef(Virtual_packages &tbl, value ml_pdef)
+CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
 {
   char * base_prop_name = String_val(Field(ml_pdef,0));
   char property_name[strlen(base_prop_name)+2] = "";
@@ -410,7 +406,7 @@ CUDFProperty * ml2c_propertydef(Virtual_packages &tbl, value ml_pdef)
   return p;
 }
 
-CUDFProperties * ml2c_propertydeflist(Virtual_packages &tbl, value ml_pdeflist)
+CUDFProperties * ml2c_propertydeflist(Virtual_packages * tbl, value ml_pdeflist)
 {
   CUDFProperties * pdeflist = new CUDFProperties;
   for (value l = ml_pdeflist; l != Val_emptylist; l = Field(l, 1)) {
@@ -429,7 +425,7 @@ char *get_enum(CUDFEnums *e, char *estr) {
 
 typedef struct {
   CUDFproblem * pb_cudf_problem;
-  Virtual_packages pb_virtual_packages;
+  Virtual_packages * pb_virtual_packages;
   int pb_max_versioned_package_rank;
 } problem;
 
@@ -437,9 +433,31 @@ typedef struct {
 
 void finalize_problem(value ml_pb) {
   problem * pb = Problem_pt(ml_pb);
-  delete pb->pb_cudf_problem;
-  delete pb->pb_virtual_packages;
-  //pb->pb_all_virtual_packages.clear;
+  CUDFproblem * cpb = pb->pb_cudf_problem;
+  fprintf(stderr, "FINALIZE PROBLEM\n");
+  for (auto it = cpb->all_packages->begin(); it != cpb->all_packages->end(); it++) {
+    delete (*it);
+  }
+  delete cpb->all_packages;
+  delete cpb->installed_packages;
+  delete cpb->uninstalled_packages;
+  for (auto it = cpb->install->begin(); it != cpb->install->end(); it++) {
+    delete (*it);
+  }
+  delete cpb->install;
+  for (auto it = cpb->remove->begin(); it != cpb->remove->end(); it++) {
+    delete (*it);
+  }
+  delete cpb->remove;
+  for (auto it = cpb->upgrade->begin(); it != cpb->upgrade->end(); it++) {
+    delete (*it);
+  }
+  delete cpb->upgrade;
+  for (auto it = cpb->all_virtual_packages->begin(); it != cpb->all_virtual_packages->end(); it++) {
+    delete (*it);
+  }
+  delete cpb->all_virtual_packages;
+  fprintf(stderr, "FINALIZATION DONE\n");
   return;
 }
 
@@ -473,13 +491,13 @@ extern "C" value gen_problem(value preamble)
 
   // initialise cudf problem
   cpb = new CUDFproblem;
-  cpb->properties = ml2c_propertydeflist(*tbl, Field(preamble,1));
+  cpb->properties = ml2c_propertydeflist(tbl, Field(preamble,1));
   cpb->all_packages = new CUDFVersionedPackageList;
   cpb->installed_packages = new CUDFVersionedPackageList;
   cpb->uninstalled_packages = new CUDFVersionedPackageList;
 
   pb->pb_cudf_problem = cpb;
-  pb->pb_virtual_packages = *tbl;
+  pb->pb_virtual_packages = tbl;
   pb->pb_max_versioned_package_rank = 0;
 
   CAMLreturn (ml_problem);
@@ -491,7 +509,7 @@ extern "C" value add_package_to_problem(value ml_problem, value ml_package)
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
   CUDFVersionedPackage * pkg;
-  Virtual_packages &tbl = pb->pb_virtual_packages;
+  Virtual_packages * tbl = pb->pb_virtual_packages;
 
   pkg = ml2c_package(tbl, cpb->properties, pb->pb_max_versioned_package_rank, ml_package);
 
@@ -506,22 +524,23 @@ extern "C" value add_package_to_problem(value ml_problem, value ml_package)
   CAMLreturn (Val_unit);
 }
 
+// Must be called once after all packages are added, and before solving
 extern "C" value set_problem_request(value ml_problem, value ml_request)
 {
   CAMLparam2 (ml_problem, ml_request);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
-  Virtual_packages &tbl = pb->pb_virtual_packages;
+  Virtual_packages * tbl = pb->pb_virtual_packages;
 
   cpb->install = ml2c_vpkglist(tbl, Field(ml_request, 1));
   cpb->remove = ml2c_vpkglist(tbl, Field(ml_request, 2));
   cpb->upgrade = ml2c_vpkglist(tbl, Field(ml_request, 3));
-  cpb->all_virtual_packages = tbl.all();
+  cpb->all_virtual_packages = tbl->all();
 
-  pb->pb_cudf_problem = compute_reduced_CUDF(cpb);
-  if (pb->pb_cudf_problem != cpb) delete cpb;
+  delete tbl; // no longer needed
+  tbl = NULL;
 
-  if (Val_emptylist != Field(ml_request, 3)) {
+  if (Val_emptylist != Field(ml_request, 4)) {
     fprintf(stderr, "WARNING: extra request field not supported\n");
   }
 
@@ -534,6 +553,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   CAMLlocal2(results, cons);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
+  CUDFproblem * reduced_cpb = compute_reduced_CUDF(cpb);
   CUDFVirtualPackageList all_virtual_packages = *(cpb->all_virtual_packages);
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
@@ -542,7 +562,8 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
-  ret = call_mccs(GLPK, criteria, cpb);
+  ret = call_mccs(GLPK, criteria, reduced_cpb);
+  delete reduced_cpb->;
   if (ret.success == 0) caml_failwith(ret.error);
 
   if (ret.solution == NULL) {
@@ -550,17 +571,16 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   }
   else {
     results = Val_emptylist;
-    for (auto ipkg = cpb->all_packages->begin(); ipkg != cpb->all_packages->end(); ipkg++) {
-      if (ret.solution->get_solution(*ipkg)) {
-        (*ipkg)->wasinstalled = (*ipkg)->installed;
-        (*ipkg)->installed = 1;
-        cons = caml_alloc_tuple(2);
-        Store_field (cons, 0, c2ml_package(*ipkg));
-        Store_field (cons, 1, results);
-
-        results = cons;
+    for (auto ipkg = reduced_cpb->all_packages->begin();
+         ipkg != reduced_cpb->all_packages->end();
+         ipkg++)
+      {
+        if (ret.solution->get_solution(*ipkg)) {
+          (*ipkg)->wasinstalled = (*ipkg)->installed;
+          (*ipkg)->installed = 1;
+          results = Val_pair(c2ml_package(*ipkg), results);
+        }
       }
-    }
     CAMLreturn (Val_some(results));
   }
 }
