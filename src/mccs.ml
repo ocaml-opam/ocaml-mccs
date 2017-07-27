@@ -40,7 +40,7 @@ external add_package_to_problem: problem -> cudf_package -> unit
 external set_problem_request: problem -> request -> unit
   = "set_problem_request"
 
-external call_solver : string -> problem -> string -> unit
+external call_solver : string -> problem -> Cudf.package list option
   = "call_solver"
 
 let problem_of_cudf cudf =
@@ -50,10 +50,18 @@ let problem_of_cudf cudf =
   set_problem_request pb request;
   pb
 
-let resolve_cudf ?(verbose=false) criteria cudf =
+let resolve_cudf ?(verbose=false) criteria (preamble, _, _ as cudf) =
   set_verbosity (if verbose then 1 else 0);
   let pb = problem_of_cudf cudf in
-  let out = Filename.temp_file "solver-out" ".cudf" in
-  call_solver criteria pb out;
-  let _preamble, univ, _req = Cudf_parser.load_from_file out in
-  univ
+  match call_solver criteria pb with
+  | None -> None
+  | Some sol ->
+    prerr_endline "STOP BEFORE";
+    Unix.sleep 4;
+    prerr_endline "CONT BEFORE";
+    let univ = Cudf.load_universe sol in
+    Gc.full_major();
+    prerr_endline "STOP AFTER";
+    Unix.sleep 4;
+    prerr_endline "CONT AFTER";
+    Some (preamble, univ)
