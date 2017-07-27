@@ -56,12 +56,5 @@ let resolve_cudf ?(verbose=false) criteria (preamble, _, _ as cudf) =
   match call_solver criteria pb with
   | None -> None
   | Some sol ->
-    prerr_endline "STOP BEFORE";
-    Unix.sleep 4;
-    prerr_endline "CONT BEFORE";
     let univ = Cudf.load_universe sol in
-    Gc.full_major();
-    prerr_endline "STOP AFTER";
-    Unix.sleep 4;
-    prerr_endline "CONT AFTER";
     Some (preamble, univ)
