@@ -12,11 +12,6 @@
 bool generate_desagregate_constraints = true;
 bool generate_agregate_constraints = false;
 
-int new_var = 0;
-
-// set of requested upgrades
-vector<an_upgrade_set> upgrades;
-
 // check if pkg belongs to a list of providers
 bool is_in_provl(const CUDFVersionedPackage *pkg, CUDFProviderList *provl) {
   for (CUDFVersionedPackageListIterator ipkg = provl->begin(); ipkg != provl->end(); ipkg++)
@@ -47,7 +42,7 @@ bool is_in_versioned_providers(const CUDFVersionedPackage *pkg, const CUDFVersio
 }
 
 // preprocess an upgrade request to insure that only one version can be installed
-int preprocess_upgrade(CUDFproblem *problem) {
+int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set> &upgrades) {
   if (problem->upgrade != (CUDFVpkgList *)NULL) {
     int firstvarrank = problem->all_packages->size();
 
@@ -176,6 +171,10 @@ int preprocess_upgrade(CUDFproblem *problem) {
 // Generate MILP objective function(s) and constraints for a given solver
 // and a given criteria combination
 int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract_combiner &combiner) { 
+  int new_var = 0;
+
+  // set of requested upgrades
+  vector<an_upgrade_set> upgrades;
   int nb_packages = problem->all_packages->size();
   int nb_vpackages = problem->all_virtual_packages->size();
   int nb_vars;
@@ -192,7 +191,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
   // Objective function
 
 
-  if (preprocess_upgrade(problem) != 0) return -1; // Trying to upgrade non existent package
+  if (preprocess_upgrade(problem, new_var, upgrades) != 0) return -1; // Trying to upgrade non existent package
 
   nb_vars = nb_packages + new_var;
   nb_vars = combiner.column_allocation(nb_vars);
