@@ -321,30 +321,6 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   default: ret.error = "Unrecognised solver specified"; return ret;
   }
 
-  // if whished, print out the read problem
-  if (verbosity > 2) {
-    fprintf(stdout, "================================================================\n");
-    if (the_problem->properties->size() > 0) {
-      fprintf(stdout, "preamble:\n");
-      print_properties(stdout, the_problem->properties);
-      fprintf(stdout, "\n");
-    }
-    fprintf(stdout, "# %d versioned packages:\n\n", (int)the_problem->all_packages->size());
-    for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin();
-         ipkg != the_problem->all_packages->end();
-         ipkg++)
-      print_versioned_package(stdout, *ipkg, false);
-    print_problem(stdout, the_problem);
-
-    fprintf(stdout, "================================================================\n");
-    fprintf(stdout, "%d virtual packages:\n\n", (int)the_problem->all_virtual_packages->size());
-    for (CUDFVirtualPackageListIterator vpkg = the_problem->all_virtual_packages->begin();
-         vpkg != the_problem->all_virtual_packages->end();
-         vpkg++)
-      print_virtual_package(stdout, *vpkg);
-    fprintf(stdout, "================================================================\n");
-  }
-
   // check criteria properties
   for (vector<abstract_criteria *>::iterator icrit = criteria_with_property.begin(); icrit != criteria_with_property.end(); icrit++)
     (*icrit)->check_property(the_problem);
