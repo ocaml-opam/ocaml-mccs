@@ -334,6 +334,18 @@ CUDFPropertyValue::~CUDFPropertyValue() {
   }
 }
 
+CUDFproblem::~CUDFproblem() {
+  delete all_packages;
+  delete installed_packages;
+  delete uninstalled_packages;
+  delete all_virtual_packages;
+  // these are shared between problem / reduced problem
+  // delete install;
+  // delete remove;
+  // delete upgrade;
+  // delete properties;
+}
+
 // Operators to compare two version
 // requires the two version to compare
 bool op_none_comp(CUDFVersion v1, CUDFVersion v2) { return true; }

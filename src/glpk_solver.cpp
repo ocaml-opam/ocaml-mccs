@@ -244,3 +244,10 @@ int glpk_solver::end_add_constraints(void) {
   if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs.lp"); 
   return 0; 
 }
+
+glpk_solver::~glpk_solver() {
+  glp_delete_prob(lp);
+  glp_free_env();
+  delete lb;
+  delete ub;
+}

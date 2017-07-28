@@ -244,6 +244,8 @@ public:
     remove = (CUDFVpkgList *)NULL;
     upgrade = (CUDFVpkgList *)NULL;
   }
+
+  ~CUDFproblem();
 };
 
 // current CUDF problem

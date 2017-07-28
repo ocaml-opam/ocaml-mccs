@@ -130,12 +130,7 @@ char *get_criteria_property_name(char *crit_descr, unsigned int &pos) {
     unsigned int start = opts[0]->first;
     unsigned int length = opts[0]->second;
 
-    if (crit_descr[start+length-1] != ':') {
-      crit_descr[start+length] = '\0';
-      fprintf(stderr, "ERROR: criteria options: a property name must end with a ':': %s\n", crit_descr);
-      exit(-1);
-    }
-
+    if (crit_descr[start+length-1] == ':') length--;
 
     if ((property = (char *)malloc((length+1)*sizeof(char))) == (char *)NULL) {
       fprintf(stderr, "ERROR: criteria options: not enough memory to store property name.\n");
@@ -164,12 +159,7 @@ char *get_criteria_property_name_and_bool(char *crit_descr, unsigned int &pos, b
     unsigned int start = opts[0]->first;
     unsigned int length = opts[0]->second;
 
-    if (crit_descr[start+length-1] != ':') {
-      crit_descr[start+length] = '\0';
-      fprintf(stderr, "ERROR: criteria options: a property name must end with a ':': %s\n", crit_descr);
-      exit(-1);
-    }
-
+    if (crit_descr[start+length-1] == ':') length--;
 
     if ((property = (char *)malloc((length+1)*sizeof(char))) == (char *)NULL) {
       fprintf(stderr, "ERROR: criteria options: not enough memory to store property name.\n");
@@ -284,13 +274,12 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
 Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem) {
   // CUDFproblem *problem;
   vector<abstract_criteria *> criteria_with_property;
-  CriteriaList *criteria;
+  CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
   abstract_solver *solver = (abstract_solver *)NULL;
   abstract_combiner *combiner = (abstract_combiner *)NULL;
   stringstream solution;
   Solver_return ret = { 0, "", NULL };
 
-  criteria = get_criteria(criteria_arg, false, &criteria_with_property);
   if (criteria->size() == 0) {
     ret.error = "invalid criteria";
     return ret;
@@ -339,6 +328,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   // generate the constraints, solve the problem and print out the solutions
   if ((the_problem->all_packages->size() > 0) && (generate_constraints(the_problem, *solver, *combiner) == 0) && (solver->solve())) {
     delete combiner;
+    for (auto it = criteria->begin(); it != criteria->end(); it++) delete(*it);
     delete criteria;
 
     solver->init_solutions();
@@ -360,6 +350,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
     return ret;
   } else {
     delete combiner;
+    for (auto it = criteria->begin(); it != criteria->end(); it++) delete(*it);
     delete criteria;
 
     if (verbosity > 0) {

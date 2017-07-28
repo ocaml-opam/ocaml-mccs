@@ -7,7 +7,6 @@
 #include <caml/alloc.h>
 #include <unordered_map>
 #include <cudf.h>
-// #include <cudf_hash_table.h>
 #include <abstract_solver.h>
 #include <cudf_reductions.h>
 #include <mccscudf.h>
@@ -45,11 +44,9 @@ public:
     CUDFVirtualPackage *pkg;
     auto iterator = tbl->find(pkgname);
     if (iterator == tbl->end()) {
-      // fprintf(stderr, "pkg %s not found, adding to tbl\n", pkgname);
       pkg = new CUDFVirtualPackage(pkgname, rank++);
       (*tbl)[pkgname] = pkg;
     } else {
-      // fprintf(stderr, "pkg %s found, getting from tbl\n", pkgname);
       pkg = iterator->second;
     }
     return pkg;
@@ -80,10 +77,7 @@ CUDFPackageOp ml2c_relop(value relop)
   else if (relop == caml_hash_variant("Leq")) return op_infeq;
   else if (relop == caml_hash_variant("Lt")) return op_inf;
   else if (relop == caml_hash_variant("Neq")) return op_neq;
-  else {
-    fprintf(stderr, "ERROR: Invalid relop\n");
-    return op_none;
-  }
+  else caml_failwith("invalid relop");
 }
 
 value c2ml_relop (CUDFPackageOp op)
@@ -95,9 +89,7 @@ value c2ml_relop (CUDFPackageOp op)
   case op_infeq: return caml_hash_variant("Leq");
   case op_inf: return caml_hash_variant("Lt");
   case op_neq: return caml_hash_variant("Neq");
-  case op_none: default:
-    fprintf(stderr, "ERROR: Invalid relop\n");
-    return Val_none;
+  case op_none: default: caml_failwith("invalid relop");
   }
 }
 
@@ -107,10 +99,7 @@ CUDFKeepOp ml2c_keepop(value ml_op)
   else if (ml_op == caml_hash_variant("Keep_none")) return keep_none;
   else if (ml_op == caml_hash_variant("Keep_package")) return keep_package;
   else if (ml_op == caml_hash_variant("Keep_version")) return keep_version;
-  else {
-    fprintf(stderr, "ERROR: Invalid keep_op\n");
-    return keep_none;
-  }
+  else caml_failwith("Invalid keep_op");
 }
 
 value c2ml_keepop(CUDFKeepOp op)
@@ -139,14 +128,10 @@ CUDFPropertyType ml2c_propertytype(value pt)
   else if (pt == caml_hash_variant("Vpkglist")) return pt_vpkglist;
   else if (pt == caml_hash_variant("Veqpkglist")) return pt_veqpkglist;
   else if (pt == caml_hash_variant("Vpkgformula")) return pt_vpkgformula;
-  else if (pt == caml_hash_variant("Typedecl")) {
-    fprintf(stderr, "ERROR: recursive property type declarations unsupported\n");
-    return pt_none;
-  }
-  else {
-    fprintf(stderr, "ERROR: invalid property\n");
-    return pt_none;
-  }
+  else if (pt == caml_hash_variant("Typedecl"))
+    caml_failwith("recursive property type declarations unsupported");
+  else
+    caml_failwith("invalid property");
 }
 
 CUDFVpkg * ml2c_vpkg(Virtual_packages * tbl, value ml_vpkg)
@@ -204,28 +189,23 @@ value c2ml_vpkgformula(CUDFVpkgFormula * form)
   CAMLparam0 ();
   CAMLlocal1 (r);
   r = Val_emptylist;
-  if (form == NULL) CAMLreturn (Val_emptylist);
-  for (auto it = form->begin(); it != form->end(); it++)
-    r = Val_pair (c2ml_vpkglist(*it), r);
+  if (form != NULL)
+    for (auto it = form->begin(); it != form->end(); it++)
+      r = Val_pair (c2ml_vpkglist(*it), r);
   CAMLreturn (r);
 }
 
 CUDFPropertyValue * ml2c_property(Virtual_packages * tbl, CUDFProperties * properties, value ml_prop)
 {
-  char * base_prop_name = String_val(Field(ml_prop,0));
-  char property_name[strlen(base_prop_name)+2] = "";
+  char * prop_name = String_val(Field(ml_prop,0));
   CUDFPropertiesIterator prop_it;
   CUDFProperty * prop;
   value ml_v = Field(ml_prop,1);
   value v = Field(ml_v, 1);
-  strcpy (property_name, base_prop_name);
-  strcat (property_name, ":");
 
-  prop_it = properties->find(property_name);
-  if (prop_it == properties->end()) {
-    fprintf(stderr, "ERROR: property %s not found\n", property_name);
-    abort();
-  }
+  prop_it = properties->find(prop_name);
+  if (prop_it == properties->end())
+    caml_failwith("property not found");
   prop = prop_it->second;
 
   switch(ml2c_propertytype(Field(ml_v, 0))) {
@@ -239,8 +219,7 @@ CUDFPropertyValue * ml2c_property(Virtual_packages * tbl, CUDFProperties * prope
     for (CUDFEnumsIterator ei = prop->enuml->begin(); ei != prop->enuml->end(); ei++)
       if (strcmp((*ei), String_val(v)) == 0)
         return new CUDFPropertyValue(prop, *ei);
-    fprintf(stderr, "ERROR: invalid enum case\n");
-    exit(88);
+    caml_failwith("invalid enum case");
   case pt_vpkg: case pt_veqpkg:
     return new CUDFPropertyValue(prop, ml2c_vpkg(tbl, v));
   case pt_vpkgformula:
@@ -248,11 +227,9 @@ CUDFPropertyValue * ml2c_property(Virtual_packages * tbl, CUDFProperties * prope
   case pt_vpkglist: case pt_veqpkglist:
     return new CUDFPropertyValue(prop, ml2c_vpkglist(tbl, v));
   case pt_none:
-    fprintf(stderr, "ERROR: none property\n");
-    exit(88);
+    caml_failwith("none property");
   default:
-    fprintf(stderr, "ERROR: unrecognised property\n");
-    exit(88);
+    caml_failwith("unrecognised property");
   }
 }
 
@@ -260,11 +237,7 @@ value c2ml_property (CUDFPropertyValue * prop)
 {
   CAMLparam0 ();
   CAMLlocal2 (ml_prop_name, pval);
-  char * prop_name = prop->property->name;
-  int prop_name_len = strlen (prop_name);
-  // remove trailing ':' in property name
-  ml_prop_name = caml_alloc_string (prop_name_len - 1);
-  strncpy(String_val(ml_prop_name), prop_name, prop_name_len - 1);
+  ml_prop_name = caml_copy_string(prop->property->name);
 
   switch (prop->property->type_id) {
   case pt_bool:   pval = Val_pair(caml_hash_variant("Bool"),   Val_bool(prop->intval)); break;
@@ -276,12 +249,11 @@ value c2ml_property (CUDFPropertyValue * prop)
   case pt_vpkg: case pt_veqpkg: // todo
   case pt_vpkgformula: // todo
   case pt_vpkglist: case pt_veqpkglist: // todo
-    fprintf(stderr, "ERROR: unimplemented cudf property type\n");
-    abort();
+    caml_failwith("unimplemented cudf property type");
   case pt_none:
-    fprintf(stderr, "ERROR: none property type\n"); break;
+    caml_failwith("none property type");
   default:
-    fprintf(stderr, "ERROR: unrecognised property type\n");
+    caml_failwith("unrecognised property type");
   }
 
   CAMLreturn (Val_pair (ml_prop_name, pval));
@@ -355,14 +327,11 @@ value c2ml_package(CUDFVersionedPackage * pkg)
 
 CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
 {
-  char * base_prop_name = String_val(Field(ml_pdef,0));
-  char property_name[strlen(base_prop_name)+2] = "";
+  char * property_name = String_val(Field(ml_pdef,0));
   value def = Field(ml_pdef,1);
   CUDFPropertyType ty = ml2c_propertytype(Field(def,0));
   value arg = Field(def,1);
   CUDFProperty * p = NULL;
-  strcpy(property_name, base_prop_name);
-  strcat(property_name, ":");
   if (arg == Val_none)
     p = new CUDFProperty(property_name, ty);
   else {
@@ -386,7 +355,7 @@ CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
           if (strcmp((*ei), dft) == 0)
             p = new CUDFProperty(property_name, ty, enuml, *ei);
         if (p == NULL)
-          fprintf(stderr, "ERROR: invalid enum case\n");
+          caml_failwith("invalid enum case");
       }
       break;
     }
@@ -397,9 +366,9 @@ CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
     case pt_vpkglist: case pt_veqpkglist:
       p = new CUDFProperty(property_name, ty, ml2c_vpkglist(tbl, Some_val(arg))); break;
     case pt_none:
-      fprintf(stderr, "ERROR: none property def\n"); break;
+      caml_failwith("none property def");
     default:
-      fprintf(stderr, "ERROR: unrecognised property type def\n"); break;
+      caml_failwith("unrecognised property type def");
     }
   }
   if (p == NULL) exit(88);
@@ -431,33 +400,25 @@ typedef struct {
 
 #define Problem_pt(v) ((problem *) (Data_custom_val(v)))
 
+#define Delete_contents(l) for (auto it = l->begin(); it != l->end(); it++) delete(*it)
+
 void finalize_problem(value ml_pb) {
   problem * pb = Problem_pt(ml_pb);
   CUDFproblem * cpb = pb->pb_cudf_problem;
-  fprintf(stderr, "FINALIZE PROBLEM\n");
-  for (auto it = cpb->all_packages->begin(); it != cpb->all_packages->end(); it++) {
-    delete (*it);
-  }
-  delete cpb->all_packages;
-  delete cpb->installed_packages;
-  delete cpb->uninstalled_packages;
-  for (auto it = cpb->install->begin(); it != cpb->install->end(); it++) {
-    delete (*it);
-  }
+  Delete_contents(cpb->all_packages);
+  Delete_contents(cpb->install);
+  Delete_contents(cpb->remove);
+  Delete_contents(cpb->upgrade);
+  Delete_contents(cpb->all_virtual_packages);
+  for (auto it = cpb->properties->begin(); it != cpb->properties->end(); it++)
+    delete(it->second);
+  if (pb->pb_virtual_packages != NULL)
+    delete (pb->pb_virtual_packages);
   delete cpb->install;
-  for (auto it = cpb->remove->begin(); it != cpb->remove->end(); it++) {
-    delete (*it);
-  }
   delete cpb->remove;
-  for (auto it = cpb->upgrade->begin(); it != cpb->upgrade->end(); it++) {
-    delete (*it);
-  }
   delete cpb->upgrade;
-  for (auto it = cpb->all_virtual_packages->begin(); it != cpb->all_virtual_packages->end(); it++) {
-    delete (*it);
-  }
-  delete cpb->all_virtual_packages;
-  fprintf(stderr, "FINALIZATION DONE\n");
+  delete cpb->properties;
+  delete cpb;
   return;
 }
 
@@ -538,7 +499,7 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
   cpb->all_virtual_packages = tbl->all();
 
   delete tbl; // no longer needed
-  tbl = NULL;
+  pb->pb_virtual_packages = NULL;
 
   if (Val_emptylist != Field(ml_request, 4)) {
     fprintf(stderr, "WARNING: extra request field not supported\n");
@@ -563,10 +524,10 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, "]");
 
   ret = call_mccs(GLPK, criteria, reduced_cpb);
-  delete reduced_cpb->;
   if (ret.success == 0) caml_failwith(ret.error);
 
   if (ret.solution == NULL) {
+    delete reduced_cpb;
     CAMLreturn (Val_none);
   }
   else {
@@ -581,6 +542,8 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
           results = Val_pair(c2ml_package(*ipkg), results);
         }
       }
+    delete reduced_cpb;
+    delete ret.solution;
     CAMLreturn (Val_some(results));
   }
 }
