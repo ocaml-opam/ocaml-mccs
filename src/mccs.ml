@@ -58,3 +58,5 @@ let resolve_cudf ?(verbose=false) criteria (preamble, _, _ as cudf) =
   | Some sol ->
     let univ = Cudf.load_universe sol in
     Some (preamble, univ)
+
+let solver_id = "mccs+glpk"
