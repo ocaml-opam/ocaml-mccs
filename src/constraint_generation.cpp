@@ -397,12 +397,12 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 		}
 	    }
 	    // as well as from all the versioned providers with the right version
-	    if (! self_depend)
+	    if (! self_depend) {
 	      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
 		   jpkg != vpackage->versioned_providers.end(); jpkg++)
 		if (self_depend)
 		  break;
-		else if (comp(jpkg->first, (*ordeps)->version))
+		else if (comp(jpkg->first, (*ordeps)->version)) {
 		  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++) 
 		    if ((*kpkg) == (*ipkg)) { // Then, the dependency is always checked
 		      self_depend = true;
@@ -412,6 +412,8 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 		      has_coeff = true;
 		      solver.set_constraint_coeff(*kpkg, +1);
 		    }
+                }
+            }
 	  }
 	  if (has_coeff) {
 	    solver.set_constraint_coeff(*ipkg, -1);
@@ -535,12 +537,12 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	case keep_package: // Preserve at least one version of the package
 	  if (((*ipkg)->virtual_package->all_versions.size() > 0) && (! keep_package_handled[(*ipkg)->virtual_package->rank+1])) {
 	    CUDFVirtualPackage *vpackage = (*ipkg)->virtual_package;
-	    bool has_coeff = false;
+	    // bool has_coeff = false;
 
 	    solver.new_constraint();
 	    if (vpackage->all_versions.size() > 0)  // Should not make sense
 	      for (CUDFVersionedPackageSetIterator jpkg = vpackage->all_versions.begin(); jpkg != vpackage->all_versions.end(); jpkg++)
-		if (use_pkg(*jpkg)) { has_coeff = true; solver.set_constraint_coeff(*jpkg, +1); }
+		if (use_pkg(*jpkg)) { /*has_coeff = true;*/ solver.set_constraint_coeff(*jpkg, +1); }
 	    solver.add_constraint_geq(+1);
 	    keep_package_handled[(*ipkg)->virtual_package->rank+1] = true;
 	  }

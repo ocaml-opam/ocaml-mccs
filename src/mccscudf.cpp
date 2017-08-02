@@ -339,7 +339,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
       printf("Objective value: %f\n", obj);
 
       for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin(); ipkg != the_problem->all_packages->end(); ipkg++)
-	printf("%s = "CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
+	printf("%s = " CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
       
       fprintf(stdout, "================================================================\n");
     

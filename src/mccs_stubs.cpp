@@ -518,8 +518,9 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   CUDFVirtualPackageList all_virtual_packages = *(cpb->all_virtual_packages);
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
-  char criteria[strlen(String_val(ml_criteria))+3] = "[";
+  char criteria[strlen(String_val(ml_criteria))+3];
 
+  strcat(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
