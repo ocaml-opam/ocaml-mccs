@@ -520,7 +520,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   Solver_return ret;
   char criteria[strlen(String_val(ml_criteria))+3];
 
-  strcat(criteria, "[");
+  strcpy(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
