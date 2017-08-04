@@ -54,24 +54,24 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
 
 CUDFVersionedPackage::~CUDFVersionedPackage() {
   if (depends != NULL) {
-    for (vector<vector<CUDFVpkg*>*>::iterator it = depends->begin(); it != depends->end(); it++) {
-      for (vector<CUDFVpkg*>::iterator it2 = (*it)->begin(); it2 != (*it)->end(); it2++)
+    for (auto it = depends->begin(); it != depends->end(); it++) {
+      for (auto it2 = (*it)->begin(); it2 != (*it)->end(); it2++)
         delete (*it2);
       delete (*it);
     }
     delete depends;
   }
   if (conflicts != NULL) {
-    for (vector<CUDFVpkg*>::iterator it = conflicts->begin(); it != conflicts->end(); it++)
+    for (auto it = conflicts->begin(); it != conflicts->end(); it++)
       delete (*it);
     delete conflicts;
   }
   if (provides != NULL) {
-    for (vector<CUDFVpkg*>::iterator it = provides->begin(); it != provides->end(); it++)
+    for (auto it = provides->begin(); it != provides->end(); it++)
       delete (*it);
     delete provides;
   }
-  for (vector<CUDFPropertyValue*>::iterator it = properties.begin(); it != properties.end(); it++)
+  for (auto it = properties.begin(); it != properties.end(); it++)
     delete (*it);
 }
 
@@ -168,7 +168,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
 CUDFProperty::~CUDFProperty() {
   free(name);
   if (type_id == pt_enum) {
-    for (vector<char*>::iterator it = enuml->begin(); it != enuml->end(); it++)
+    for (auto it = enuml->begin(); it != enuml->end(); it++)
       free(*it);
     delete enuml;
   }
