@@ -16,9 +16,9 @@
                       mccs_stubs))
   (public_name       mccs)
   (cxx_flags         (:standard -I . -std=c++11))
-;; for dynlink version:  (c_library_flags   (:standard -lglpk -lstdc++))
-  (c_library_flags   (:standard -lz -lltdl))
-  (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
+  (c_library_flags   (:standard -lz -lltdl -lglpk -lstdc++)) ;; dynlink version
+  ;; (no_dynlink) (c_library_flags   (:standard -lz -lltdl)) ;; static version
+  ;; (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
   (wrapped           false)
   (libraries         (cudf))
-  (no_dynlink)))
+  ))
