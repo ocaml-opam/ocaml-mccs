@@ -13,5 +13,5 @@ build: ["jbuilder" "build" "-p" name]
 depends: [
   "jbuilder" {build}
   "conf-glpk"
-  "cudf" {= "0.7"}
+  "cudf" {>= "0.7"}
 ]
