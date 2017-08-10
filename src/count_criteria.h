@@ -56,7 +56,8 @@ class count_criteria: public abstract_criteria {
   // lambda multiplier for the criteria
   CUDFcoefficient lambda_crit ;
 
-  // True iff reduced to newly installed versioned packages
+  // WARNING: CHANGED FROM ITS ORIGINAL MEANING
+  // True iff reduced to packages appearing in the user request
   bool onlynew;
 
   // Criteria initialization
