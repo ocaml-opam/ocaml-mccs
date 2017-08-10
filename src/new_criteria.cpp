@@ -79,7 +79,7 @@ int new_criteria::add_constraints() {
 }
 
 // Compute the criteria range
-CUDFcoefficient new_criteria::bound_range() { return CUDFabs(lambda_crit) * all_uninstalled_versioned_virtual_packages.size(); }
+CUDFcoefficient new_criteria::bound_range() { return CUDFabs(lambda_crit) * all_uninstalled_versioned_virtual_packages.size() + 1; }
 
 // Compute the criteria upper bound
 CUDFcoefficient new_criteria::upper_bound() { 

@@ -113,7 +113,7 @@ int changed_criteria::add_constraints() {
 }
 
 // Compute the criteria range
-CUDFcoefficient changed_criteria::bound_range() { return CUDFabs(lambda_crit) * (ub - lb); }
+CUDFcoefficient changed_criteria::bound_range() { return CUDFabs(lambda_crit) * (ub - lb + 1); }
 
 // Compute the criteria upper bound
 CUDFcoefficient changed_criteria::upper_bound() { 

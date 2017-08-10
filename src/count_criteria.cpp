@@ -119,7 +119,7 @@ int count_criteria::add_criteria_to_constraint(CUDFcoefficient lambda) {
 int count_criteria::add_constraints() { return 0; }
 
 // Compute the criteria range
-CUDFcoefficient count_criteria::bound_range() { return (ub - lb); }
+CUDFcoefficient count_criteria::bound_range() { return (ub - lb + 1); }
 
 // Compute the criteria upper bound
 CUDFcoefficient count_criteria::upper_bound() { return ub; }

@@ -55,10 +55,7 @@ int lexagregate_combiner::add_criteria_to_objective(CUDFcoefficient lambda) {
 
   for (CriteriaList::reverse_iterator crit = criteria->rbegin(); crit != criteria->rend(); ++crit) {
     (*crit)->add_criteria_to_objective(lambda_comb);
-    {
-      CUDFcoefficient brange = (*crit)->bound_range();
-      if (brange != 0) lambda_comb *= brange;
-    }
+    lambda_comb *= (*crit)->bound_range() + 1;
   }
   return 0;
 }
@@ -69,10 +66,7 @@ int lexagregate_combiner::add_criteria_to_constraint(CUDFcoefficient lambda) {
 
   for (CriteriaList::reverse_iterator crit = criteria->rbegin(); crit != criteria->rend(); ++crit) {
     (*crit)->add_criteria_to_constraint(lambda_comb);
-    {
-      CUDFcoefficient brange = (*crit)->bound_range();
-      if (brange != 0) lambda_comb *= brange;
-    }
+    lambda_comb *= (*crit)->bound_range() + 1;
   }
   return 0;
 }
@@ -86,9 +80,8 @@ CUDFcoefficient lexagregate_combiner::bound_range() {
   CUDFcoefficient lambda = +1;
 
   for (CriteriaList::reverse_iterator crit = criteria->rbegin(); crit != criteria->rend(); ++crit) {
-    CUDFcoefficient prev_lambda = lambda;
-    lambda = (*crit)->bound_range();
-    range += CUDFabs(lambda_crit) * lambda * prev_lambda;
+    lambda *= ((*crit)->bound_range() + 1);
+    range += CUDFabs(lambda_crit) * lambda;
   }
   return range;
 }
@@ -103,7 +96,7 @@ CUDFcoefficient lexagregate_combiner::upper_bound() {
       ub += lambda_crit * lambda * (*crit)->upper_bound();
     else
       ub += lambda_crit * lambda * (*crit)->lower_bound();
-    lambda = (*crit)->bound_range();
+    lambda *= (*crit)->bound_range() + 1;
   }
   return ub;
 }
@@ -118,7 +111,7 @@ CUDFcoefficient lexagregate_combiner::lower_bound() {
       lb += lambda_crit * lambda * (*crit)->lower_bound();
     else
       lb += lambda_crit * lambda * (*crit)->upper_bound();
-    lambda = (*crit)->bound_range();
+    lambda *= (*crit)->bound_range() + 1;
   }
   return lb;
 }
