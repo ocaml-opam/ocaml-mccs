@@ -14,7 +14,7 @@
 #define Val_none Val_int(0)
 #define Some_val(v)  Field(v,0)
 
-static value Val_some (value v)
+value Val_some (value v)
 {
   CAMLparam1 (v);
   CAMLlocal1 (some);
@@ -23,7 +23,7 @@ static value Val_some (value v)
   CAMLreturn (some);
 }
 
-static value Val_pair (value v1, value v2)
+value Val_pair (value v1, value v2)
 {
   CAMLparam2 (v1, v2);
   CAMLlocal1 (pair);
@@ -149,11 +149,14 @@ CUDFVpkg * ml2c_vpkg(Virtual_packages * tbl, value ml_vpkg)
 value c2ml_vpkg(CUDFVpkg * vpkg)
 {
   CAMLparam0 ();
-  CAMLreturn
-    (Val_pair
-     (caml_copy_string(vpkg->virtual_package->name),
-      (vpkg->op == op_none) ? Val_none :
-      Val_some (Val_pair (c2ml_relop(vpkg->op), Val_int(vpkg->version)))));
+  CAMLlocal2(ml_name, ml_cstr);
+  ml_name = caml_copy_string(vpkg->virtual_package->name);
+  if (vpkg->op == op_none)
+    CAMLreturn(Val_pair(ml_name, Val_none));
+  else {
+    ml_cstr = Val_pair(c2ml_relop(vpkg->op), Val_int(vpkg->version));
+    CAMLreturn(Val_pair(ml_name, Val_some(ml_cstr)));
+  }
 }
 
 CUDFVpkgList * ml2c_vpkglist(Virtual_packages * tbl, value ml_vpkglist)
@@ -167,10 +170,12 @@ CUDFVpkgList * ml2c_vpkglist(Virtual_packages * tbl, value ml_vpkglist)
 value c2ml_vpkglist(CUDFVpkgList * vpkgl)
 {
   CAMLparam0 ();
-  CAMLlocal1 (r);
+  CAMLlocal2 (item, r);
   r = Val_emptylist;
-  for (auto it = vpkgl->begin(); it != vpkgl->end(); it++)
-    r = Val_pair (c2ml_vpkg(*it), r);
+  for (auto it = vpkgl->begin(); it != vpkgl->end(); it++) {
+    item = c2ml_vpkg(*it);
+    r = Val_pair (item, r);
+  }
   CAMLreturn (r);
 }
 
@@ -187,11 +192,14 @@ CUDFVpkgFormula * ml2c_vpkgformula(Virtual_packages * tbl, value ml_vpkgformula)
 value c2ml_vpkgformula(CUDFVpkgFormula * form)
 {
   CAMLparam0 ();
-  CAMLlocal1 (r);
+  CAMLlocal2 (item, r);
   r = Val_emptylist;
-  if (form != NULL)
-    for (auto it = form->begin(); it != form->end(); it++)
-      r = Val_pair (c2ml_vpkglist(*it), r);
+  if (form != NULL) {
+    for (auto it = form->begin(); it != form->end(); it++) {
+      item = c2ml_vpkglist(*it);
+      r = Val_pair (item, r);
+    }
+  }
   CAMLreturn (r);
 }
 
@@ -269,12 +277,13 @@ void ml2c_propertylist
 value c2ml_propertylist (CUDFPropertyValueList * plist)
 {
   CAMLparam0 ();
-  CAMLlocal1 (ml_plist);
-  ml_plist = Val_emptylist;
+  CAMLlocal2 (item, r);
+  r = Val_emptylist;
   for (auto it = plist->begin(); it != plist->end(); it++) {
-    ml_plist = Val_pair(c2ml_property(*it), ml_plist);
+    item = c2ml_property(*it);
+    r = Val_pair(item, r);
   }
-  CAMLreturn (ml_plist);
+  CAMLreturn (r);
 }
 
 //extern int versioned_package_rank;
@@ -511,7 +520,7 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
 extern "C" value call_solver(value ml_criteria, value ml_problem)
 {
   CAMLparam2(ml_criteria, ml_problem);
-  CAMLlocal1(results);
+  CAMLlocal2(results, pkg);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
   CUDFproblem * reduced_cpb = compute_reduced_CUDF(cpb);
@@ -540,7 +549,8 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
         if (ret.solution->get_solution(*ipkg)) {
           (*ipkg)->wasinstalled = (*ipkg)->installed;
           (*ipkg)->installed = 1;
-          results = Val_pair(c2ml_package(*ipkg), results);
+          pkg = c2ml_package(*ipkg);
+          results = Val_pair(pkg, results);
         }
       }
     delete reduced_cpb;
