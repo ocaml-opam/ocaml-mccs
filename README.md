@@ -13,8 +13,19 @@ the native C++ parsers and printers.
 
 While mccs itself natively supports a wide array of underlying solvers (integer
 programming or pseudo-boolean), at the moment, the build system is set to link
-with [glpk](https://www.gnu.org/software/glpk/) only. It will also advertise as
-much static linking as possible, in order to generate portable executables.
+with [glpk](https://www.gnu.org/software/glpk/) only. It's planned to extend it
+again to bring back support for lpsolve, and external lp solvers such as cplex,
+coinor-cbc or scip.
+
+NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
+`mccs -h`), assuming `-lexagregate[CRITERIA]`. There are two important
+differences:
+- the semicolon after properties can be omitted `-count[version-lag,true]`
+  rather than `-count[version-lag:,true]`
+- the boolean parameter for `count[]` has a **different meaning**: it restricts
+  the criterion to packages appearing in the request, rather than to packages
+  newly installed.
+Example: `-removed,-count[version-lag,true],-changed,-count[version-lag,false]`
 
 Build using `opam install .` (opam 2.0), or `jbuilder build`.
 
