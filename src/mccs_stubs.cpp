@@ -309,18 +309,18 @@ CUDFVersionedPackage * ml2c_package(Virtual_packages * tbl, CUDFProperties * pro
 value c2ml_package(CUDFVersionedPackage * pkg)
 {
   CAMLparam0 ();
-  CAMLlocal4 (ml_package, extras, ml_prop_name, pval);
+  CAMLlocal1 (ml_package);
 
   ml_package = caml_alloc_tuple(9);
-  Field(ml_package, 0) = caml_copy_string(pkg->name); // pkgname
-  Field(ml_package, 1) = Val_int(pkg->version); // version
-  Field(ml_package, 2) = c2ml_vpkgformula(pkg->depends); // depends
-  Field(ml_package, 3) = c2ml_vpkglist(pkg->conflicts); // conflicts
-  Field(ml_package, 4) = c2ml_vpkglist(pkg->provides); // provides
-  Field(ml_package, 5) = Val_bool(pkg->installed); // installed
-  Field(ml_package, 6) = Val_bool(pkg->wasinstalled); // was_installed
-  Field(ml_package, 7) = c2ml_keepop(pkg->keep); // keep
-  Field(ml_package, 8) = c2ml_propertylist(&pkg->properties); // pkg_extra
+  Store_field(ml_package, 0, caml_copy_string(pkg->name)); // pkgname
+  Store_field(ml_package, 1, Val_int(pkg->version)); // version
+  Store_field(ml_package, 2, c2ml_vpkgformula(pkg->depends)); // depends
+  Store_field(ml_package, 3, c2ml_vpkglist(pkg->conflicts)); // conflicts
+  Store_field(ml_package, 4, c2ml_vpkglist(pkg->provides)); // provides
+  Store_field(ml_package, 5, Val_bool(pkg->installed)); // installed
+  Store_field(ml_package, 6, Val_bool(pkg->wasinstalled)); // was_installed
+  Store_field(ml_package, 7, c2ml_keepop(pkg->keep)); // keep
+  Store_field(ml_package, 8, c2ml_propertylist(&(pkg->properties))); // pkg_extra
 
   CAMLreturn(ml_package);
 }
@@ -511,7 +511,7 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
 extern "C" value call_solver(value ml_criteria, value ml_problem)
 {
   CAMLparam2(ml_criteria, ml_problem);
-  CAMLlocal2(results, cons);
+  CAMLlocal1(results);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
   CUDFproblem * reduced_cpb = compute_reduced_CUDF(cpb);

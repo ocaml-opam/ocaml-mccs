@@ -248,6 +248,4 @@ int glpk_solver::end_add_constraints(void) {
 glpk_solver::~glpk_solver() {
   glp_delete_prob(lp);
   glp_free_env();
-  delete lb;
-  delete ub;
 }
