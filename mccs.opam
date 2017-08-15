@@ -1,5 +1,5 @@
 opam-version: "1.2"
-version: "1.1+1"
+version: "1.1+2"
 maintainer: "Louis Gesbert <louis.gesbert@ocamlpro.com>"
 authors: [
   "Claude Michel <claude.michel@unice.fr>"
