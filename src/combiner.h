@@ -7,7 +7,7 @@
 
 
 #ifndef __COMBINER_H
-#define __COMBINER_h
+#define __COMBINER_H
 
 #include <cudf.h>
 #include <abstract_criteria.h>

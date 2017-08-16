@@ -8,7 +8,7 @@
 // Defines common types for cudf handling
 
 #ifndef _CUDF_TYPES__
-#define _CUDF_TYPES_
+#define _CUDF_TYPES__
 
 
 typedef long long int CUDFcoefficient;  // type of coefficients

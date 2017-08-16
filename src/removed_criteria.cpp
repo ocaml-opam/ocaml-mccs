@@ -95,8 +95,8 @@ int removed_criteria::add_constraints() {
 CUDFcoefficient removed_criteria::bound_range() { return CUDFabs(lambda_crit) * (ub - lb + 1); }
 
 // Compute the criteria upper bound
-CUDFcoefficient removed_criteria::upper_bound() { return lambda_crit * (lambda_crit >= 0)?ub:lb; }
+CUDFcoefficient removed_criteria::upper_bound() { return lambda_crit * (lambda_crit >= 0 ?ub:lb); }
 
 // Compute the criteria lower bound
-CUDFcoefficient removed_criteria::lower_bound() { return lambda_crit * (lambda_crit >= 0)?lb:ub; }
+CUDFcoefficient removed_criteria::lower_bound() { return lambda_crit * (lambda_crit >= 0 ?lb:ub); }
 
