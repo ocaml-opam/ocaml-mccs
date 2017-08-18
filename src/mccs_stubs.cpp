@@ -5,7 +5,7 @@
 #include <caml/custom.h>
 #include <caml/fail.h>
 #include <caml/alloc.h>
-#include <unordered_map>
+#include <map>
 #include <cudf.h>
 #include <abstract_solver.h>
 #include <cudf_reductions.h>
@@ -36,13 +36,13 @@ value Val_pair (value v1, value v2)
 class Virtual_packages
 {
   int rank;
-  unordered_map<string, CUDFVirtualPackage*> * tbl;
+  map<string, CUDFVirtualPackage*> * tbl;
 
 public:
 
   CUDFVirtualPackage * get(const char *pkgname) {
     CUDFVirtualPackage *pkg;
-    unordered_map<string, CUDFVirtualPackage*>::iterator iterator = tbl->find(pkgname);
+    map<string, CUDFVirtualPackage*>::iterator iterator = tbl->find(pkgname);
     if (iterator == tbl->end()) {
       pkg = new CUDFVirtualPackage(pkgname, rank++);
       (*tbl)[pkgname] = pkg;
@@ -54,14 +54,14 @@ public:
 
   CUDFVirtualPackageList * all() {
     CUDFVirtualPackageList * l = new CUDFVirtualPackageList;
-    for (unordered_map<string, CUDFVirtualPackage*>::iterator it = tbl->begin(); it != tbl->end(); it++)
+    for (map<string, CUDFVirtualPackage*>::iterator it = tbl->begin(); it != tbl->end(); it++)
       l->push_back(it->second);
     return l;
   }
 
   Virtual_packages() {
     rank = 0;
-    tbl = new unordered_map<string, CUDFVirtualPackage*>;
+    tbl = new map<string, CUDFVirtualPackage*>;
   }
 
   ~Virtual_packages() {
