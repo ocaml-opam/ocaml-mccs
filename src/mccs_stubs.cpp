@@ -36,13 +36,13 @@ value Val_pair (value v1, value v2)
 class Virtual_packages
 {
   int rank;
-  std::unordered_map<std::string, CUDFVirtualPackage*> * tbl;
+  unordered_map<string, CUDFVirtualPackage*> * tbl;
 
 public:
 
   CUDFVirtualPackage * get(const char *pkgname) {
     CUDFVirtualPackage *pkg;
-    auto iterator = tbl->find(pkgname);
+    unordered_map<string, CUDFVirtualPackage*>::iterator iterator = tbl->find(pkgname);
     if (iterator == tbl->end()) {
       pkg = new CUDFVirtualPackage(pkgname, rank++);
       (*tbl)[pkgname] = pkg;
@@ -54,14 +54,14 @@ public:
 
   CUDFVirtualPackageList * all() {
     CUDFVirtualPackageList * l = new CUDFVirtualPackageList;
-    for (auto it = tbl->begin(); it != tbl->end(); it++)
+    for (unordered_map<string, CUDFVirtualPackage*>::iterator it = tbl->begin(); it != tbl->end(); it++)
       l->push_back(it->second);
     return l;
   }
 
   Virtual_packages() {
     rank = 0;
-    tbl = new std::unordered_map<std::string, CUDFVirtualPackage*>;
+    tbl = new unordered_map<string, CUDFVirtualPackage*>;
   }
 
   ~Virtual_packages() {
@@ -172,7 +172,7 @@ value c2ml_vpkglist(CUDFVpkgList * vpkgl)
   CAMLparam0 ();
   CAMLlocal2 (item, r);
   r = Val_emptylist;
-  for (auto it = vpkgl->begin(); it != vpkgl->end(); it++) {
+  for (vector<CUDFVpkg*>::iterator it = vpkgl->begin(); it != vpkgl->end(); it++) {
     item = c2ml_vpkg(*it);
     r = Val_pair (item, r);
   }
@@ -195,7 +195,7 @@ value c2ml_vpkgformula(CUDFVpkgFormula * form)
   CAMLlocal2 (item, r);
   r = Val_emptylist;
   if (form != NULL) {
-    for (auto it = form->begin(); it != form->end(); it++) {
+    for (vector<vector<CUDFVpkg*>*>::iterator it = form->begin(); it != form->end(); it++) {
       item = c2ml_vpkglist(*it);
       r = Val_pair (item, r);
     }
@@ -279,7 +279,7 @@ value c2ml_propertylist (CUDFPropertyValueList * plist)
   CAMLparam0 ();
   CAMLlocal2 (item, r);
   r = Val_emptylist;
-  for (auto it = plist->begin(); it != plist->end(); it++) {
+  for (vector<CUDFPropertyValue*>::iterator it = plist->begin(); it != plist->end(); it++) {
     item = c2ml_property(*it);
     r = Val_pair(item, r);
   }
@@ -409,17 +409,17 @@ typedef struct {
 
 #define Problem_pt(v) ((problem *) (Data_custom_val(v)))
 
-#define Delete_contents(l) for (auto it = l->begin(); it != l->end(); it++) delete(*it)
+#define Delete_contents(t,l) for (vector<t*>::iterator it = l->begin(); it != l->end(); it++) delete(*it)
 
 void finalize_problem(value ml_pb) {
   problem * pb = Problem_pt(ml_pb);
   CUDFproblem * cpb = pb->pb_cudf_problem;
-  Delete_contents(cpb->all_packages);
-  Delete_contents(cpb->install);
-  Delete_contents(cpb->remove);
-  Delete_contents(cpb->upgrade);
-  Delete_contents(cpb->all_virtual_packages);
-  for (auto it = cpb->properties->begin(); it != cpb->properties->end(); it++)
+  Delete_contents(CUDFVersionedPackage,cpb->all_packages);
+  Delete_contents(CUDFVpkg,cpb->install);
+  Delete_contents(CUDFVpkg,cpb->remove);
+  Delete_contents(CUDFVpkg,cpb->upgrade);
+  Delete_contents(CUDFVirtualPackage,cpb->all_virtual_packages);
+  for (map<string, CUDFProperty*>::iterator it = cpb->properties->begin(); it != cpb->properties->end(); it++)
     delete(it->second);
   if (pb->pb_virtual_packages != NULL)
     delete (pb->pb_virtual_packages);
@@ -542,7 +542,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   }
   else {
     results = Val_emptylist;
-    for (auto ipkg = reduced_cpb->all_packages->begin();
+    for (vector<CUDFVersionedPackage*>::iterator ipkg = reduced_cpb->all_packages->begin();
          ipkg != reduced_cpb->all_packages->end();
          ipkg++)
       {

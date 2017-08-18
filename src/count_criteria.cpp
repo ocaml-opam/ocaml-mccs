@@ -30,11 +30,11 @@ void count_criteria::check_property(CUDFproblem *problem) {
 }
 
 inline int appears_in_request(CUDFproblem * problem, CUDFVirtualPackage * p) {
-  for (auto it = problem->install->begin(); it != problem->install->end(); it++)
+  for (CUDFVpkgListIterator it = problem->install->begin(); it != problem->install->end(); it++)
     if ((*it)->virtual_package == p) return 1;
-  for (auto it = problem->upgrade->begin(); it != problem->upgrade->end(); it++)
+  for (CUDFVpkgListIterator it = problem->upgrade->begin(); it != problem->upgrade->end(); it++)
     if ((*it)->virtual_package == p) return 1;
-  for (auto it = problem->remove->begin(); it != problem->remove->end(); it++)
+  for (CUDFVpkgListIterator it = problem->remove->begin(); it != problem->remove->end(); it++)
     if ((*it)->virtual_package == p) return 1;
   return 0;
 }
