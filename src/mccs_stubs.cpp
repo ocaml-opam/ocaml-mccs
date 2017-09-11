@@ -5,6 +5,7 @@
 #include <caml/custom.h>
 #include <caml/fail.h>
 #include <caml/alloc.h>
+#include <caml/threads.h>
 #include <map>
 #include <cudf.h>
 #include <abstract_solver.h>
@@ -533,7 +534,9 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
+  caml_release_runtime_system ();
   ret = call_mccs(GLPK, criteria, reduced_cpb);
+  caml_acquire_runtime_system ();
   if (ret.success == 0) caml_failwith(ret.error);
 
   if (ret.solution == NULL) {
