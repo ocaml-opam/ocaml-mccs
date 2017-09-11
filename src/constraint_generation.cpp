@@ -160,7 +160,7 @@ int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set
 	new_var += nb_new_var;
 	firstvarrank += nb_new_var;
       } else { // We need somethin to upgrade to ...
-	printf("Cannot upgrade to %s.\n", vpackage->name);
+	if (verbosity > 0) printf("Cannot upgrade to %s.\n", vpackage->name);
 	return -1;
       }
     }
