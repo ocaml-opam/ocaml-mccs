@@ -60,12 +60,12 @@ int glpk_solver::solve() {
   int status = 0, nb_objectives = objectives.size();
   glp_iocp mip_params;
   int save_stdout = 1;
-    
+
+  try {
   if (verbosity == 0) {
     save_stdout = dup(1);
     close(1);
   }
-
   glp_init_iocp(&mip_params);
   mip_params.gmi_cuts = GLP_ON;
   mip_params.mir_cuts = GLP_ON;
@@ -102,6 +102,13 @@ int glpk_solver::solve() {
 
       if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs1.lp");
     }
+  }
+  } catch (...) {
+    if (verbosity == 0) {
+      dup2(save_stdout, 1);
+      close(save_stdout);
+    }
+    throw;
   }
   if (verbosity == 0) {
     dup2(save_stdout, 1);

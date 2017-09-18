@@ -28,6 +28,8 @@ type request = Cudf.request = {
 
 type problem
 
+let _ = Callback.register_exception "Sys.Break" Sys.Break
+
 external set_verbosity: int -> unit
   = "set_verbosity"
 

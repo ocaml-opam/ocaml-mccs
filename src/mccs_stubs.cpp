@@ -6,6 +6,8 @@
 #include <caml/fail.h>
 #include <caml/alloc.h>
 #include <caml/threads.h>
+#include <caml/callback.h>
+#include <signal.h>
 #include <map>
 #include <cudf.h>
 #include <abstract_solver.h>
@@ -518,6 +520,51 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
   CAMLreturn (Val_unit);
 }
 
+static void sigint_handler(int sig, siginfo_t *si, void * ucontext) {
+  throw 130;
+}
+
+struct sigaction ocaml_sigint_action;
+
+void install_sigint_handler() {
+  struct sigaction sa;
+  sa.sa_flags = SA_SIGINFO;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_sigaction = sigint_handler;
+  if (sigaction(SIGINT, &sa, &ocaml_sigint_action) == -1) {
+    fprintf(stderr, "ERROR: can not install solver signal handler\n");
+    exit(99);
+  }
+  return;
+}
+
+void restore_sigint_handler() {
+  if (sigaction (SIGINT, &ocaml_sigint_action, NULL) == -1) {
+    fprintf(stderr, "ERROR: can not restorel solver signal handler\n");
+    exit(99);
+  }
+  return;
+}
+
+// Allow C-c to interrupt the solver
+Solver_return call_mccs_protected(Solver solver, char *criteria, CUDFproblem* cpb) {
+  Solver_return ret = { 0, "", NULL };
+  try {
+    install_sigint_handler();
+    ret = call_mccs(solver, criteria, cpb);
+  } catch (int p) {
+    if (p == 130) {
+      ret.success = -1;
+      ret.error = "Solver interrupted by SIGINT";
+    } else
+      ret.error = "Uncaught solver exception";
+  } catch (...) {
+    ret.error = "Uncaught solver exception";
+  }
+  restore_sigint_handler();
+  return ret;
+}
+
 extern "C" value call_solver(value ml_criteria, value ml_problem)
 {
   CAMLparam2(ml_criteria, ml_problem);
@@ -534,10 +581,15 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
-  caml_release_runtime_system ();
-  ret = call_mccs(GLPK, criteria, reduced_cpb);
-  caml_acquire_runtime_system ();
+  //  caml_release_runtime_system ();
+  ret = call_mccs_protected(GLPK, criteria, reduced_cpb);
+  // caml_acquire_runtime_system ();
   if (ret.success == 0) caml_failwith(ret.error);
+  else if (ret.success < 0) {
+    // raise (SIGINT); Does not work well from C, better to raise directly
+    caml_raise_constant(*caml_named_value("Sys.Break"));
+    CAMLreturn (Val_none);
+  }
 
   if (ret.solution == NULL) {
     delete reduced_cpb;
