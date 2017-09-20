@@ -53,7 +53,7 @@
                       asnokalg
                       ckasn
                       ckcnf
-                      cplex
+;;                      cplex
                       cpp
                       cpxbas
                       graph
@@ -97,7 +97,7 @@
                       wript
                       wrmaxf
                       wrmcf
-                      wrmip
+;;                      wrmip
                       wrprob
                       wrsol
                       btf
@@ -127,7 +127,7 @@
                       error
                       stdc
                       stdout
-                      stream
+;;                      stream
                       time
                       tls
                       minisat
@@ -175,21 +175,22 @@
                       spychuzc
                       spychuzr
                       spydual
-                      adler32
-                      compress
-                      crc32
-                      deflate
-                      gzclose
-                      gzlib
-                      gzread
-                      gzwrite
-                      inffast
-                      inflate
-                      inftrees
-                      trees
-                      uncompr
-                      zio
-                      zutil))
+;;                      adler32
+;;                      compress
+;;                      crc32
+;;                      deflate
+;;                      gzclose
+;;                      gzlib
+;;                      gzread
+;;                      gzwrite
+;;                      inffast
+;;                      inflate
+;;                      inftrees
+;;                      trees
+;;                      uncompr
+;;                      zio
+;;                      zutil
+                      ))
   ;; the following are the objects from mccs
   (cxx_names         (changed_criteria
                       constraint_generation

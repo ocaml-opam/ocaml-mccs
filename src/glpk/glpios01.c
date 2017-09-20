@@ -1596,21 +1596,6 @@ void ios_process_sol(glp_tree *T)
       }
       xassert(T->P != NULL);
       /* save solution to text file, if requested */
-      if (T->save_sol != NULL)
-      {  char *fn, *mark;
-         fn = talloc(strlen(T->save_sol) + 50, char);
-         mark = strrchr(T->save_sol, '*');
-         if (mark == NULL)
-            strcpy(fn, T->save_sol);
-         else
-         {  memcpy(fn, T->save_sol, mark - T->save_sol);
-            fn[mark - T->save_sol] = '\0';
-            sprintf(fn + strlen(fn), "%03d", ++(T->save_cnt));
-            strcat(fn, &mark[1]);
-         }
-         glp_write_mip(T->P, fn);
-         tfree(fn);
-      }
       return;
 }
 #endif

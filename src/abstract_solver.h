@@ -84,7 +84,7 @@ class abstract_solver {
 
   // ******************************************************************
   // write the internal representation of the problem to a file
-  virtual int writelp(char *filename) { return 0; };
+  // virtual int writelp(char *filename) { return 0; };
 
   // ******************************************************************
   // solve the problem (must return a value > 0 if a solution has been found)

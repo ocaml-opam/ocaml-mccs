@@ -53,7 +53,7 @@ int glpk_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficie
 }
 
 // write the problem into a file
-int glpk_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
+// int glpk_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
 
 // solve the current lp problem
 int glpk_solver::solve() {
