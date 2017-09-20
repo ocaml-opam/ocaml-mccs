@@ -25,11 +25,20 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+The GLPK code, in directory src/glpk, is:
+
+Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017 Andrew Makhorin,
+Department for Applied Informatics, Moscow Aviation Institute, Moscow,
+Russia. All rights reserved. E-mail: <mao@gnu.org>.
+
+Licensed under the GNU GENERAL PUBLIC LICENSE Version 3, included below.
+
 The OCaml binding is:
 
-Copyright (c) 2017, Louis Gesbert, OCamlPro, and distributed under the
-GNU GENERAL PUBLIC LICENSE v2.1, with STATIC LINKING EXCEPTION as
-written below. All other files are under GNU GENERAL PUBLIC LICENSE v3.
+Copyright (c) 2017, Louis Gesbert, OCamlPro, and distributed under the GNU
+LESSER GENERAL PUBLIC LICENSE v2.1, with STATIC LINKING EXCEPTION as written
+below. All other files are under GNU GENERAL PUBLIC LICENSE v3.
 
 If you wish to get copies of this software, either source or binary,
 under other licenses, please contact us at <contact@ocamlpro.com>.
