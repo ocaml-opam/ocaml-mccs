@@ -2,17 +2,13 @@
 
 (library
  ((name              mccs)
-  ;; the following are all the objects constituting GLPK, from src/glpk
+  ;; the following are all the objects from GLPK that we need, from src/glpk
   (c_names           (bfd
-                      bfx
                       glpapi06
-                      glpapi07
-;;                      glpapi08
                       glpapi09
                       glpapi10
                       glpapi12
                       glpapi13
-                      glphbm
                       glpios01
                       glpios02
                       glpios03
@@ -21,85 +17,18 @@
                       glpios10
                       glpios11
                       glpios12
-;;                      glpipm
-;;                      glpmat
                       glpnpp01
                       glpnpp02
                       glpnpp03
                       glpnpp04
                       glpnpp05
-                      glpnpp06
-                      glprgr
                       glpscl
-                      glpspm
-                      glpssx01
-                      glpssx02
-                      lux
-                      amd_1
-                      amd_2
-                      amd_aat
-                      amd_control
-                      amd_defaults
-                      amd_dump
-                      amd_info
-                      amd_order
-                      amd_post_tree
-                      amd_postorder
-                      amd_preprocess
-                      amd_valid
                       advbas
-                      asnhall
-                      asnlp
-                      asnokalg
-                      ckasn
-                      ckcnf
-;;                      cplex
-                      cpp
                       cpxbas
-                      graph
-                      gridgen
-                      intfeas1
-                      maxffalg
-                      maxflp
-                      mcflp
-                      mcfokalg
-                      mcfrelax
-;;                      minisat1
-                      mpl
-                      mps
-                      netgen
-                      pript
-                      prmip
                       prob1
                       prob2
-                      prob3
                       prob4
                       prob5
-                      prrngs
-                      prsol
-                      rdasn
-                      rdcc
-                      rdcnf
-                      rdipt
-                      rdmaxf
-                      rdmcf
-                      rdmip
-                      rdprob
-                      rdsol
-                      rmfgen
-                      strong
-                      topsort
-                      weak
-                      wcliqex
-                      wrasn
-                      wrcc
-                      wrcnf
-                      wript
-                      wrmaxf
-                      wrmcf
-;;                      wrmip
-                      wrprob
-                      wrsol
                       btf
                       btfint
                       fhv
@@ -120,49 +49,26 @@
                       gmigen
                       mirgen
                       spv
-;;                      colamd
                       alloc
                       dlsup
                       env
                       error
                       stdc
                       stdout
-;;                      stream
                       time
                       tls
-;;                      minisat
                       avl
-                      bignum
-                      dimacs
                       dmp
-                      ffalg
-                      fp2rat
                       gcd
                       jd
-                      keller
                       mc13d
                       mc21a
-;;                      mygmp
-                      okalg
-                      qmd
-                      relax4
                       rng
                       rng1
                       round2n
-                      str2int
-                      str2num
-                      strspx
-                      strtrim
                       triang
                       wclique
                       wclique1
-                      mpl1
-                      mpl2
-                      mpl3
-                      mpl4
-                      mpl5
-                      mpl6
-                      mplsql
                       proxy
                       proxy1
                       spxat
@@ -174,23 +80,7 @@
                       spxprob
                       spychuzc
                       spychuzr
-                      spydual
-;;                      adler32
-;;                      compress
-;;                      crc32
-;;                      deflate
-;;                      gzclose
-;;                      gzlib
-;;                      gzread
-;;                      gzwrite
-;;                      inffast
-;;                      inflate
-;;                      inftrees
-;;                      trees
-;;                      uncompr
-;;                      zio
-;;                      zutil
-                      ))
+                      spydual))
   ;; the following are the objects from mccs
   (cxx_names         (changed_criteria
                       constraint_generation
@@ -215,15 +105,10 @@
   ))
 
 (copy_files# glpk/*.{c,h})
-(copy_files# glpk/amd/*.{c,h})
 (copy_files# glpk/api/*.{c,h})
 (copy_files# glpk/bflib/*.{c,h})
 (copy_files# glpk/cglib/*.{c,h})
-(copy_files# glpk/colamd/*.{c,h})
 (copy_files# glpk/env/*.{c,h})
-(copy_files# glpk/minisat/*.{c,h})
 (copy_files# glpk/misc/*.{c,h})
-(copy_files# glpk/mpl/*.{c,h})
 (copy_files# glpk/proxy/*.{c,h})
 (copy_files# glpk/simplex/*.{c,h})
-(copy_files# glpk/zlib/*.{c,h})
