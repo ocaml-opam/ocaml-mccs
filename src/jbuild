@@ -7,7 +7,7 @@
                       bfx
                       glpapi06
                       glpapi07
-                      glpapi08
+;;                      glpapi08
                       glpapi09
                       glpapi10
                       glpapi12
@@ -21,8 +21,8 @@
                       glpios10
                       glpios11
                       glpios12
-                      glpipm
-                      glpmat
+;;                      glpipm
+;;                      glpmat
                       glpnpp01
                       glpnpp02
                       glpnpp03
@@ -64,7 +64,7 @@
                       mcflp
                       mcfokalg
                       mcfrelax
-                      minisat1
+;;                      minisat1
                       mpl
                       mps
                       netgen
@@ -120,7 +120,7 @@
                       gmigen
                       mirgen
                       spv
-                      colamd
+;;                      colamd
                       alloc
                       dlsup
                       env
@@ -130,7 +130,7 @@
 ;;                      stream
                       time
                       tls
-                      minisat
+;;                      minisat
                       avl
                       bignum
                       dimacs
@@ -142,7 +142,7 @@
                       keller
                       mc13d
                       mc21a
-                      mygmp
+;;                      mygmp
                       okalg
                       qmd
                       relax4
