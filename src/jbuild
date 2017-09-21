@@ -3,6 +3,7 @@
 (library
  ((name              mccs)
   ;; the following are all the objects from GLPK that we need, from src/glpk
+  ;; (can be replaced by (c_library_flags (-lglpk)) if installed)
   (c_names           (bfd
                       glpapi06
                       glpapi09

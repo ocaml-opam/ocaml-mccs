@@ -6,8 +6,9 @@ developed at UNS during the European MANCOOSI project.
 This repository contains a stripped-down version of the
 [mccs solver](http://www.i3s.unice.fr/~cpjm/misc/mccs.html), taken from snapshot
 1.1, with a binding as an OCaml library, and building with `jbuilder`. The
-[GLPK](https://www.gnu.org/software/glpk/glpk.html) source it links
-against is also included within src/glpk, at version 4.63.
+[GLPK](https://www.gnu.org/software/glpk/glpk.html) source it links against is
+also included within src/glpk, at version 4.63 (unmodified, apart from many
+removed modules, corresponding to the parts that we don't use).
 
 The binding enables interoperation with binary CUDF data from
 [the OCaml CUDF library](https://gforge.inria.fr/projects/cudf/), and removes
@@ -22,8 +23,8 @@ coinor-cbc or scip.
 NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
 `mccs -h`), assuming `-lexagregate[CRITERIA]`. There are two important
 differences:
-- the semicolon after properties can be omitted `-count[version-lag,true]`
-  rather than `-count[version-lag:,true]`
+- the colon after properties can be omitted `-count[version-lag,true]` rather
+  than `-count[version-lag:,true]`
 - the boolean parameter for `count[]` has a **different meaning**: it restricts
   the criterion to packages appearing in the request, rather than to packages
   newly installed.
