@@ -13,6 +13,7 @@
 #include <abstract_solver.h>
 #include <cudf_reductions.h>
 #include <mccscudf.h>
+#include "mccs_stubs_cpp.h"
 
 #define Val_none Val_int(0)
 #define Some_val(v)  Field(v,0)
@@ -444,14 +445,14 @@ static struct custom_operations problem_ops = {
   custom_compare_ext_default
 };
 
-extern "C" value set_verbosity(value v)
+extern "C" value cpp_set_verbosity(value v)
 {
   CAMLparam1 (v);
   verbosity = Int_val(v);
   CAMLreturn (Val_unit);
 }
 
-extern "C" value gen_problem(value preamble)
+extern "C" value cpp_gen_problem(value preamble)
 {
   CAMLparam1 (preamble);
   CAMLlocal1 (ml_problem);
@@ -476,7 +477,7 @@ extern "C" value gen_problem(value preamble)
   CAMLreturn (ml_problem);
 }
 
-extern "C" value add_package_to_problem(value ml_problem, value ml_package)
+extern "C" value cpp_add_package_to_problem(value ml_problem, value ml_package)
 {
   CAMLparam2 (ml_problem, ml_package);
   problem * pb = Problem_pt(ml_problem);
@@ -498,7 +499,7 @@ extern "C" value add_package_to_problem(value ml_problem, value ml_package)
 }
 
 // Must be called once after all packages are added, and before solving
-extern "C" value set_problem_request(value ml_problem, value ml_request)
+extern "C" value cpp_set_problem_request(value ml_problem, value ml_request)
 {
   CAMLparam2 (ml_problem, ml_request);
   problem * pb = Problem_pt(ml_problem);
@@ -565,7 +566,7 @@ Solver_return call_mccs_protected(Solver solver, char *criteria, CUDFproblem* cp
   return ret;
 }
 
-extern "C" value call_solver(value ml_criteria, value ml_problem)
+extern "C" value cpp_call_solver(value ml_criteria, value ml_problem)
 {
   CAMLparam2(ml_criteria, ml_problem);
   CAMLlocal2(results, pkg);

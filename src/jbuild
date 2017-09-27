@@ -81,7 +81,9 @@
                       spxprob
                       spychuzc
                       spychuzr
-                      spydual))
+                      spydual
+                      ;; This last one is for our MCCS binding
+                      mccs_stubs))
   ;; the following are the objects from mccs
   (cxx_names         (changed_criteria
                       constraint_generation
@@ -94,7 +96,7 @@
                       notuptodate_criteria
                       removed_criteria
                       mccscudf
-                      mccs_stubs))
+                      mccs_stubs_cpp))
   (public_name       mccs)
   (c_flags           (:standard -w))
   (cxx_flags         (:standard -I .))
