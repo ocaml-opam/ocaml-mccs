@@ -279,6 +279,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   abstract_combiner *combiner = (abstract_combiner *)NULL;
   stringstream solution;
   Solver_return ret = { 0, "", NULL };
+  bool failed = false;
 
   if (criteria->size() == 0) {
     ret.error = "invalid criteria";
@@ -326,38 +327,39 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   combiner->initialize(the_problem, solver);
   
   // generate the constraints, solve the problem and print out the solutions
-  if ((the_problem->all_packages->size() > 0) && (generate_constraints(the_problem, *solver, *combiner) == 0) && (solver->solve())) {
-    delete combiner;
-    for (vector<abstract_criteria*>::iterator it = criteria->begin(); it != criteria->end(); it++) delete(*it);
-    delete criteria;
-
-    solver->init_solutions();
-
-    double obj = solver->objective_value();
-    if (verbosity > 2) {
-      fprintf(stdout, "================================================================\n");
-      printf("Objective value: %f\n", obj);
-
-      for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin(); ipkg != the_problem->all_packages->end(); ipkg++)
-	printf("%s = " CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
-      
-      fprintf(stdout, "================================================================\n");
-    
-     }
-
-    ret.success = 1;
-    ret.solution = solver;
-    return ret;
-  } else {
-    delete combiner;
-    for (vector<abstract_criteria*>::iterator it = criteria->begin(); it != criteria->end(); it++) delete(*it);
-    delete criteria;
-
-    if (verbosity > 0) {
-      fprintf(stdout, "================================================================\n");
-      fprintf(stdout, "No solution found.\n");
-    }
-    ret.success = 1;
-    return ret;
+  if (the_problem->all_packages->size() == 0) {
+    if (verbosity > 0) fprintf(stdout, "========\nEmpty problem.\n");
+    failed = true;
   }
+  if (! failed && generate_constraints(the_problem, *solver, *combiner) < 0) {
+    if (verbosity > 0) fprintf(stdout, "========\nConstraint generation error.\n");
+    failed = true;
+  }
+  if (! failed && ! solver->solve()) {
+    if (verbosity > 0) fprintf(stdout, "========\nNo solution found.\n");
+    failed = true;
+  }
+  ret.success = 1;
+  delete combiner;
+  for (vector<abstract_criteria*>::iterator it = criteria->begin(); it != criteria->end(); it++) delete(*it);
+  delete criteria;
+  if (failed) return ret;
+
+  solver->init_solutions();
+
+  if (verbosity > 2) {
+    double obj = solver->objective_value();
+    fprintf(stdout, "================================================================\n");
+    printf("Objective value: %f\n", obj);
+
+    for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin(); ipkg != the_problem->all_packages->end(); ipkg++)
+      printf("%s = " CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
+      
+    fprintf(stdout, "================================================================\n");
+    
+  }
+
+  ret.success = 1;
+  ret.solution = solver;
+  return ret;
 }
