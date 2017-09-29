@@ -326,6 +326,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   // combiner initialization
   combiner->initialize(the_problem, solver);
   
+  ret.success = 1;
   // generate the constraints, solve the problem and print out the solutions
   if (the_problem->all_packages->size() == 0) {
     if (verbosity > 0) fprintf(stdout, "========\nEmpty problem.\n");
@@ -339,7 +340,6 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
     if (verbosity > 0) fprintf(stdout, "========\nNo solution found.\n");
     failed = true;
   }
-  ret.success = 1;
   delete combiner;
   for (vector<abstract_criteria*>::iterator it = criteria->begin(); it != criteria->end(); it++) delete(*it);
   delete criteria;

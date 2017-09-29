@@ -299,17 +299,40 @@ CUDFVersionedPackage * ml2c_package(Virtual_packages * tbl, CUDFProperties * pro
 
   CUDFVirtualPackage * virtual_package = tbl->get(package);
   CUDFVersionedPackage * pkg = new CUDFVersionedPackage(package, max_rank++);
+  CUDFVpkgList * provides = ml2c_vpkglist(tbl, Field(ml_package,4));
+  pkg->set_version(version);
+
   virtual_package->all_versions.insert(pkg);
   if (version > virtual_package->highest_version)
     virtual_package->highest_version = version;
-  if (installed && virtual_package->highest_installed == (CUDFVersionedPackage *)NULL)
+  if (installed &&
+      (virtual_package->highest_installed == (CUDFVersionedPackage *)NULL ||
+       version > virtual_package->highest_installed->version))
     virtual_package->highest_installed = pkg;
 
+  for (CUDFVpkgListIterator ei = provides->begin(); ei != provides->end(); ei++) {
+    CUDFVirtualPackage * vprovided = (*ei)->virtual_package;
+    switch ((*ei)->op) {
+    case op_none: vprovided->providers.push_back(pkg); break;
+    case op_eq: {
+      CUDFVersionedProviderListIterator ivpkgl;
+      if (installed && version > vprovided->highest_installed_provider_version)
+        vprovided->highest_installed_provider_version = version;
+      ivpkgl = vprovided->versioned_providers.find(version);
+      if (ivpkgl == vprovided->versioned_providers.end())
+	vprovided->versioned_providers.insert(CUDFVersionedProviderList::value_type(version, CUDFProviderList(1, pkg)));
+      else
+	ivpkgl->second.push_back(pkg);
+      break;
+    }
+    default: caml_failwith("invalid provides formula");
+    }
+  }
+
   pkg->virtual_package = virtual_package;
-  pkg->version = version;
   pkg->depends = ml2c_vpkgformula(tbl, Field(ml_package,2));
-  pkg->conflicts =  ml2c_vpkglist(tbl, Field(ml_package,3));
-  pkg->provides = ml2c_vpkglist(tbl, Field(ml_package,4));
+  pkg->conflicts = ml2c_vpkglist(tbl, Field(ml_package,3));
+  pkg->provides = provides;
   pkg->installed = installed;
   pkg->wasinstalled = Bool_val(Field(ml_package, 6));
   pkg->keep = ml2c_keepop(Field(ml_package, 7));
