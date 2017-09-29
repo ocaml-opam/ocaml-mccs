@@ -114,7 +114,7 @@ int glpk_solver::solve() {
     dup2(save_stdout, 1);
     close(save_stdout);
   }
-  if (status == 0)  return 1; else return 0;
+  if (status == 0 && glp_mip_status(lp) == GLP_OPT)  return 1; else return 0;
 }
 
 // get objective function value
