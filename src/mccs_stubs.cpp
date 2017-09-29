@@ -615,7 +615,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   }
 
   if (ret.solution == NULL) {
-    delete reduced_cpb;
+    if (reduced_cpb != cpb) delete reduced_cpb;
     CAMLreturn (Val_none);
   }
   else {
@@ -631,7 +631,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
           results = Val_pair(pkg, results);
         }
       }
-    delete reduced_cpb;
+    if (reduced_cpb != cpb) delete reduced_cpb;
     delete ret.solution;
     CAMLreturn (Val_some(results));
   }
