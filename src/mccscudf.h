@@ -7,6 +7,7 @@ typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK} Solver;
 typedef struct {
   int success;
   const char * error;
+  CUDFproblem * problem;
   abstract_solver * solution;
 } Solver_return;
 

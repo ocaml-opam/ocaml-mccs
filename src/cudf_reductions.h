@@ -17,15 +17,14 @@
 
 #include <cudf.h>
 
-extern bool use_reduced; // should we reduce the problem
 extern vector<CUDFPropertiesIterator> process_properties; // set of property to process
 
 // Do reduce the problem
 extern CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem);
 
 // boolean function to test whether or not a package or a virtual package belongs to the reduced problem
-inline bool use_pkg(CUDFVersionedPackage *pkg) { return ((! use_reduced) || (pkg->in_reduced)); }
-inline bool use_vpkg(CUDFVirtualPackage *vpkg) { return ((! use_reduced) || (vpkg->in_reduced)); }
+inline bool use_pkg(CUDFVersionedPackage *pkg) { return (pkg->in_reduced); }
+inline bool use_vpkg(CUDFVirtualPackage *vpkg) { return (vpkg->in_reduced); }
 
 #endif
 

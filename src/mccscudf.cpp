@@ -272,13 +272,13 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
 }
 
 Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem) {
-  // CUDFproblem *problem;
+  CUDFproblem *problem = the_problem;
   vector<abstract_criteria *> criteria_with_property;
   CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
   abstract_solver *solver = (abstract_solver *)NULL;
   abstract_combiner *combiner = (abstract_combiner *)NULL;
   stringstream solution;
-  Solver_return ret = { 0, "", NULL };
+  Solver_return ret = { 0, "", NULL, NULL };
   bool failed = false;
 
   if (criteria->size() == 0) {
@@ -315,24 +315,24 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   for (vector<abstract_criteria *>::iterator icrit = criteria_with_property.begin(); icrit != criteria_with_property.end(); icrit++)
     (*icrit)->check_property(the_problem);
 
-  // if (combiner->can_reduce()) {
-  //   if (verbosity > 0) fprintf(stdout, "Can reduce graph.\n");
-  // } else {
-  //   use_reduced = false;
-  //   if (verbosity > 0) fprintf(stdout, "Can NOT reduce graph.\n");
-  // }
-  // problem = compute_reduced_CUDF(the_problem);
+  if (combiner->can_reduce()) {
+    if (verbosity > 0) fprintf(stdout, "Can reduce graph.\n");
+    problem = compute_reduced_CUDF(the_problem);
+  } else {
+    if (verbosity > 0) fprintf(stdout, "Can NOT reduce graph.\n");
+  }
+  ret.problem = problem;
 
   // combiner initialization
-  combiner->initialize(the_problem, solver);
+  combiner->initialize(problem, solver);
   
   ret.success = 1;
   // generate the constraints, solve the problem and print out the solutions
-  if (the_problem->all_packages->size() == 0) {
+  if (problem->all_packages->size() == 0) {
     if (verbosity > 0) fprintf(stdout, "========\nEmpty problem.\n");
     failed = true;
   }
-  if (! failed && generate_constraints(the_problem, *solver, *combiner) < 0) {
+  if (! failed && generate_constraints(problem, *solver, *combiner) < 0) {
     if (verbosity > 0) fprintf(stdout, "========\nConstraint generation error.\n");
     failed = true;
   }
@@ -352,7 +352,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
     fprintf(stdout, "================================================================\n");
     printf("Objective value: %f\n", obj);
 
-    for (CUDFVersionedPackageListIterator ipkg = the_problem->all_packages->begin(); ipkg != the_problem->all_packages->end(); ipkg++)
+    for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++)
       printf("%s = " CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
       
     fprintf(stdout, "================================================================\n");

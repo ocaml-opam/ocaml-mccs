@@ -9,7 +9,6 @@
 #include <cudf_reductions.h>
 #include <list>
 
-bool use_reduced = true; // should we reduce the problem
 vector<CUDFPropertiesIterator> process_properties; // set of property to process
 
 // Add the virtual package of a vpkglist to the reduced problem
@@ -82,20 +81,16 @@ void process_vpackage(CUDFproblem *new_pb, list<CUDFVirtualPackage *> &lvpkg, CU
 }
 
 // Do compute a reduced version of the problem
-// iff use_reduced is true ...
 CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
   list<CUDFVirtualPackage *> lvpkg;
-  CUDFproblem *new_pb = problem;
+  CUDFproblem *new_pb = new CUDFproblem();
 
   if (verbosity > 0)
     printf("Initial size: %zu packages (%zu installed, %zu uninstalled), %zu virtual packages\n", 
 	   new_pb->all_packages->size(), new_pb->installed_packages->size(), new_pb->uninstalled_packages->size(), 
 	   new_pb->all_virtual_packages->size());
 
-  if (use_reduced) {
-    new_pb = new CUDFproblem();
-
-    new_pb->properties = problem->properties;
+  new_pb->properties = problem->properties;
     new_pb->all_packages = new CUDFVersionedPackageList();
     new_pb->installed_packages = new CUDFVersionedPackageList();;
     new_pb->uninstalled_packages = new CUDFVersionedPackageList();;
@@ -103,6 +98,12 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
     new_pb->install = problem->install;
     new_pb->remove = problem->remove;
     new_pb->upgrade = problem->upgrade;
+
+    for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++)
+      (*ipkg)->in_reduced = false;
+
+    for (CUDFVirtualPackageListIterator ipkg = problem->all_virtual_packages->begin(); ipkg != problem->all_virtual_packages->end(); ipkg++)
+      (*ipkg)->in_reduced = false;
 
     // process all virtual packages of installed versioned packages
     for (CUDFVersionedPackageListIterator ipkg = problem->installed_packages->begin(); ipkg != problem->installed_packages->end(); ipkg++)
@@ -138,8 +139,6 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
 	(*ivpkg)->rank = rank;
     }
 
-      
-  }
 
   return new_pb;
 }

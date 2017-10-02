@@ -49,7 +49,7 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
   
   rank = my_rank;
 
-  in_reduced = false;
+  in_reduced = true;
 }
 
 CUDFVersionedPackage::~CUDFVersionedPackage() {
@@ -107,7 +107,7 @@ CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {
   
   rank = my_rank;
 
-  in_reduced = false;
+  in_reduced = true;
 }
 
 CUDFVirtualPackage::~CUDFVirtualPackage() {

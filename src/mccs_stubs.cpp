@@ -594,7 +594,6 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   CAMLlocal2(results, pkg);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
-  CUDFproblem * reduced_cpb = compute_reduced_CUDF(cpb);
   CUDFVirtualPackageList all_virtual_packages = *(cpb->all_virtual_packages);
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
@@ -605,7 +604,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, "]");
 
   //  caml_release_runtime_system ();
-  ret = call_mccs_protected(GLPK, criteria, reduced_cpb);
+  ret = call_mccs_protected(GLPK, criteria, cpb);
   // caml_acquire_runtime_system ();
   if (ret.success == 0) caml_failwith(ret.error);
   else if (ret.success < 0) {
@@ -615,13 +614,13 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   }
 
   if (ret.solution == NULL) {
-    if (reduced_cpb != cpb) delete reduced_cpb;
+    if (ret.problem != cpb) delete ret.problem;
     CAMLreturn (Val_none);
   }
   else {
     results = Val_emptylist;
-    for (vector<CUDFVersionedPackage*>::iterator ipkg = reduced_cpb->all_packages->begin();
-         ipkg != reduced_cpb->all_packages->end();
+    for (vector<CUDFVersionedPackage*>::iterator ipkg = ret.problem->all_packages->begin();
+         ipkg != ret.problem->all_packages->end();
          ipkg++)
       {
         if (ret.solution->get_solution(*ipkg)) {
@@ -631,7 +630,7 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
           results = Val_pair(pkg, results);
         }
       }
-    if (reduced_cpb != cpb) delete reduced_cpb;
+    if (ret.problem != cpb) delete ret.problem;
     delete ret.solution;
     CAMLreturn (Val_some(results));
   }
