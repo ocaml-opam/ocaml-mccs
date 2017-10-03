@@ -87,8 +87,8 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
 
   if (verbosity > 0)
     printf("Initial size: %zu packages (%zu installed, %zu uninstalled), %zu virtual packages\n", 
-	   new_pb->all_packages->size(), new_pb->installed_packages->size(), new_pb->uninstalled_packages->size(), 
-	   new_pb->all_virtual_packages->size());
+	   problem->all_packages->size(), problem->installed_packages->size(), problem->uninstalled_packages->size(), 
+	   problem->all_virtual_packages->size());
 
   new_pb->properties = problem->properties;
     new_pb->all_packages = new CUDFVersionedPackageList();
