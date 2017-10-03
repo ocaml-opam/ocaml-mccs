@@ -570,14 +570,14 @@ void restore_sigint_handler() {
 }
 
 // Allow C-c to interrupt the solver
-Solver_return call_mccs_protected(Solver solver, char *criteria, CUDFproblem* cpb) {
-  Solver_return ret = { 0, "", NULL };
+Solver_return call_mccs_protected(Solver solver, char *criteria, int timeout, CUDFproblem* cpb) {
+  Solver_return ret = { 0, "", cpb, NULL };
   try {
     install_sigint_handler();
-    ret = call_mccs(solver, criteria, cpb);
+    ret = call_mccs(solver, criteria, timeout, cpb);
   } catch (int p) {
     if (p == 130) {
-      ret.success = -1;
+      ret.success = -2;
       ret.error = "Solver interrupted by SIGINT";
     } else
       ret.error = "Uncaught solver exception";
@@ -588,9 +588,9 @@ Solver_return call_mccs_protected(Solver solver, char *criteria, CUDFproblem* cp
   return ret;
 }
 
-extern "C" value call_solver(value ml_criteria, value ml_problem)
+extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_problem)
 {
-  CAMLparam2(ml_criteria, ml_problem);
+  CAMLparam3(ml_criteria, ml_timeout, ml_problem);
   CAMLlocal2(results, pkg);
   problem * pb = Problem_pt(ml_problem);
   CUDFproblem * cpb = pb->pb_cudf_problem;
@@ -604,13 +604,13 @@ extern "C" value call_solver(value ml_criteria, value ml_problem)
   strcat(criteria, "]");
 
   //  caml_release_runtime_system ();
-  ret = call_mccs_protected(GLPK, criteria, cpb);
+  ret = call_mccs_protected(GLPK, criteria, Int_val(ml_timeout), cpb);
   // caml_acquire_runtime_system ();
-  if (ret.success == 0) caml_failwith(ret.error);
-  else if (ret.success < 0) {
+  switch (ret.success) {
+  case 0: caml_failwith(ret.error);
+  case -1: caml_raise_constant(*caml_named_value("Mccs.Timeout"));
+  case -2: caml_raise_constant(*caml_named_value("Sys.Break"));
     // raise (SIGINT); Does not work well from C, better to raise directly
-    caml_raise_constant(*caml_named_value("Sys.Break"));
-    CAMLreturn (Val_none);
   }
 
   if (ret.solution == NULL) {

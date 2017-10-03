@@ -28,7 +28,10 @@ type request = Cudf.request = {
 
 type problem
 
-let _ = Callback.register_exception "Sys.Break" Sys.Break
+exception Timeout
+
+let () = Callback.register_exception "Sys.Break" Sys.Break
+let () = Callback.register_exception "Mccs.Timeout" Timeout
 
 external set_verbosity: int -> unit
   = "set_verbosity"
@@ -42,7 +45,7 @@ external add_package_to_problem: problem -> cudf_package -> unit
 external set_problem_request: problem -> request -> unit
   = "set_problem_request"
 
-external call_solver : string -> problem -> Cudf.package list option
+external call_solver : string -> int -> problem -> Cudf.package list option
   = "call_solver"
 
 let problem_of_cudf cudf =
@@ -52,10 +55,14 @@ let problem_of_cudf cudf =
   set_problem_request pb request;
   pb
 
-let resolve_cudf ?(verbose=false) criteria (preamble, _, _ as cudf) =
+let resolve_cudf ?(verbose=false) ?timeout criteria (preamble, _, _ as cudf) =
+  let timeout = match timeout with
+    | None -> 0
+    | Some f -> int_of_float (1000. *. f)
+  in
   set_verbosity (if verbose then 1 else 0);
   let pb = problem_of_cudf cudf in
-  match call_solver criteria pb with
+  match call_solver criteria timeout pb with
   | None -> None
   | Some sol ->
     let univ = Cudf.load_universe sol in

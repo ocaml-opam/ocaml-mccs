@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <glpk_solver.h>
+#include <limits.h>
 
 #define OUTPUT_MODEL 0
 
@@ -56,7 +57,7 @@ int glpk_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficie
 // int glpk_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
 
 // solve the current lp problem
-int glpk_solver::solve() {
+int glpk_solver::solve(int timeout) {
   int status = 0, nb_objectives = objectives.size();
   glp_iocp mip_params;
   int save_stdout = 1;
@@ -73,8 +74,9 @@ int glpk_solver::solve() {
   mip_params.clq_cuts = GLP_ON;
   mip_params.presolve = GLP_ON;
   mip_params.binarize = GLP_ON;
-  if (verbosity <= 1)
-    mip_params.msg_lev  = GLP_MSG_OFF; // one of GLP_MSG_OFF GLP_MSG_ERR GLP_MSG_ON GLP_MSG_ALL
+  mip_params.tm_lim = timeout;
+  mip_params.msg_lev = (verbosity > 1) ? GLP_MSG_ON : GLP_MSG_OFF;
+  // one of GLP_MSG_OFF GLP_MSG_ERR GLP_MSG_ON GLP_MSG_ALL
 
   for (int k = 0; k < nb_objectives; k++) {
     glp_cpx_basis(lp);
@@ -114,7 +116,21 @@ int glpk_solver::solve() {
     dup2(save_stdout, 1);
     close(save_stdout);
   }
-  return (status == 0 && glp_mip_status(lp) == GLP_OPT);
+  switch (status) {
+  case 0: {
+    switch (glp_mip_status(lp)) {
+    case GLP_OPT: return 1;
+    case GLP_NOFEAS: return 0;
+    default: return -1;
+    }
+  }
+  case GLP_ETMLIM: return -2;
+  default: return -1;
+  }
+}
+
+int glpk_solver::solve() {
+  return (this->solve(INT_MAX));
 }
 
 // get objective function value

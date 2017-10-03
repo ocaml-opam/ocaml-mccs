@@ -5,12 +5,12 @@
 typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK} Solver;
 
 typedef struct {
-  int success;
-  const char * error;
-  CUDFproblem * problem;
-  abstract_solver * solution;
+  int success; // 1 on success (SAT or UNSAT), 0 on error, -1 on timeout
+  const char * error; // filled when success == 0
+  CUDFproblem * problem; // might be the original problem, or a copy
+  abstract_solver * solution; // May be NULL with success == 1 for unsatisfiable problems
 } Solver_return;
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem);
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem);
 
 #endif

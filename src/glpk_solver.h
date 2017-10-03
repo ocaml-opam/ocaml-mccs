@@ -29,6 +29,8 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
 
   // Solve the problem
   int solve();
+  // Solve the problem, with timeout
+  int solve(int timeout);
   // Get the objective value (final one)
   CUDFcoefficient objective_value();
   // Init solutions (required before calling get_solution)

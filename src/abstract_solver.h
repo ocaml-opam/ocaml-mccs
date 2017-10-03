@@ -87,8 +87,10 @@ class abstract_solver {
   // virtual int writelp(char *filename) { return 0; };
 
   // ******************************************************************
-  // solve the problem (must return a value > 0 if a solution has been found)
+  // solve the problem (must return a value > 0 if a solution has been found, 0
+  // if unsatisfiable, < 0 on error. -2 means timeout)
   virtual int solve() { return 0; }; 
+  virtual int solve(int timeout) { return 0; };
 
   // ******************************************************************
   // initialisation of the solutions (called before reading them)

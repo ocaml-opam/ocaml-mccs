@@ -271,7 +271,7 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
   return process_criteria(crit_descr, pos, first_level, criteria_with_property);
 }
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_problem) {
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem) {
   CUDFproblem *problem = the_problem;
   vector<abstract_criteria *> criteria_with_property;
   CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
@@ -279,7 +279,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   abstract_combiner *combiner = (abstract_combiner *)NULL;
   stringstream solution;
   Solver_return ret = { 0, "", NULL, NULL };
-  bool failed = false;
+  bool no_solution = false;
 
   if (criteria->size() == 0) {
     ret.error = "invalid criteria";
@@ -330,20 +330,36 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, CUDFproblem* the_
   // generate the constraints, solve the problem and print out the solutions
   if (problem->all_packages->size() == 0) {
     if (verbosity > 0) fprintf(stdout, "========\nEmpty problem.\n");
-    failed = true;
+    no_solution = true;
   }
-  if (! failed && generate_constraints(problem, *solver, *combiner) < 0) {
+  if (! no_solution && generate_constraints(problem, *solver, *combiner) < 0) {
     if (verbosity > 0) fprintf(stdout, "========\nConstraint generation error.\n");
-    failed = true;
+    no_solution = true;
   }
-  if (! failed && ! solver->solve()) {
-    if (verbosity > 0) fprintf(stdout, "========\nNo solution found.\n");
-    failed = true;
+  if (! no_solution) {
+    int s = (timeout > 0) ? solver->solve(timeout) : solver->solve();
+    if (s <= 0) {
+      no_solution = true;
+      switch(s) {
+      case 0:
+        if (verbosity > 0) fprintf(stdout, "========\nNo solution found.\n");
+        break;
+      case -2:
+        ret.success = -1;
+        ret.error = "Timeout";
+        if (verbosity > 0) fprintf(stdout, "========\nSolver timed out.\n");
+        break;
+      default:
+        ret.success = 0;
+        ret.error = "Mip solver failure";
+        if (verbosity > 0) fprintf(stdout, "========\nMip solver failed.\n");
+      }
+    }
   }
   delete combiner;
   for (vector<abstract_criteria*>::iterator it = criteria->begin(); it != criteria->end(); it++) delete(*it);
   delete criteria;
-  if (failed) return ret;
+  if (no_solution) return ret;
 
   solver->init_solutions();
 
