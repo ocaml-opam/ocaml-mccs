@@ -124,6 +124,9 @@ int glpk_solver::solve(int timeout) {
     default: return -1;
     }
   }
+  case GLP_ENOPFS:
+  case GLP_ENODFS:
+    return 0;
   case GLP_ETMLIM: return -2;
   default: return -1;
   }
