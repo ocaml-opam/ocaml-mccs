@@ -12,6 +12,8 @@
 
 #include <abstract_criteria.h>
 
+typedef enum {REQUEST,NEW,CHANGED,SOLUTION} Count_scope;
+
 // A concrete class for the count criteria
 // i.e. a criteria that count the value of a property
 // of installed virtual packages
@@ -56,9 +58,7 @@ class count_criteria: public abstract_criteria {
   // lambda multiplier for the criteria
   CUDFcoefficient lambda_crit ;
 
-  // WARNING: CHANGED FROM ITS ORIGINAL MEANING
-  // True iff reduced to packages appearing in the user request
-  bool onlynew;
+  Count_scope scope;
 
   // Criteria initialization
   count_criteria(char *property_name) { 
@@ -67,10 +67,10 @@ class count_criteria: public abstract_criteria {
   };
 
   // Criteria initialization
-  count_criteria(char *property_name, bool onlynew, CUDFcoefficient lambda_crit) { 
+  count_criteria(char *property_name, Count_scope scope, CUDFcoefficient lambda_crit) { 
     this->property_name = property_name;
     this->lambda_crit = lambda_crit; 
-    this->onlynew = onlynew;
+    this->scope = scope;
   };
 };
 

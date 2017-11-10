@@ -25,9 +25,8 @@ NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
 differences:
 - the colon after properties can be omitted `-count[version-lag,true]` rather
   than `-count[version-lag:,true]`
-- the boolean parameter for `count[]` has a **different meaning**: it restricts
-  the criterion to packages appearing in the request, rather than to packages
-  newly installed.
+- the second parameter for `count[]` has been **extended** from a boolean to any
+  one of `request`, `new`, `changed`, `solution`, for more expressivity.
 Example: `-removed,-count[version-lag,true],-changed,-count[version-lag,false]`
 
 Build using `opam install .` (opam 2.0), or `jbuilder build`.

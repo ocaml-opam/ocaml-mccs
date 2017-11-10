@@ -148,8 +148,13 @@ char *get_criteria_property_name(char *crit_descr, unsigned int &pos) {
   return property;
 }
 
+bool str_is(unsigned int pos, const char * ref, const char * s, int start) {
+  int len = strlen(ref);
+  return (int)pos - start == len && strncmp(ref, s + start, len) == 0;
+}
+
 // Get name and boolean options from user defined criteria
-char *get_criteria_property_name_and_bool(char *crit_descr, unsigned int &pos, bool &value) {
+char *get_criteria_property_name_and_scope(char *crit_descr, unsigned int &pos, Count_scope &scope) {
   vector< pair<unsigned int, unsigned int> *> opts;
   char *property = (char *)NULL;
 
@@ -172,27 +177,24 @@ char *get_criteria_property_name_and_bool(char *crit_descr, unsigned int &pos, b
     start = opts[1]->first;
     length = opts[1]->second;
 
-    if ((length == 4) && 
-	(crit_descr[start+0] == 't') &&
-	(crit_descr[start+1] == 'r') &&
-	(crit_descr[start+2] == 'u') &&
-	(crit_descr[start+3] == 'e')) 
-      value = true;
-    else if ((length == 5) && 
-	     (crit_descr[start+0] == 'f') &&
-	     (crit_descr[start+1] == 'a') &&
-	     (crit_descr[start+2] == 'l') &&
-	     (crit_descr[start+3] == 's') &&
-	     (crit_descr[start+4] == 'e'))
-      value = false;
+    if (str_is(pos-1, "request", crit_descr, start))
+      scope = REQUEST;
+    else if (str_is(pos-1, "new", crit_descr, start))
+      scope = NEW;
+    else if (str_is(pos-1, "changed", crit_descr, start) ||
+             str_is(pos-1, "true", crit_descr, start))
+      scope = CHANGED;
+    else if (str_is(pos-1, "solution", crit_descr, start) ||
+             str_is(pos-1,"false", crit_descr, start))
+      scope = SOLUTION;
     else {
       crit_descr[start+length] = '\0';
-      fprintf(stderr, "ERROR: criteria options: a boolean is required here (either 'true' or 'false'): %s\n", crit_descr);
+      fprintf(stderr, "ERROR: criteria options: one of 'request', 'new', 'changed' or 'solution' is required here: '%s'\n", crit_descr+start);
       exit(-1);
     }
   } else {
     crit_descr[pos] = '\0';
-    fprintf(stderr, "ERROR: criteria options: a property name and a booleen are required here: %s\n", crit_descr);
+    fprintf(stderr, "ERROR: criteria options: a property name and a scope (one of 'request', 'new', 'changed' or 'solution') are required here: %s\n", crit_descr);
     exit(-1);
   }
 
@@ -205,7 +207,7 @@ CriteriaList *process_criteria(char *crit_descr, unsigned int &pos, bool first_l
 
   if (crit_descr[pos] == '[') {
     for (pos += 1; pos < strlen(crit_descr) && crit_descr[pos] != ']';) {
-      unsigned int sign, crit_name, crit_name_length;
+      unsigned int sign, crit_name;
 
       // check for criteria sense
       switch (crit_descr[pos]) {
@@ -226,26 +228,25 @@ CriteriaList *process_criteria(char *crit_descr, unsigned int &pos, bool first_l
 	char c = crit_descr[pos];
 	if ((c == ',') || (c == '[') || (c == ']')) break; 
       }
-      crit_name_length = pos - crit_name;
 
       // handle criteria
-      if (strncmp(crit_descr+crit_name, "removed", crit_name_length) == 0) {
+      if (str_is(pos, "removed", crit_descr, crit_name)) {
 	criteria->push_back(new removed_criteria(get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
-      } else if (strncmp(crit_descr+crit_name, "changed", crit_name_length) == 0) {
+      } else if (str_is(pos, "changed", crit_descr, crit_name)) {
 	criteria->push_back(new changed_criteria(get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
-      } else if (strncmp(crit_descr+crit_name, "new", crit_name_length) == 0) {
+      } else if (str_is(pos, "new", crit_descr, crit_name)) {
 	criteria->push_back(new new_criteria(get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
-      } else if (strncmp(crit_descr+crit_name, "notuptodate", crit_name_length) == 0) {
+      } else if (str_is(pos, "notuptodate", crit_descr, crit_name)) {
 	criteria->push_back(new notuptodate_criteria(get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
-      } else if (strncmp(crit_descr+crit_name, "count", crit_name_length) == 0) {
-	bool onlynew = false;
-	char *property_name = get_criteria_property_name_and_bool(crit_descr, pos, onlynew);
+      } else if (str_is(pos, "count", crit_descr, crit_name)) {
+	Count_scope scope = SOLUTION;
+	char *property_name = get_criteria_property_name_and_scope(crit_descr, pos, scope);
 	if (property_name != (char *)NULL) {
-	  abstract_criteria *crit = new count_criteria(property_name, onlynew, get_criteria_lambda(crit_descr, pos, crit_descr[sign]));
+	  abstract_criteria *crit = new count_criteria(property_name, scope, get_criteria_lambda(crit_descr, pos, crit_descr[sign]));
 	  criteria_with_property->push_back(crit);
 	  criteria->push_back(crit);
 	}
-      } else if (strncmp(crit_descr+crit_name, "lexagregate", crit_name_length) == 0) {
+      } else if (str_is(pos, "lexagregate", crit_descr, crit_name)) {
 	criteria->push_back(new lexagregate_combiner(process_criteria(crit_descr, pos, false, criteria_with_property), 
 						     get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
       } else {

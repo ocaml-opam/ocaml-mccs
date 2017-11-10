@@ -29,14 +29,29 @@ void count_criteria::check_property(CUDFproblem *problem) {
     }
 }
 
-inline int appears_in_request(CUDFproblem * problem, CUDFVirtualPackage * p) {
+inline bool appears_in_request(CUDFproblem * problem, CUDFVirtualPackage * p) {
   for (CUDFVpkgListIterator it = problem->install->begin(); it != problem->install->end(); it++)
-    if ((*it)->virtual_package == p) return 1;
+    if ((*it)->virtual_package == p) return true;
   for (CUDFVpkgListIterator it = problem->upgrade->begin(); it != problem->upgrade->end(); it++)
-    if ((*it)->virtual_package == p) return 1;
+    if ((*it)->virtual_package == p) return true;
   for (CUDFVpkgListIterator it = problem->remove->begin(); it != problem->remove->end(); it++)
-    if ((*it)->virtual_package == p) return 1;
-  return 0;
+    if ((*it)->virtual_package == p) return true;
+  return false;
+}
+
+inline bool in_scope(Count_scope scope, CUDFproblem * problem, CUDFVersionedPackage * p) {
+  switch (scope) {
+  case REQUEST:
+    return appears_in_request(problem, p->virtual_package);
+  case NEW:
+    return (p->virtual_package->highest_installed == (CUDFVersionedPackage *)NULL);
+  case CHANGED:
+    return !(p->installed);
+  case SOLUTION:
+    return true;
+  default:
+    return false;
+  }
 }
 
 // Criteria initialization
@@ -63,7 +78,7 @@ void count_criteria::initialize(CUDFproblem *problem, abstract_solver *solver) {
     if (verbosity > 2) printf("count criteria default value for %s = " CUDFflags"\n", property_name, default_value);
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
-      if (onlynew && !appears_in_request(problem, (*ipkg)->virtual_package))
+      if (!in_scope(scope, problem, *ipkg))
         continue;
       bool got_property = false;
       for (CUDFPropertyValueListIterator propval = (*ipkg)->properties.begin();  propval != (*ipkg)->properties.end(); propval++)
@@ -89,7 +104,7 @@ int count_criteria::add_criteria_to_objective(CUDFcoefficient lambda) {
     CUDFPropertiesIterator prop =  problem->properties->find(string(property_name));
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
-      if (onlynew && !appears_in_request(problem, (*ipkg)->virtual_package))
+      if (!in_scope (scope, problem, *ipkg))
         continue;
       bool got_property = false;
       for (CUDFPropertyValueListIterator propval = (*ipkg)->properties.begin();  propval != (*ipkg)->properties.end(); propval++)
@@ -111,7 +126,7 @@ int count_criteria::add_criteria_to_constraint(CUDFcoefficient lambda) {
     CUDFPropertiesIterator prop =  problem->properties->find(string(property_name));
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
-      if (onlynew && !appears_in_request(problem, (*ipkg)->virtual_package))
+      if (!in_scope(scope, problem, *ipkg))
         continue;
       bool got_property = false;
       for (CUDFPropertyValueListIterator propval = (*ipkg)->properties.begin();  propval != (*ipkg)->properties.end(); propval++)
