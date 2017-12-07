@@ -18,6 +18,7 @@
   (modules         (:standard \ context_flags))
   (cxx_flags       (:standard -I . (:include cxxflags.sexp)))
   (c_library_flags (:standard (:include clibs.sexp)))
+  (library_flags   (:standard (:include flags.sexp)))
   (wrapped         false)
   (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _))))))
 
@@ -32,3 +33,8 @@
  ((targets (clibs.sexp))
   (deps (context_flags.ml))
   (action (with-stdout-to ${@} (run ocaml ${^} clibs)))))
+
+(rule
+ ((targets (flags.sexp))
+  (deps (context_flags.ml))
+  (action (with-stdout-to ${@} (run ocaml ${^} flags)))))
