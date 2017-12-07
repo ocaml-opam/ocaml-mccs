@@ -6,7 +6,11 @@
 /*******************************************************/
 
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <math.h>
 #include <glpk_solver.h>
 #include <limits.h>
