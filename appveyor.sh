@@ -72,6 +72,11 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
     pushd ../$OCAML_VERSION/$PORT/ocaml > /dev/null
     git submodule update --init
+    # PR#48 (not yet merged)
+    cd flexdll
+    git remote add -f dra27 https://github.com/dra27/flexdll.git
+    git checkout linking-c++
+    cd ..
     popd > /dev/null
   fi
   cd ../$OCAML_VERSION/$PORT/ocaml
