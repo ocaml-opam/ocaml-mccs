@@ -1,0 +1,79 @@
+From 98eedcd7169b6e207f09963663b0fd97ca0e6cc1 Mon Sep 17 00:00:00 2001
+From: David Allsopp <david.allsopp@metastack.com>
+Date: Thu, 7 Dec 2017 21:12:16 +0000
+Subject: [PATCH] Fix copy# for Microsoft C compiler
+
+Microsoft CL doesn't support #n and requires the more strictly correct
+directive #line
+
+Signed-off-by: David Allsopp <david.allsopp@metastack.com>
+---
+ CHANGES.md    | 2 ++
+ src/action.ml | 8 +++++++-
+ src/path.ml   | 8 ++++++++
+ src/path.mli  | 2 ++
+ 4 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/CHANGES.md b/CHANGES.md
+index 25354e4..68b90db 100644
+--- a/CHANGES.md
++++ b/CHANGES.md
+@@ -14,6 +14,8 @@ next
+ 
+ - Build documentation for non public libraries (#306)
+ 
++- Fix copy# for C/C++ with Microsoft C compiler (#353)
++
+ 1.0+beta16 (05/11/2017)
+ -----------------------
+ 
+diff --git a/src/action.ml b/src/action.ml
+index b350a95..d602139 100644
+--- a/src/action.ml
++++ b/src/action.ml
+@@ -596,7 +596,13 @@ let rec exec t ~ectx ~dir ~env_extra ~stdout_to ~stderr_to =
+     Io.with_file_in (Path.to_string src) ~f:(fun ic ->
+       Io.with_file_out (Path.to_string dst) ~f:(fun oc ->
+         let fn = Path.drop_build_context src in
+-        Printf.fprintf oc "# 1 %S\n" (Path.to_string fn);
++        let directive =
++          if List.mem (Path.get_extension fn) ~set:[".c"; ".cpp"; ".h"] then
++            "line"
++          else
++            ""
++        in
++        Printf.fprintf oc "#%s 1 %S\n" directive (Path.to_string fn);
+         Io.copy_channels ic oc));
+     return ()
+   | System cmd ->
+diff --git a/src/path.ml b/src/path.ml
+index 996fd26..aeeb8ae 100644
+--- a/src/path.ml
++++ b/src/path.ml
+@@ -425,4 +425,12 @@ let change_extension ~ext t =
+   let t = try Filename.chop_extension t with Not_found -> t in
+   t ^ ext
+ 
++let get_extension t =
++  try
++    let t' = Filename.chop_extension t in
++    let l = String.length t' in
++    String.sub t ~pos:l ~len:(String.length t - l)
++  with Not_found ->
++    ""
++
+ let pp = Format.pp_print_string
+diff --git a/src/path.mli b/src/path.mli
+index 31d781d..23e99c1 100644
+--- a/src/path.mli
++++ b/src/path.mli
+@@ -112,4 +112,6 @@ val rm_rf : t -> unit
+ (** Changes the extension of the filename (or adds an extension if there was none) *)
+ val change_extension : ext:string -> t -> t
+ 
++val get_extension : t -> string
++
+ val pp : t Fmt.t
+-- 
+2.14.1.windows.1
+
