@@ -12,6 +12,14 @@
 #ifndef _CUDF_H
 #define _CUDF_H
 
+#ifdef __MINGW32__
+// libstdc++ requires POSIX printf, as per comments in GCC's
+// libstdc++-v3/config/os/mingw32-w64/os_defines.h. It's defined here to ensure
+// that it's defined even if a C header is #include'd before the first C++
+// header.
+#define __USE_MINGW_ANSI_STDIO 1
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
