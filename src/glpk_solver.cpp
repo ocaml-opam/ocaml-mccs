@@ -29,12 +29,12 @@ int glpk_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, i
   glp_add_cols(lp, nb_vars);
 
   if ((lb = (CUDFcoefficient *)malloc((nb_vars+1)*sizeof(CUDFcoefficient))) == (CUDFcoefficient *)NULL) {
-    fprintf(stderr, "glpk_solver: init_solver: not enough memory for lb.\n");
+    PRINT_ERR("glpk_solver: init_solver: not enough memory for lb.\n");
     exit(-1);
   }
 
   if ((ub = (CUDFcoefficient *)malloc((nb_vars+1)*sizeof(CUDFcoefficient))) == (CUDFcoefficient *)NULL) {
-    fprintf(stderr, "glpk_solver: init_solver: not enough memory for ub.\n");
+    PRINT_ERR("glpk_solver: init_solver: not enough memory for ub.\n");
     exit(-1);
   }
 
@@ -87,7 +87,7 @@ int glpk_solver::solve(int timeout) {
       // Get objective value
       CUDFcoefficient objval = objective_value();
 
-      if (verbosity > 0) printf(">>> Objective %d value : %" CUDFint64"d\n", k, objval);
+      if (verbosity > 0) PRINT_OUT(">>> Objective %d value : %" CUDFint64"d\n", k, objval);
 
       // Reset objective i coefficients
       for (int i = 1; i < objectives[k]->nb_coeffs + 1; i++) 
@@ -189,7 +189,7 @@ int glpk_solver::end_objectives(void) {
 
     sprintf(buffer, "x%d", i);
     if ((name = (char *)malloc(strlen(buffer)+1)) == (char *)NULL) {
-      fprintf(stderr, "CUDF error: can not alloc memory for variable name in glpk_solver::end_objective.\n");
+      PRINT_ERR("CUDF error: can not alloc memory for variable name in glpk_solver::end_objective.\n");
       exit(-1);
     }
     strcpy(name, buffer);

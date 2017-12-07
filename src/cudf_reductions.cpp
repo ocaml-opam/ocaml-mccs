@@ -86,7 +86,7 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
   CUDFproblem *new_pb = new CUDFproblem();
 
   if (verbosity > 0)
-    printf("Initial size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
+    PRINT_OUT("Initial size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
 	   problem->all_packages->size(), problem->installed_packages->size(), problem->uninstalled_packages->size(), 
 	   problem->all_virtual_packages->size());
 
@@ -124,7 +124,7 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
       process_vpackage(new_pb, lvpkg, (*ivpkg));
 
     if (verbosity > 0)
-      printf("Final size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
+      PRINT_OUT("Final size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
 	     new_pb->all_packages->size(), new_pb->installed_packages->size(), new_pb->uninstalled_packages->size(), 
 	     new_pb->all_virtual_packages->size());
 

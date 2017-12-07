@@ -160,7 +160,7 @@ int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set
 	new_var += nb_new_var;
 	firstvarrank += nb_new_var;
       } else { // We need somethin to upgrade to ...
-	if (verbosity > 0) printf("Cannot upgrade to %s.\n", vpackage->name);
+	if (verbosity > 0) PRINT_OUT("Cannot upgrade to %s.\n", vpackage->name);
 	return -1;
       }
     }
@@ -183,7 +183,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
   CUDFVirtualPackageList installed_vpkgs_uv;
 
   if (nb_packages == 0) { // we lack a problem then ...
-    fprintf(stderr, "generate_constraints: no declared package !\n");
+    PRINT_ERR("generate_constraints: no declared package !\n");
     exit(-1);
   }
 
@@ -311,7 +311,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	solver.new_constraint();
 	for (CUDFVersionedPackageListIterator ipkg = (*iup).remove_set.begin(); ipkg != (*iup).remove_set.end(); ipkg++) {
 	  if (solver.get_constraint_coeff(*ipkg) == 0) solver.set_constraint_coeff(*ipkg, +1);
-	  //printf("upgrade => remove %s\n", (*ipkg)->name);
+	  //PRINT_OUT("upgrade => remove %s\n", (*ipkg)->name);
 	}
 	solver.add_constraint_eq(0);
       }

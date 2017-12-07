@@ -31,6 +31,9 @@
 
 using namespace std;
 
+#define PRINT_ERR(...) fprintf(stderr, __VA_ARGS__)
+#define PRINT_OUT(...) fprintf(stdout, __VA_ARGS__)
+
 // class predeclarations
 class CUDFPropertyValue;
 class CUDFPackage;

@@ -46,7 +46,7 @@ int get_criteria_options(char *crit_descr, unsigned int &pos, vector< pair<unsig
       switch(crit_descr[pos]) {
       case '[':
 	crit_descr[pos] = '\0';
-	fprintf(stderr, "ERROR: criteria options: found '[' within criteria options: %s.\n", crit_descr);
+	PRINT_ERR("ERROR: criteria options: found '[' within criteria options: %s.\n", crit_descr);
 	exit(-1);
 	break;
       case ']': 
@@ -54,7 +54,7 @@ int get_criteria_options(char *crit_descr, unsigned int &pos, vector< pair<unsig
 	  unsigned int length = pos - start;
 	  if (length == 0) {
 	    crit_descr[pos] = '\0';
-	    fprintf(stderr, "ERROR: criteria options: found empty criteria option: %s.\n", crit_descr);
+	    PRINT_ERR("ERROR: criteria options: found empty criteria option: %s.\n", crit_descr);
 	    exit(-1);
 	  }
 	  opts->push_back(new pair<unsigned int, unsigned int>(start, length));
@@ -68,7 +68,7 @@ int get_criteria_options(char *crit_descr, unsigned int &pos, vector< pair<unsig
 	  unsigned int length = pos - start;
 	  if (length == 0) {
 	    crit_descr[pos] = '\0';
-	    fprintf(stderr, "ERROR: criteria options: found empty criteria option: %s.\n", crit_descr);
+	    PRINT_ERR("ERROR: criteria options: found empty criteria option: %s.\n", crit_descr);
 	    exit(-1);
 	  }
 	  opts->push_back(new pair<unsigned int, unsigned int>(start, length));
@@ -78,7 +78,7 @@ int get_criteria_options(char *crit_descr, unsigned int &pos, vector< pair<unsig
 	break;
       }
 
-    fprintf(stderr, "ERROR: criteria options: criteria options ended without an ending ']': %s.\n", crit_descr);
+    PRINT_ERR("ERROR: criteria options: criteria options ended without an ending ']': %s.\n", crit_descr);
     exit(-1);
   } 
 
@@ -99,18 +99,18 @@ CUDFcoefficient get_criteria_lambda(char *crit_descr, unsigned int &pos, char si
     for (unsigned int i = 0; i < length; i++) 
       if ((crit_descr[start+i] < '0') || (crit_descr[start+i] > '9')) {
 	crit_descr[start+i+1] = '\0';
-	fprintf(stderr, "ERROR: criteria options: a lambda value must be an integer int: %s\n", crit_descr);
+	PRINT_ERR("ERROR: criteria options: a lambda value must be an integer int: %s\n", crit_descr);
 	exit(-1);
       }
 
     if (sscanf(crit_descr+start, "%" CUDFint64"d", &lambda) != 1) {
       crit_descr[start+length+1] = '\0';
-      fprintf(stderr, "ERROR: criteria options: a lambda value is espected here: %s\n", crit_descr);
+      PRINT_ERR("ERROR: criteria options: a lambda value is espected here: %s\n", crit_descr);
       exit(-1);
     }
   } else if (n > 1) {
     crit_descr[pos] = '\0';
-    fprintf(stderr, "ERROR: criteria options: a lambda value is espected here: %s\n", crit_descr);
+    PRINT_ERR("ERROR: criteria options: a lambda value is espected here: %s\n", crit_descr);
     exit(-1);
   }
 
@@ -133,7 +133,7 @@ char *get_criteria_property_name(char *crit_descr, unsigned int &pos) {
     if (crit_descr[start+length-1] == ':') length--;
 
     if ((property = (char *)malloc((length+1)*sizeof(char))) == (char *)NULL) {
-      fprintf(stderr, "ERROR: criteria options: not enough memory to store property name.\n");
+      PRINT_ERR("ERROR: criteria options: not enough memory to store property name.\n");
       exit(-1);
     }
     
@@ -141,7 +141,7 @@ char *get_criteria_property_name(char *crit_descr, unsigned int &pos) {
     property[length] = '\0';
   } else {
     crit_descr[pos] = '\0';
-    fprintf(stderr, "ERROR: criteria options: a property name is required here: %s\n", crit_descr);
+    PRINT_ERR("ERROR: criteria options: a property name is required here: %s\n", crit_descr);
     exit(-1);
   }
 
@@ -167,7 +167,7 @@ char *get_criteria_property_name_and_scope(char *crit_descr, unsigned int &pos, 
     if (crit_descr[start+length-1] == ':') length--;
 
     if ((property = (char *)malloc((length+1)*sizeof(char))) == (char *)NULL) {
-      fprintf(stderr, "ERROR: criteria options: not enough memory to store property name.\n");
+      PRINT_ERR("ERROR: criteria options: not enough memory to store property name.\n");
       exit(-1);
     }
     
@@ -189,12 +189,12 @@ char *get_criteria_property_name_and_scope(char *crit_descr, unsigned int &pos, 
       scope = SOLUTION;
     else {
       crit_descr[start+length] = '\0';
-      fprintf(stderr, "ERROR: criteria options: one of 'request', 'new', 'changed' or 'solution' is required here: '%s'\n", crit_descr+start);
+      PRINT_ERR("ERROR: criteria options: one of 'request', 'new', 'changed' or 'solution' is required here: '%s'\n", crit_descr+start);
       exit(-1);
     }
   } else {
     crit_descr[pos] = '\0';
-    fprintf(stderr, "ERROR: criteria options: a property name and a scope (one of 'request', 'new', 'changed' or 'solution') are required here: %s\n", crit_descr);
+    PRINT_ERR("ERROR: criteria options: a property name and a scope (one of 'request', 'new', 'changed' or 'solution') are required here: %s\n", crit_descr);
     exit(-1);
   }
 
@@ -217,7 +217,7 @@ CriteriaList *process_criteria(char *crit_descr, unsigned int &pos, bool first_l
 	crit_name = pos;
 	break;
       default:
-	fprintf(stderr, "ERROR: criteria options: a criteria description must begin with a sign which gives its sense (- = min, + = max): %s\n", 
+	PRINT_ERR("ERROR: criteria options: a criteria description must begin with a sign which gives its sense (- = min, + = max): %s\n",
 		crit_descr+pos);
 	exit(-1);
 	break;
@@ -251,14 +251,14 @@ CriteriaList *process_criteria(char *crit_descr, unsigned int &pos, bool first_l
 						     get_criteria_lambda(crit_descr, pos, crit_descr[sign])));
       } else {
 	crit_descr[pos] = '\0';
-	fprintf(stderr, "ERROR: criteria options: this is not a criteria: %s\n", crit_descr+crit_name);
+	PRINT_ERR("ERROR: criteria options: this is not a criteria: %s\n", crit_descr+crit_name);
 	exit(-1);
       }
 
       if (crit_descr[pos] == ',') pos++; // skip comma
     }
   } else {
-    fprintf(stderr, "ERROR: criteria options: a criteria list must begin with a '[': %s\n", crit_descr+pos);
+    PRINT_ERR("ERROR: criteria options: a criteria list must begin with a '[': %s\n", crit_descr+pos);
     exit(-1);
   }
 
@@ -317,10 +317,10 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
     (*icrit)->check_property(the_problem);
 
   if (combiner->can_reduce()) {
-    if (verbosity > 0) fprintf(stdout, "Can reduce graph.\n");
+    if (verbosity > 0) PRINT_OUT("Can reduce graph.\n");
     problem = compute_reduced_CUDF(the_problem);
   } else {
-    if (verbosity > 0) fprintf(stdout, "Can NOT reduce graph.\n");
+    if (verbosity > 0) PRINT_OUT("Can NOT reduce graph.\n");
   }
   ret.problem = problem;
 
@@ -330,11 +330,11 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   ret.success = 1;
   // generate the constraints, solve the problem and print out the solutions
   if (problem->all_packages->size() == 0) {
-    if (verbosity > 0) fprintf(stdout, "========\nEmpty problem.\n");
+    if (verbosity > 0) PRINT_OUT("========\nEmpty problem.\n");
     no_solution = true;
   }
   if (! no_solution && generate_constraints(problem, *solver, *combiner) < 0) {
-    if (verbosity > 0) fprintf(stdout, "========\nConstraint generation error.\n");
+    if (verbosity > 0) PRINT_OUT("========\nConstraint generation error.\n");
     no_solution = true;
   }
   if (! no_solution) {
@@ -343,17 +343,17 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
       no_solution = true;
       switch(s) {
       case 0:
-        if (verbosity > 0) fprintf(stdout, "========\nNo solution found.\n");
+        if (verbosity > 0) PRINT_OUT("========\nNo solution found.\n");
         break;
       case -2:
         ret.success = -1;
         ret.error = "Timeout";
-        if (verbosity > 0) fprintf(stdout, "========\nSolver timed out.\n");
+        if (verbosity > 0) PRINT_OUT("========\nSolver timed out.\n");
         break;
       default:
         ret.success = 0;
         ret.error = "Mip solver failure";
-        if (verbosity > 0) fprintf(stdout, "========\nMip solver failed.\n");
+        if (verbosity > 0) PRINT_OUT("========\nMip solver failed.\n");
       }
     }
   }
@@ -366,13 +366,13 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
 
   if (verbosity > 2) {
     double obj = solver->objective_value();
-    fprintf(stdout, "================================================================\n");
-    printf("Objective value: %f\n", obj);
+    PRINT_OUT("================================================================\n");
+    PRINT_OUT("Objective value: %f\n", obj);
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++)
-      printf("%s = %" CUDFint64"d\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
+      PRINT_OUT("%s = %" CUDFint64"d\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
       
-    fprintf(stdout, "================================================================\n");
+    PRINT_OUT("================================================================\n");
     
   }
 

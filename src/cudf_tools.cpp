@@ -31,7 +31,7 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
 
   // Get some piece of memory to store package name
   if ((name = (char *)malloc(strlen(pkg_name)+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for CUDFVersionedPackage.\n");
+    PRINT_ERR("error: cannot alloc name for CUDFVersionedPackage.\n");
     exit(-1);
   }
   strcpy(name, pkg_name);
@@ -84,7 +84,7 @@ void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
 
   sprintf(temp, "%" CUDFint64"u", pkg_version);
   if ((versioned_name = (char *)malloc(strlen(name)+strlen(temp)+2)) == NULL) {
-    fprintf(stderr, "error: cannot alloc versioned_name for CUDFVersionedPackage.\n");
+    PRINT_ERR("error: cannot alloc versioned_name for CUDFVersionedPackage.\n");
     exit(-1);
   }
   sprintf(versioned_name, "%s_%s", name, temp);
@@ -96,7 +96,7 @@ void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
 // requires virtual package name and virtual package rank
 CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {    
   if ((name = (char *)malloc(strlen(pkg_name)+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for CUDFVirtualPackage.\n");
+    PRINT_ERR("error: cannot alloc name for CUDFVirtualPackage.\n");
     exit(-1);
   }
   strcpy(name, pkg_name);
@@ -121,7 +121,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -139,7 +139,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -149,17 +149,17 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
 
   // Checking property
   if ((type_id == pt_bool) && (tdefault != 0) && (tdefault != 1)) {
-    fprintf(stderr, "CUDF error: default value for property %s: bool must be true or false.\n", tname);
+    PRINT_ERR("CUDF error: default value for property %s: bool must be true or false.\n", tname);
     exit(-1);
   }
 
   if ((type_id == pt_nat) && (tdefault < 0)) {
-    fprintf(stderr, "CUDF error: default value for property %s: nat must be >= 0.\n", tname);
+    PRINT_ERR("CUDF error: default value for property %s: nat must be >= 0.\n", tname);
     exit(-1);
   }
 
   if ((type_id == pt_posint) && (tdefault <= 0)) {
-    fprintf(stderr, "CUDF error: default value for property %s: posint must be > 0.\n", tname);
+    PRINT_ERR("CUDF error: default value for property %s: posint must be > 0.\n", tname);
     exit(-1);
   }
 
@@ -182,7 +182,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault) 
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -198,7 +198,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -217,7 +217,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -229,7 +229,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
   char *defval = get_enum(tenum, tident);
   if (defval == (char *)NULL) {
-    fprintf(stderr, "CUDF error: property %s default value can not be %s.\n", tname, tident);
+    PRINT_ERR("CUDF error: property %s default value can not be %s.\n", tname, tident);
     exit(-1);
   } else
     default_value = new CUDFPropertyValue(this, defval);
@@ -242,7 +242,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefau
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -259,7 +259,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *td
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);
@@ -276,7 +276,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula 
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
-    fprintf(stderr, "error: cannot alloc name for property %s.\n", tname);
+    PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
   strcpy(name, tname);

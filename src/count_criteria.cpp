@@ -16,7 +16,7 @@ void count_criteria::check_property(CUDFproblem *problem) {
   has_property = false;
 
   if (prop == problem->properties->end())
-    printf("WARNING: cannot find \"%s\" property definition: criteria count not used.\n", property_name);
+    PRINT_OUT("WARNING: cannot find \"%s\" property definition: criteria count not used.\n", property_name);
   else
     switch ((*prop).second->type_id) {
     case pt_int: 
@@ -25,7 +25,7 @@ void count_criteria::check_property(CUDFproblem *problem) {
       has_property = true;
       break;
     default:
-      printf("WARNING: Property \"%s\" has wrong type: type must be an int, a nat or a posint. Criteria count not used.\n", property_name);
+      PRINT_OUT("WARNING: Property \"%s\" has wrong type: type must be an int, a nat or a posint. Criteria count not used.\n", property_name);
     }
 }
 
@@ -75,7 +75,7 @@ void count_criteria::initialize(CUDFproblem *problem, abstract_solver *solver) {
 	break;
       }
 
-    if (verbosity > 2) printf("count criteria default value for %s = %" CUDFint64"d\n", property_name, default_value);
+    if (verbosity > 2) PRINT_OUT("count criteria default value for %s = %" CUDFint64"d\n", property_name, default_value);
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++) {
       if (!in_scope(scope, problem, *ipkg))

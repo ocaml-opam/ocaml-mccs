@@ -509,7 +509,7 @@ extern "C" value add_package_to_problem(value ml_problem, value ml_package)
 
   pkg = ml2c_package(tbl, cpb->properties, pb->pb_max_versioned_package_rank, ml_package);
 
-  //fprintf(stderr, "add package: %s\n", pkg->name);
+  //PRINT_ERR("add package: %s\n", pkg->name);
 
   cpb->all_packages->push_back(pkg);
   if (pkg->installed) {
@@ -537,7 +537,7 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
   pb->pb_virtual_packages = NULL;
 
   if (Val_emptylist != Field(ml_request, 4)) {
-    fprintf(stderr, "WARNING: extra request field not supported\n");
+    PRINT_ERR("WARNING: extra request field not supported\n");
   }
 
   CAMLreturn (Val_unit);
@@ -555,7 +555,7 @@ void install_sigint_handler() {
   sigemptyset(&sa.sa_mask);
   sa.sa_sigaction = sigint_handler;
   if (sigaction(SIGINT, &sa, &ocaml_sigint_action) == -1) {
-    fprintf(stderr, "ERROR: can not install solver signal handler\n");
+    PRINT_ERR("ERROR: can not install solver signal handler\n");
     exit(99);
   }
   return;
@@ -563,7 +563,7 @@ void install_sigint_handler() {
 
 void restore_sigint_handler() {
   if (sigaction (SIGINT, &ocaml_sigint_action, NULL) == -1) {
-    fprintf(stderr, "ERROR: can not restorel solver signal handler\n");
+    PRINT_ERR("ERROR: can not restorel solver signal handler\n");
     exit(99);
   }
   return;
