@@ -103,7 +103,7 @@ CUDFcoefficient get_criteria_lambda(char *crit_descr, unsigned int &pos, char si
 	exit(-1);
       }
 
-    if (sscanf(crit_descr+start, CUDFflags, &lambda) != 1) {
+    if (sscanf(crit_descr+start, "%" CUDFint64"d", &lambda) != 1) {
       crit_descr[start+length+1] = '\0';
       fprintf(stderr, "ERROR: criteria options: a lambda value is espected here: %s\n", crit_descr);
       exit(-1);
@@ -370,7 +370,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
     printf("Objective value: %f\n", obj);
 
     for (CUDFVersionedPackageListIterator ipkg = problem->all_packages->begin(); ipkg != problem->all_packages->end(); ipkg++)
-      printf("%s = " CUDFflags"\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
+      printf("%s = %" CUDFint64"d\n", (*ipkg)->versioned_name, solver->get_solution(*ipkg));
       
     fprintf(stdout, "================================================================\n");
     

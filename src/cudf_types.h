@@ -13,8 +13,7 @@
 
 typedef long long int CUDFcoefficient;  // type of coefficients
 #define CUDFabs llabs                   // absolute value of a coefficient
-#define CUDFflags "%lld"                // flags to print a coefficient
-#define CUDFflagsplus "%+lld"           // flags to print a coefficient with its sign
+#define CUDFint64 "ll"
 
 
 #endif

@@ -87,7 +87,7 @@ int glpk_solver::solve(int timeout) {
       // Get objective value
       CUDFcoefficient objval = objective_value();
 
-      if (verbosity > 0) printf(">>> Objective %d value : " CUDFflags"\n", k, objval);
+      if (verbosity > 0) printf(">>> Objective %d value : %" CUDFint64"d\n", k, objval);
 
       // Reset objective i coefficients
       for (int i = 1; i < objectives[k]->nb_coeffs + 1; i++) 

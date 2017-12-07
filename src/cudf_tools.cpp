@@ -7,6 +7,7 @@
 
 
 #include <cudf.h>
+#include <cudf_types.h>
 
 // Handling verbosity level
 int verbosity = 0;
@@ -81,7 +82,7 @@ CUDFVersionedPackage::~CUDFVersionedPackage() {
 void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
   static char temp[50];
 
-  sprintf(temp, "%llu", pkg_version);
+  sprintf(temp, "%" CUDFint64"u", pkg_version);
   if ((versioned_name = (char *)malloc(strlen(name)+strlen(temp)+2)) == NULL) {
     fprintf(stderr, "error: cannot alloc versioned_name for CUDFVersionedPackage.\n");
     exit(-1);
