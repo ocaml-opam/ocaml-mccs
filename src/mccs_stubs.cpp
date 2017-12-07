@@ -597,7 +597,7 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   CUDFVirtualPackageList all_virtual_packages = *(cpb->all_virtual_packages);
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
-  char criteria[strlen(String_val(ml_criteria))+3];
+  char* criteria = new char[strlen(String_val(ml_criteria))+3];
 
   strcpy(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
@@ -606,6 +606,7 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   //  caml_release_runtime_system ();
   ret = call_mccs_protected(GLPK, criteria, Int_val(ml_timeout), cpb);
   // caml_acquire_runtime_system ();
+  delete[] criteria;
   switch (ret.success) {
   case 0: caml_failwith(ret.error);
   case -1: caml_raise_constant(*caml_named_value("Mccs.Timeout"));
