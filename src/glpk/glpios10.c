@@ -60,7 +60,7 @@ struct VAR
       /* sorting key */
 };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *x, const void *y)
 #else
 static int __cdecl fcmp(const void *x, const void *y)

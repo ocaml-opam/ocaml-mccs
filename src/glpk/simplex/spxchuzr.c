@@ -536,7 +536,7 @@ int spx_ls_eval_bp(SPXLP *lp, const double beta[/*1+m*/],
 *  On exit the routine also replaces the parameter slope with a new
 *  value that corresponds to the new last break-point bp[num1]. */
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *v1, const void *v2)
 #else
 static int __cdecl fcmp(const void *v1, const void *v2)

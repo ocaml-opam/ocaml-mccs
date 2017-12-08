@@ -802,7 +802,7 @@ static int cmir_ineq(const int n, const double a[], const double b,
 
 struct vset { int j; double v; };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int cmir_cmp(const void *p1, const void *p2)
 #else
 static int __cdecl cmir_cmp(const void *p1, const void *p2)

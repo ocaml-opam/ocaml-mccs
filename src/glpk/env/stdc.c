@@ -49,7 +49,7 @@ char *xstrtok(char *s1, const char *s2)
 
 /* MS Windows version *************************************************/
 
-#elif defined(__WOE__)
+#elif defined(_MSC_VER)
 
 #include "stdc.h"
 

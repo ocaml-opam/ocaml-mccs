@@ -68,7 +68,7 @@
 
 struct vertex { int i; double cw; };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *xx, const void *yy)
 #else
 static int __cdecl fcmp(const void *xx, const void *yy)
