@@ -97,8 +97,8 @@
                       mccs_stubs))
   (public_name       mccs)
   (c_flags           (:standard (:include cflags.sexp)))
-  (cxx_flags         (:standard -I .))
-  (c_library_flags   (:standard -lstdc++)) ;; dynlink version
+  (cxx_flags         (:standard -I . (:include cxxflags.sexp)))
+  (c_library_flags   (:standard (:include clibs.sexp)))
   ;; (no_dynlink) (c_library_flags   (:standard -lz -lltdl)) ;; static version
   ;; (library_flags     (-cclib -static-libgcc -cclib -Wl,-l:libstdc++.a,-l:libglpk.a))
   (wrapped           false)
@@ -118,3 +118,13 @@
  ((targets (cflags.sexp))
   (deps (context_flags.ml))
   (action (with-stdout-to ${@} (run ocaml ${^} cflags)))))
+
+(rule
+ ((targets (cxxflags.sexp))
+  (deps (context_flags.ml))
+  (action (with-stdout-to ${@} (run ocaml ${^} cxxflags)))))
+
+(rule
+ ((targets (clibs.sexp))
+  (deps (context_flags.ml))
+  (action (with-stdout-to ${@} (run ocaml ${^} clibs)))))
