@@ -1,0 +1,41 @@
+(jbuild_version 1)
+
+(library
+ ((name        mccs_glpk)
+  (public_name mccs.glpk.internal)
+  (modules     (ocaml_mccs_glpk))
+  (c_names     (; Core GLPK
+                bfd
+                glpapi06 glpapi09 glpapi10 glpapi12 glpapi13
+                glpios01 glpios02 glpios03 glpios07 glpios09 glpios10 glpios11 glpios12
+                glpnpp01 glpnpp02 glpnpp03 glpnpp04 glpnpp05
+                glpscl
+                ; api
+                advbas cpxbas prob1 prob2 prob4 prob5
+                ; bflib
+                btf btfint fhv fhvint fvs ifu luf lufint scf scfint sgf sva
+                ; cglib
+                cfg cfg1 cfg2 clqcut gmicut gmigen mirgen spv
+                ; env
+                alloc dlsup env error stdc stdout time tls
+                ; misc
+                avl dmp gcd jd mc13d mc21a rng rng1 round2n triang wclique wclique1
+                ; proxy
+                proxy proxy1
+                ; simplex
+                spxat spxchuzc spxchuzr spxlp spxnt spxprim spxprob spychuzc spychuzr spydual))
+  (c_flags     (:standard (:include cflags.sexp)))
+  (wrapped     false)))
+
+(copy_files# api/*.{c,h})
+(copy_files# bflib/*.{c,h})
+(copy_files# cglib/*.{c,h})
+(copy_files# env/*.{c,h})
+(copy_files# misc/*.{c,h})
+(copy_files# proxy/*.{c,h})
+(copy_files# simplex/*.{c,h})
+
+(rule
+ ((targets (cflags.sexp))
+  (deps (context_flags.ml))
+  (action (with-stdout-to ${@} (run ocaml ${^} cflags)))))

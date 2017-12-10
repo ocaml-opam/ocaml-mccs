@@ -2,11 +2,6 @@
 #load "ocamlcommon.cma";;
 
 match Sys.argv.(1) with
-| "cflags" ->
-    if Config.ccomp_type = "cc" then
-      print_string "(-Wno-maybe-uninitialized -Wno-parentheses)"
-    else
-      print_string "()"
 | "cxxflags" ->
     if Sys.win32 && Config.ccomp_type = "msvc" then
       print_string "(/EHsc)"
