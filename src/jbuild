@@ -96,7 +96,7 @@
                       mccscudf
                       mccs_stubs))
   (public_name       mccs)
-  (c_flags           (:standard -w))
+  (c_flags           (:standard (:include cflags.sexp)))
   (cxx_flags         (:standard -I .))
   (c_library_flags   (:standard -lstdc++)) ;; dynlink version
   ;; (no_dynlink) (c_library_flags   (:standard -lz -lltdl)) ;; static version
@@ -113,3 +113,8 @@
 (copy_files# glpk/misc/*.{c,h})
 (copy_files# glpk/proxy/*.{c,h})
 (copy_files# glpk/simplex/*.{c,h})
+
+(rule
+ ((targets (cflags.sexp))
+  (deps (context_flags.ml))
+  (action (with-stdout-to ${@} (run ocaml ${^} cflags)))))
