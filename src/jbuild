@@ -13,10 +13,9 @@
                     notuptodate_criteria
                     removed_criteria
                     mccscudf
-                    sigint_handler
                     mccs_stubs))
   (public_name     mccs)
-  (modules         (mccs))
+  (modules         (:standard \ context_flags))
   (cxx_flags       (:standard -I . (:include cxxflags.sexp)))
   (c_library_flags (:standard (:include clibs.sexp)))
   (library_flags   (:standard (:include flags.sexp)))
@@ -24,17 +23,6 @@
   (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _))))))
 
 (copy_files# glpk/glpk.h)
-
-(library
- ((name      test_sigint_lib)
-  (modules   ())
-  (cxx_names (test_sigint_stubs))
-  (cxx_flags (:standard -I . (:include cxxflags.sexp)))))
-
-(executable
- ((name      test_sigint)
-  (modules   (test_sigint))
-  (libraries (test_sigint_lib mccs))))
 
 (rule
  ((targets (cxxflags.sexp))

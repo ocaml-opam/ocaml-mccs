@@ -273,6 +273,11 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
 }
 
 Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem) {
+  abstract_solver *solver;
+  return call_mccs(solver_arg, criteria_arg, timeout, the_problem, &solver);
+}
+
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem, abstract_solver **solver_ptr) {
   CUDFproblem *problem = the_problem;
   vector<abstract_criteria *> criteria_with_property;
   CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
@@ -312,6 +317,8 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   default: ret.error = "Unrecognised solver specified"; return ret;
   }
 
+  *solver_ptr = solver;
+
   // check criteria properties
   for (vector<abstract_criteria *>::iterator icrit = criteria_with_property.begin(); icrit != criteria_with_property.end(); icrit++)
     (*icrit)->check_property(the_problem);
@@ -349,6 +356,11 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
         ret.success = -1;
         ret.error = "Timeout";
         if (verbosity > 0) PRINT_OUT("========\nSolver timed out.\n");
+        break;
+      case -3:
+        ret.success = -2;
+        ret.error = "Solver interrupted by SIGINT";
+        if (verbosity > 0) PRINT_OUT("========\nSolver interrupted.\n");
         break;
       default:
         ret.success = 0;

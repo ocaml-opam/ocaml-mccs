@@ -60,10 +60,15 @@ int glpk_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficie
 // write the problem into a file
 // int glpk_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
 
+void glpk_solver::abort(void) {
+  this->aborted = true;
+  this->mip_params.tm_lim = 0;
+  return;
+}
+
 // solve the current lp problem
 int glpk_solver::solve(int timeout) {
   int status = 0, nb_objectives = objectives.size();
-  glp_iocp mip_params;
   int save_stdout = 1;
 
   try {
@@ -71,21 +76,23 @@ int glpk_solver::solve(int timeout) {
     save_stdout = dup(1);
     close(1);
   }
-  glp_init_iocp(&mip_params);
-  mip_params.gmi_cuts = GLP_ON;
-  mip_params.mir_cuts = GLP_ON;
-  mip_params.cov_cuts = GLP_ON;
-  mip_params.clq_cuts = GLP_ON;
-  mip_params.presolve = GLP_ON;
-  mip_params.binarize = GLP_ON;
-  mip_params.tm_lim = timeout;
-  mip_params.msg_lev = (verbosity > 1) ? GLP_MSG_ON : GLP_MSG_OFF;
+  glp_init_iocp(&this->mip_params);
+  this->mip_params.gmi_cuts = GLP_ON;
+  this->mip_params.mir_cuts = GLP_ON;
+  this->mip_params.cov_cuts = GLP_ON;
+  this->mip_params.clq_cuts = GLP_ON;
+  this->mip_params.presolve = GLP_ON;
+  this->mip_params.binarize = GLP_ON;
+  this->mip_params.tm_lim = timeout;
+  this->mip_params.msg_lev = (verbosity > 1) ? GLP_MSG_ON : GLP_MSG_OFF;
   // one of GLP_MSG_OFF GLP_MSG_ERR GLP_MSG_ON GLP_MSG_ALL
+
+  this->aborted = false;
 
   for (int k = 0; k < nb_objectives; k++) {
     glp_cpx_basis(lp);
   
-    if (status == 0) status = glp_intopt(lp, &mip_params);
+    if (status == 0) status = glp_intopt(lp, &this->mip_params);
 
     if (k + 1 < nb_objectives) {
       // Get objective value
@@ -131,7 +138,11 @@ int glpk_solver::solve(int timeout) {
   case GLP_ENOPFS:
   case GLP_ENODFS:
     return 0;
-  case GLP_ETMLIM: return -2;
+  case GLP_ETMLIM:
+    if (this->aborted)
+      return -3;
+    else
+      return -2;
   default: return -1;
   }
 }

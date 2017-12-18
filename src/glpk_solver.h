@@ -31,6 +31,8 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
   int solve();
   // Solve the problem, with timeout
   int solve(int timeout);
+  // Terminate the current solver run
+  void abort(void);
   // Get the objective value (final one)
   CUDFcoefficient objective_value();
   // Init solutions (required before calling get_solution)
@@ -87,9 +89,15 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
     lp = (glp_prob *)NULL;
     all_versioned_packages = (CUDFVersionedPackageList *)NULL;
     lb = ub = (CUDFcoefficient *)NULL;
+    aborted = false;
   }
 
   ~glpk_solver();
+
+ private:
+  glp_iocp mip_params;
+  bool aborted;
+
 };
 
 #endif

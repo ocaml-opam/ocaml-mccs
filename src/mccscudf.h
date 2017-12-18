@@ -12,5 +12,6 @@ typedef struct {
 } Solver_return;
 
 Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem);
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem, abstract_solver **solver);
 
 #endif
