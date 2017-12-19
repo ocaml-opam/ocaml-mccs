@@ -64,7 +64,7 @@
 
 struct var { int j; double f; };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *p1, const void *p2)
 #else
 static int __cdecl fcmp(const void *p1, const void *p2)

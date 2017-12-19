@@ -1,0 +1,33 @@
+platform:
+  - x64
+
+image: Visual Studio 2017
+
+clone_depth: 1
+
+environment:
+  global:
+    CYG_ROOT: C:/cygwin
+    CYG_MIRROR: http://mirrors.kernel.org/sourceware/cygwin/
+    CYG_CACHE: C:/cygwin/var/cache/setup
+  matrix:
+    - OCAML_VERSION: 4.06.0
+      PORT: mingw
+    - OCAML_VERSION: 4.06.0
+      PORT: mingw64
+    - OCAML_VERSION: 4.06.0
+      PORT: msvc
+    - OCAML_VERSION: 4.06.0
+      PORT: msvc64
+
+cache:
+  - C:\OCaml
+
+install:
+  - call "%APPVEYOR_BUILD_FOLDER%\appveyor.cmd"
+
+build_script:
+  - jbuilder build
+
+test_script:
+  - jbuilder runtest

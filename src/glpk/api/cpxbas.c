@@ -36,7 +36,7 @@ struct var
       /* penalty value */
 };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *ptr1, const void *ptr2)
 #else
 static int __cdecl fcmp(const void *ptr1, const void *ptr2)

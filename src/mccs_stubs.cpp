@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #define CAML_NAME_SPACE
 #include <caml/mlvalues.h>
@@ -13,6 +16,7 @@
 #include <abstract_solver.h>
 #include <cudf_reductions.h>
 #include <mccscudf.h>
+#include <glpk_solver.h>
 
 #define Val_none Val_int(0)
 #define Some_val(v)  Field(v,0)
@@ -509,7 +513,7 @@ extern "C" value add_package_to_problem(value ml_problem, value ml_package)
 
   pkg = ml2c_package(tbl, cpb->properties, pb->pb_max_versioned_package_rank, ml_package);
 
-  //fprintf(stderr, "add package: %s\n", pkg->name);
+  //PRINT_ERR("add package: %s\n", pkg->name);
 
   cpb->all_packages->push_back(pkg);
   if (pkg->installed) {
@@ -537,17 +541,23 @@ extern "C" value set_problem_request(value ml_problem, value ml_request)
   pb->pb_virtual_packages = NULL;
 
   if (Val_emptylist != Field(ml_request, 4)) {
-    fprintf(stderr, "WARNING: extra request field not supported\n");
+    PRINT_ERR("WARNING: extra request field not supported\n");
   }
 
   CAMLreturn (Val_unit);
 }
 
+abstract_solver *mccs_current_solver = NULL;
+
+#ifndef _WIN32
+
 static void sigint_handler(int sig, siginfo_t *si, void * ucontext) {
-  throw 130;
+  if (mccs_current_solver) {
+    mccs_current_solver->abort();
+  }
 }
 
-struct sigaction ocaml_sigint_action;
+static struct sigaction ocaml_sigint_action;
 
 void install_sigint_handler() {
   struct sigaction sa;
@@ -555,7 +565,7 @@ void install_sigint_handler() {
   sigemptyset(&sa.sa_mask);
   sa.sa_sigaction = sigint_handler;
   if (sigaction(SIGINT, &sa, &ocaml_sigint_action) == -1) {
-    fprintf(stderr, "ERROR: can not install solver signal handler\n");
+    PRINT_ERR("ERROR: cannot install solver signal handler\n");
     exit(99);
   }
   return;
@@ -563,28 +573,66 @@ void install_sigint_handler() {
 
 void restore_sigint_handler() {
   if (sigaction (SIGINT, &ocaml_sigint_action, NULL) == -1) {
-    fprintf(stderr, "ERROR: can not restorel solver signal handler\n");
+    PRINT_ERR("ERROR: cannot restore solver signal handler\n");
     exit(99);
   }
   return;
 }
+
+#else
+
+/*
+ * Handling CTRL+C on Windows. Windows allows a handler function to be called on
+ * certain events via the SetConsoleCtrlHandler function. This function handles
+ * both the addition and removal of handler functions and maintains a stack of
+ * handlers (so there is no need to back-up OCaml's handler).
+ */
+
+static BOOL WINAPI sigint_handler(DWORD dwCtrlType) {
+  if (dwCtrlType == CTRL_C_EVENT) {
+    if (mccs_current_solver) {
+      mccs_current_solver->abort();
+    }
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
+
+static bool mccs_handler_installed = false;
+
+void install_sigint_handler() {
+  if (!SetConsoleCtrlHandler(&sigint_handler, TRUE)) {
+    PRINT_ERR("ERROR: cannot install solver signal handler\n");
+    exit(99);
+  }
+  mccs_handler_installed = true;
+  return;
+}
+
+void restore_sigint_handler() {
+  if (mccs_handler_installed && !SetConsoleCtrlHandler(&sigint_handler, FALSE)) {
+    PRINT_ERR("ERROR: cannot restore solver signal handler\n");
+    exit(99);
+  }
+  mccs_handler_installed = false;
+  return;
+}
+
+#endif
 
 // Allow C-c to interrupt the solver
 Solver_return call_mccs_protected(Solver solver, char *criteria, int timeout, CUDFproblem* cpb) {
   Solver_return ret = { 0, "", cpb, NULL };
   try {
     install_sigint_handler();
-    ret = call_mccs(solver, criteria, timeout, cpb);
-  } catch (int p) {
-    if (p == 130) {
-      ret.success = -2;
-      ret.error = "Solver interrupted by SIGINT";
-    } else
-      ret.error = "Uncaught solver exception";
+    ret = call_mccs(solver, criteria, timeout, cpb, &mccs_current_solver);
+    mccs_current_solver = NULL;
+    restore_sigint_handler();
   } catch (...) {
+    restore_sigint_handler();
     ret.error = "Uncaught solver exception";
   }
-  restore_sigint_handler();
   return ret;
 }
 
@@ -597,7 +645,7 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   CUDFVirtualPackageList all_virtual_packages = *(cpb->all_virtual_packages);
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
-  char criteria[strlen(String_val(ml_criteria))+3];
+  char* criteria = new char[strlen(String_val(ml_criteria))+3];
 
   strcpy(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
@@ -606,6 +654,7 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   //  caml_release_runtime_system ();
   ret = call_mccs_protected(GLPK, criteria, Int_val(ml_timeout), cpb);
   // caml_acquire_runtime_system ();
+  delete[] criteria;
   switch (ret.success) {
   case 0: caml_failwith(ret.error);
   case -1: caml_raise_constant(*caml_named_value("Mccs.Timeout"));

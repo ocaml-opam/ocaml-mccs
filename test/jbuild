@@ -1,0 +1,11 @@
+(jbuild_version 1)
+
+(executable
+ ((name      mccs_test)
+  (libraries (mccs))))
+
+(alias
+ ((name    runtest)
+  (deps    (mccs_test.exe test.cudf test.reference))
+  (action  (progn (with-stdout-to test.result (run ${<} test.cudf))
+                  (system "diff --ignore-trailing-space test.result test.reference")))))

@@ -70,7 +70,7 @@ struct info
       /* lower bound to objective degradation */
 };
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *arg1, const void *arg2)
 #else
 static int __cdecl fcmp(const void *arg1, const void *arg2)

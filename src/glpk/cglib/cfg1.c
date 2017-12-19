@@ -201,7 +201,7 @@
 struct term { int ind; double val; };
 /* term a[j] * z[j] used to sort a[j]'s */
 
-#ifndef __WOE__
+#ifndef _MSC_VER
 static int fcmp(const void *e1, const void *e2)
 #else
 static int __cdecl fcmp(const void *e1, const void *e2)

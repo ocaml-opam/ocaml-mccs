@@ -16,6 +16,7 @@
 #define __CUDF_REDUCTIONS
 
 #include <cudf.h>
+#include <cudf_types.h>
 
 extern vector<CUDFPropertiesIterator> process_properties; // set of property to process
 
