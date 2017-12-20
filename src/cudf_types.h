@@ -12,7 +12,11 @@
 
 
 typedef long long int CUDFcoefficient;  // type of coefficients
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 #define CUDFabs llabs                   // absolute value of a coefficient
+#else
+#define CUDFabs _abs64
+#endif
 
 #ifdef _WIN32
 // See note in cudf.h about __MINGW_USE_ANSI_STDIO. This check ensures that the
