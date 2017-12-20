@@ -152,13 +152,13 @@ int glpk_solver::solve() {
 }
 
 // get objective function value
-CUDFcoefficient glpk_solver::objective_value() { return (CUDFcoefficient)nearbyint(glp_mip_obj_val(lp)); }
+CUDFcoefficient glpk_solver::objective_value() { return (CUDFcoefficient)CUDFnearbyint(glp_mip_obj_val(lp)); }
 
 // solution initialisation
 int glpk_solver::init_solutions() { return 0; }
 
 // return the status of a package within the final configuration
-CUDFcoefficient glpk_solver::get_solution(CUDFVersionedPackage *package) { return (CUDFcoefficient)nearbyint(glp_mip_col_val(lp, package->rank+1)); }
+CUDFcoefficient glpk_solver::get_solution(CUDFVersionedPackage *package) { return (CUDFcoefficient)CUDFnearbyint(glp_mip_col_val(lp, package->rank+1)); }
 
 // initialize objective function
 int glpk_solver::begin_objectives(void) { 
