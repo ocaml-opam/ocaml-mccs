@@ -19,7 +19,7 @@ match Sys.argv.(1) with
       Printf.printf "(-lstdc++ %s)" glpk
 | "cflags" ->
     if Config.ccomp_type = "cc" then
-      print_string "(-Wno-maybe-uninitialized -Wno-parentheses)"
+      print_string "(-Wno-parentheses)"
     else
       print_string "()"
 | _ ->
