@@ -9,8 +9,8 @@
 
 #include <constraint_generation.h>
 
-bool generate_desagregate_constraints = true;
-bool generate_agregate_constraints = false;
+bool generate_desagregate_constraints = false;
+bool generate_agregate_constraints = true;
 
 // check if pkg belongs to a list of providers
 bool is_in_provl(const CUDFVersionedPackage *pkg, CUDFProviderList *provl) {
