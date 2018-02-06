@@ -48,3 +48,6 @@ typedef long long int CUDFcoefficient;  // type of coefficients
 
 
 #endif
+
+#define CUDFflags "%" CUDFint64 "d"
+#define CUDFflagsplus "%+" CUDFint64 "d"

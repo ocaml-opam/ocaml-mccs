@@ -9,7 +9,9 @@ let (preamble, universe, request) as cudf =
  *   Cudf_printer.pp_cudf stdout (preamble, Cudf.load_universe (Mccs.get_problem_packages (Mccs.problem_of_cudf cudf)), request);
  *   Printf.printf "####\n\n%!" *)
 
-let criteria = "-removed,-changed"
+let criteria =
+  if Array.length Sys.argv <= 2 then "-removed,-changed"
+  else Sys.argv.(2)
 
 let solve () =
   Mccs.resolve_cudf ~verbose:true criteria cudf

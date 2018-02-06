@@ -107,7 +107,7 @@ int lp_solver::solve() {
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
 
     if (system(command) == -1) {
-      fprintf(stderr, "mccs: error while calling solver.\n");
+      fprintf(stderr, "mccs: error while calling solver '%s'.\n", lpsolver);
       exit(-1);
     }
 

@@ -8,6 +8,7 @@
                     cudf_reductions
                     cudf_tools
                     glpk_solver
+                    lp_solver
                     lexagregate_combiner
                     new_criteria
                     notuptodate_criteria

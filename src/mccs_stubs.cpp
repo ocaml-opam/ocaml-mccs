@@ -646,13 +646,14 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
   char* criteria = new char[strlen(String_val(ml_criteria))+3];
+  Solver solver = { GLPK, (char *)NULL };
 
   strcpy(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
   strcat(criteria, "]");
 
-  //  caml_release_runtime_system ();
-  ret = call_mccs_protected(GLPK, criteria, Int_val(ml_timeout), cpb);
+  // caml_release_runtime_system ();
+  ret = call_mccs_protected(solver, criteria, Int_val(ml_timeout), cpb);
   // caml_acquire_runtime_system ();
   delete[] criteria;
   switch (ret.success) {

@@ -2,7 +2,12 @@
 #ifndef _MCCSCUDF_H
 #define _MCCSCUDF_H
 
-typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK} Solver;
+typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK, LP} Solver_backend;
+
+typedef struct {
+  Solver_backend backend;
+  char * lp_solver;
+} Solver;
 
 typedef struct {
   int success; // 1 on success (SAT or UNSAT), 0 on error, -1 on timeout

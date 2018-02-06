@@ -18,7 +18,7 @@
 
 // underlying solver declaration
 // allows using solvers withour having to include the whole solver classes
-//extern abstract_solver *new_lp_solver(char *lpsolver);
+extern abstract_solver *new_lp_solver(char *lpsolver);
 /* extern abstract_solver *new_pblib_solver(char *pbsolver); */
 //extern abstract_solver *new_ampl_solver(char *amplsolver);
 #ifdef USECPLEX 
@@ -293,7 +293,8 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   }
   combiner = new lexagregate_combiner(criteria);
 
-  switch (solver_arg) {
+  switch (solver_arg.backend) {
+  case LP: solver = new_lp_solver(solver_arg.lp_solver); break;
 #ifdef USECPLEX
   case CPLEX: solver = new_cplex_solver(); break;
 #else
