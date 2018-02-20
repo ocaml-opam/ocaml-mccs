@@ -1,3 +1,13 @@
+(**************************************************************************)
+(*                                                                        *)
+(*    Copyright 2017-2018 OCamlPro                                        *)
+(*                                                                        *)
+(*  All rights reserved. This file is distributed under the terms of the  *)
+(*  GNU Lesser General Public License version 2.1, with the special       *)
+(*  exception on linking described in the file LICENSE.                   *)
+(*                                                                        *)
+(**************************************************************************)
+
 type cudf_package = Cudf.package = {
   package : string;
   version : int;
@@ -28,6 +38,10 @@ type request = Cudf.request = {
 
 type problem
 
+type solver_backend = [ `GLPK | `LP of string (* | `COIN *) ]
+
+let default_solver = `GLPK
+
 exception Timeout
 
 let () = Callback.register_exception "Sys.Break" Sys.Break
@@ -45,7 +59,8 @@ external add_package_to_problem: problem -> cudf_package -> unit
 external set_problem_request: problem -> request -> unit
   = "set_problem_request"
 
-external call_solver : string -> int -> problem -> Cudf.package list option
+external call_solver:
+  solver_backend -> string -> int -> problem -> Cudf.package list option
   = "call_solver"
 
 let problem_of_cudf cudf =
@@ -55,17 +70,25 @@ let problem_of_cudf cudf =
   set_problem_request pb request;
   pb
 
-let resolve_cudf ?(verbose=false) ?timeout criteria (preamble, _, _ as cudf) =
+let resolve_cudf
+    ?(verbose=false) ?timeout ?(solver=default_solver)
+    criteria (preamble, _, _ as cudf) =
   let timeout = match timeout with
     | None -> 0
     | Some f -> int_of_float (1000. *. f)
   in
-  set_verbosity (if verbose then 1 else 0);
+  set_verbosity 10;(* (if verbose then 1 else 0); *)
   let pb = problem_of_cudf cudf in
-  match call_solver criteria timeout pb with
-  | None -> None
+  match call_solver solver criteria timeout pb with
+  | None -> prerr_endline "NONE"; None
   | Some sol ->
     let univ = Cudf.load_universe sol in
     Some (preamble, univ)
 
-let solver_id = "mccs+glpk"
+let get_solver_id ?(solver=default_solver) () =
+  "mccs+" ^
+  match solver with
+  | `GLPK -> "glpk"
+  | `LP cmd -> Printf.sprintf "lp+%s" cmd
+
+let solver_id = get_solver_id ()

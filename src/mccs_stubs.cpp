@@ -424,6 +424,20 @@ CUDFProperties * ml2c_propertydeflist(Virtual_packages * tbl, value ml_pdeflist)
   return pdeflist;
 }
 
+Solver ml2c_solver(value ml_solver)
+{
+  if (Is_block(ml_solver))
+    if (Field (ml_solver, 0) == caml_hash_variant("LP"))
+      return { LP, String_val (Field (ml_solver, 1)) };
+    else caml_failwith("invalid solver backend");
+  else if (ml_solver == caml_hash_variant("GLPK"))
+    return { GLPK, NULL };
+  // else if (ml_solver == caml_hash_variant("COIN"))
+  //   return { COIN, NULL };
+  else
+    caml_failwith("invalid solver backend");
+}
+
 // get an enum from its name in an enum list
 char *get_enum(CUDFEnums *e, char *estr) {
   for (CUDFEnumsIterator ei = e->begin(); ei != e->end(); ei++)
@@ -636,7 +650,8 @@ Solver_return call_mccs_protected(Solver solver, char *criteria, int timeout, CU
   return ret;
 }
 
-extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_problem)
+extern "C" value call_solver
+(value ml_solver_backend, value ml_criteria, value ml_timeout, value ml_problem)
 {
   CAMLparam3(ml_criteria, ml_timeout, ml_problem);
   CAMLlocal2(results, pkg);
@@ -646,7 +661,7 @@ extern "C" value call_solver(value ml_criteria, value ml_timeout, value ml_probl
   CUDFVersionedPackageList all_packages = *(cpb->all_packages);
   Solver_return ret;
   char* criteria = new char[strlen(String_val(ml_criteria))+3];
-  Solver solver = { GLPK, (char *)NULL };
+  Solver solver = ml2c_solver(ml_solver_backend);
 
   strcpy(criteria, "[");
   strcat(criteria, String_val(ml_criteria));
