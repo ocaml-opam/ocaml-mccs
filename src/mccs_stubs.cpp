@@ -680,6 +680,7 @@ extern "C" value call_solver
 
   if (ret.solution == NULL) {
     if (ret.problem != cpb) delete ret.problem;
+    fflush(stdout);
     CAMLreturn (Val_none);
   }
   else {
@@ -697,6 +698,7 @@ extern "C" value call_solver
       }
     if (ret.problem != cpb) delete ret.problem;
     delete ret.solution;
+    fflush(stdout);
     CAMLreturn (Val_some(results));
   }
 }
