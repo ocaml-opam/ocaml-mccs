@@ -337,10 +337,10 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   
   ret.success = 1;
   // generate the constraints, solve the problem and print out the solutions
-  if (problem->all_packages->size() == 0) {
-    if (verbosity > 0) PRINT_OUT("========\nEmpty problem.\n");
-    no_solution = true;
-  }
+  // if (problem->all_packages->size() == 0) {
+  //   if (verbosity > 0) PRINT_OUT("========\nEmpty problem.\n");
+  //   no_solution = true;
+  // }
   if (! no_solution && generate_constraints(problem, *solver, *combiner) < 0) {
     if (verbosity > 0) PRINT_OUT("========\nConstraint generation error.\n");
     no_solution = true;
