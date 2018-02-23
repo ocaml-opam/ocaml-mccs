@@ -22,6 +22,7 @@ class lp_solver: public abstract_solver, public scoeff_solver<CUDFcoefficient, 0
 
   // Solve the problem
   int solve();
+  int solve(int timeout);
   // Get the objective value (final one)
   CUDFcoefficient objective_value();
   // Init solutions (required before calling get_solution)
