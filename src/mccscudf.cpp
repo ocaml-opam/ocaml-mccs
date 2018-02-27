@@ -33,6 +33,9 @@ extern abstract_solver *new_lpsolve_solver();
 #ifdef USEGLPK
 extern abstract_solver *new_glpk_solver(bool use_exact);
 #endif
+#ifdef USECOIN
+extern abstract_solver *new_osi_solver(bool use_exact);
+#endif
 
 bool criteria_opt_var = false;
 // Basic user defined criteria option handling
@@ -283,7 +286,6 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
   abstract_solver *solver = (abstract_solver *)NULL;
   abstract_combiner *combiner = (abstract_combiner *)NULL;
-  stringstream solution;
   Solver_return ret = { 0, "", NULL, NULL };
   bool no_solution = false;
 
@@ -315,6 +317,11 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
 #else
   case GLPK: ret.error = "This mccs is built without glpk support"; return ret;
 #endif
+#ifdef USECOIN
+  case COIN: solver = new_osi_solver(false); break;
+#else
+  case COIN: ret.error = "This mccs is built without OSI support"; return ret;
+#endif
   default: ret.error = "Unrecognised solver specified"; return ret;
   }
 
@@ -337,10 +344,10 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   
   ret.success = 1;
   // generate the constraints, solve the problem and print out the solutions
-  // if (problem->all_packages->size() == 0) {
-  //   if (verbosity > 0) PRINT_OUT("========\nEmpty problem.\n");
-  //   no_solution = true;
-  // }
+  if (problem->all_packages->size() == 0) {
+    if (verbosity > 0) PRINT_OUT("========\nEmpty problem.\n");
+    no_solution = true;
+  }
   if (! no_solution && generate_constraints(problem, *solver, *combiner) < 0) {
     if (verbosity > 0) PRINT_OUT("========\nConstraint generation error.\n");
     no_solution = true;

@@ -14,7 +14,7 @@ exception Timeout
 
 val problem_of_cudf: Cudf.cudf -> problem
 
-type solver_backend = [ `GLPK | `LP of string (* | `COIN *) ]
+type solver_backend = [ `GLPK | `LP of string | `COIN ]
 
 (** Resolve the given problem. The timeout is in seconds, default is to never
     time out. *)

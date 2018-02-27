@@ -38,7 +38,7 @@ type request = Cudf.request = {
 
 type problem
 
-type solver_backend = [ `GLPK | `LP of string (* | `COIN *) ]
+type solver_backend = [ `GLPK | `LP of string | `COIN ]
 
 let default_solver = `GLPK
 
@@ -80,7 +80,7 @@ let resolve_cudf
   set_verbosity 10;(* (if verbose then 1 else 0); *)
   let pb = problem_of_cudf cudf in
   match call_solver solver criteria timeout pb with
-  | None -> prerr_endline "NONE"; None
+  | None -> None
   | Some sol ->
     let univ = Cudf.load_universe sol in
     Some (preamble, univ)
@@ -90,5 +90,6 @@ let get_solver_id ?(solver=default_solver) () =
   match solver with
   | `GLPK -> "glpk"
   | `LP cmd -> Printf.sprintf "lp+%s" cmd
+  | `COIN -> "coin"
 
 let solver_id = get_solver_id ()

@@ -17,6 +17,7 @@
 #include <cudf_reductions.h>
 #include <mccscudf.h>
 #include <glpk_solver.h>
+#include <osi_solver.h>
 
 #define Val_none Val_int(0)
 #define Some_val(v)  Field(v,0)
@@ -432,8 +433,8 @@ Solver ml2c_solver(value ml_solver)
     else caml_failwith("invalid solver backend");
   else if (ml_solver == caml_hash_variant("GLPK"))
     return { GLPK, NULL };
-  // else if (ml_solver == caml_hash_variant("COIN"))
-  //   return { COIN, NULL };
+  else if (ml_solver == caml_hash_variant("COIN"))
+    return { COIN, NULL };
   else
     caml_failwith("invalid solver backend");
 }

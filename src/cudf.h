@@ -6,6 +6,7 @@
 /*******************************************************/
 
 #define USEGLPK
+#define USECOIN
 
 // main CUDF include file
 

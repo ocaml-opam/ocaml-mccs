@@ -8,6 +8,7 @@
                     cudf_reductions
                     cudf_tools
                     glpk_solver
+                    osi_solver
                     lp_solver
                     lexagregate_combiner
                     new_criteria
@@ -18,10 +19,11 @@
   (public_name     mccs)
   (modules         (:standard \ context_flags))
   (cxx_flags       (:standard -I . (:include cxxflags.sexp)))
-  (c_library_flags (:standard (:include clibs.sexp)))
+  (c_library_flags (:standard (:include clibs.sexp) -lCoinUtils -lOsiClp))
   (library_flags   (:standard (:include flags.sexp)))
   (wrapped         false)
-  (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _))))))
+  (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _))
+))))
 
 (copy_files# glpk/glpk.h)
 

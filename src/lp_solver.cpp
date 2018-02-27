@@ -208,7 +208,7 @@ int lp_solver::solve() {
         }
         break;
       }
-
+    fclose(fsol);
     // If we are here with a status = -1, then we were enable to read the solution (or the infeasability)
     if (status == -1) {
       fprintf(stderr, "ERROR: Cannot read solution from lp solver.\n");

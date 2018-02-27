@@ -19,6 +19,7 @@ let solver =
   if Array.length Sys.argv <= 3 then `GLPK
   else match Sys.argv.(3) with
     | "glpk" -> `GLPK
+    | "coin" -> `COIN
     | s when String.sub s 0 3 = "lp+" ->
       `LP (String.sub s 3 (String.length s - 3))
     | s -> Printf.ksprintf failwith "Unknown solver %s" s
