@@ -95,9 +95,7 @@ int osi_solver::new_objective(void) {
 
 // add an additional objective function
 int osi_solver::add_objective(void) {
-  CoinPackedVector obj = new CoinPackedVector(coefficients);
-  obj = coefficients; // copy constructor doesn't work !?
-  objectives.push_back (obj);
+  objectives.push_back(coefficients);
   return 0;
 }
 
