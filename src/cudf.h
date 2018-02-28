@@ -7,6 +7,9 @@
 
 #define USEGLPK
 #define USECOIN
+#define USECLP
+#define USECBC
+#define USESYM
 
 // main CUDF include file
 

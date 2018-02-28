@@ -2,7 +2,7 @@
 #ifndef _MCCSCUDF_H
 #define _MCCSCUDF_H
 
-typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK, LP, COIN} Solver_backend;
+typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK, LP, CLP, CBC, SYMPHONY} Solver_backend;
 
 typedef struct {
   Solver_backend backend;

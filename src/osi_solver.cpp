@@ -12,7 +12,6 @@
 #include <unistd.h>
 #endif
 #include <math.h>
-#include <coin/OsiClpSolverInterface.hpp>
 #include <coin/CoinPackedVector.hpp>
 #include <osi_solver.h>
 #include <limits.h>
@@ -20,19 +19,24 @@
 #define OUTPUT_MODEL 1
 
 // external function for solver creation
-abstract_solver *new_osi_solver(bool use_exact) { return new osi_solver(use_exact); }
+template<class OsiSolver>
+abstract_solver *new_osi_solver(bool use_exact) {
+  return new osi_solver<OsiSolver>(use_exact);
+}
 
 int setIndex(CoinPackedVector &v, int rank, CUDFcoefficient value) {
   try { v.insert (rank, value); } catch (...) {}
   return 0;
 }
 
-int osi_solver::setCoef(int rank, CUDFcoefficient value) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::setCoef(int rank, CUDFcoefficient value) {
   return setIndex(coefficients, rank, value);
 }
 
 // solver initialisation
-int osi_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int other_vars) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::init_solver(CUDFVersionedPackageList *all_versioned_packages, int other_vars) {
   int i = 0;
   nb_packages = all_versioned_packages->size();
   nb_vars = nb_packages + other_vars;
@@ -47,7 +51,7 @@ int osi_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, in
 
   this->all_versioned_packages = all_versioned_packages;
 
-  solver = new OsiClpSolverInterface;
+  solver = new OsiSolver;
 
   matrix = new CoinPackedMatrix(false,0,0);
   matrix->setDimensions(0, nb_vars);
@@ -56,68 +60,80 @@ int osi_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, in
 }
 
 // Does the solver provides integer variables
-bool osi_solver::has_intvars() { return true; }
+template<class OsiSolver>
+bool osi_solver<OsiSolver>::has_intvars() { return true; }
 
 // Set range of an integer variable
-int osi_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper) {
   col_lb[rank] = lower;
   col_ub[rank] = upper;
   return 0;
 }
 
 // initialize objective function
-int osi_solver::begin_objectives(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::begin_objectives(void) {
   solver->setObjSense(1); // Problem is a minimization
   return 0;
 }
 
 // return the package coefficient of the objective function
-CUDFcoefficient osi_solver::get_obj_coeff(CUDFVersionedPackage *package) {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::get_obj_coeff(CUDFVersionedPackage *package) {
   return (CUDFcoefficient)coefficients[package->rank];
 }
 
 // return the package coefficient of the objective function 
-CUDFcoefficient osi_solver::get_obj_coeff(int rank) {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::get_obj_coeff(int rank) {
   return (CUDFcoefficient)coefficients[rank];
 }
 
 // set package coefficient to a value
-int osi_solver::set_obj_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::set_obj_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) {
   return setCoef(package->rank, value);
 }
 // set column coefficient to a value
-int osi_solver::set_obj_coeff(int rank, CUDFcoefficient value) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::set_obj_coeff(int rank, CUDFcoefficient value) {
   return setCoef(rank, value);
 }
 
 // initialize an additional objective function 
-int osi_solver::new_objective(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::new_objective(void) {
   coefficients.clear();
   return 0;
 }
 
 // add an additional objective function
-int osi_solver::add_objective(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::add_objective(void) {
   objectives.push_back(coefficients);
   return 0;
 }
 
 // finalize the objective function
-int osi_solver::end_objectives(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::end_objectives(void) {
   return 0;
 }
 
 // write the problem into a file
-// int osi_solver::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
+// int osi_solver<OsiSolver>::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
 
-void osi_solver::abort(void) {
+template<class OsiSolver>
+void osi_solver<OsiSolver>::abort(void) {
   this->aborted = true;
   // this->mip_params.tm_lim = 0; TODO
   return;
 }
 
 // solve the current lp problem
-int osi_solver::solve(int timeout) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::solve(int timeout) {
   int nb_objectives = objectives.size();
   int nb_rows = matrix->getNumRows();
   int save_stdout = 1;
@@ -208,59 +224,70 @@ int osi_solver::solve(int timeout) {
   }
 }
 
-int osi_solver::solve() {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::solve() {
   return (this->solve(INT_MAX));
 }
 
 // get objective function value
-CUDFcoefficient osi_solver::objective_value() {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::objective_value() {
   return (CUDFcoefficient)CUDFnearbyint(solver->getObjValue());
 }
 
 // solution initialisation
-int osi_solver::init_solutions() {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::init_solutions() {
   solution = solver->getColSolution();
   return 0;
 }
 
 // return the status of a package within the final configuration
-CUDFcoefficient osi_solver::get_solution(CUDFVersionedPackage *package) {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::get_solution(CUDFVersionedPackage *package) {
   return (CUDFcoefficient)CUDFnearbyint(solution[package->rank]);
 }
 
 // initialize constraints
-int osi_solver::begin_add_constraints(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::begin_add_constraints(void) {
   return 0;
 }
 
 // begin a new constraint
-int osi_solver::new_constraint(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::new_constraint(void) {
   coefficients.clear();
   return 0;
 }
 
 // get the package coefficient of the current constraint
-CUDFcoefficient osi_solver::get_constraint_coeff(CUDFVersionedPackage *package) {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::get_constraint_coeff(CUDFVersionedPackage *package) {
   return (CUDFcoefficient)coefficients[package->rank];
 }
 
 // get the package coefficient of the current constraint
-CUDFcoefficient osi_solver::get_constraint_coeff(int rank) {
+template<class OsiSolver>
+CUDFcoefficient osi_solver<OsiSolver>::get_constraint_coeff(int rank) {
   return (CUDFcoefficient)coefficients[rank];
 }
 
 // set package coefficient of the current constraint
-int osi_solver::set_constraint_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::set_constraint_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) {
   return setCoef(package->rank, value);
 }
 
 // set column coefficient of the current constraint
-int osi_solver::set_constraint_coeff(int rank, CUDFcoefficient value) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::set_constraint_coeff(int rank, CUDFcoefficient value) {
   return setCoef(rank, value);
 }
 
 // add current constraint as a greater or equal constraint
-int osi_solver::add_constraint_geq(CUDFcoefficient bound) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::add_constraint_geq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
     matrix->appendRow(coefficients);
     row_lb.push_back(bound);
@@ -270,7 +297,8 @@ int osi_solver::add_constraint_geq(CUDFcoefficient bound) {
 }
 
 // add current constraint as a less or equal constraint
-int osi_solver::add_constraint_leq(CUDFcoefficient bound) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::add_constraint_leq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
     matrix->appendRow(coefficients);
     row_lb.push_back(-solver->getInfinity());
@@ -280,7 +308,8 @@ int osi_solver::add_constraint_leq(CUDFcoefficient bound) {
 }
 
 // add current constraint as an equality constraint
-int osi_solver::add_constraint_eq(CUDFcoefficient bound) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::add_constraint_eq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
     int i = matrix->getNumRows();
     matrix->appendRow(coefficients);
@@ -291,11 +320,13 @@ int osi_solver::add_constraint_eq(CUDFcoefficient bound) {
 }
 
 // finalize constraints
-int osi_solver::end_add_constraints(void) {
+template<class OsiSolver>
+int osi_solver<OsiSolver>::end_add_constraints(void) {
   // if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "osipbs.lp");
   return 0;
 }
 
-osi_solver::~osi_solver() {
+template<class OsiSolver>
+osi_solver<OsiSolver>::~osi_solver() {
   if (solver != NULL) delete solver;
 }

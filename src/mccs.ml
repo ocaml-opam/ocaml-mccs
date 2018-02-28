@@ -38,7 +38,7 @@ type request = Cudf.request = {
 
 type problem
 
-type solver_backend = [ `GLPK | `LP of string | `COIN ]
+type solver_backend = [ `GLPK | `LP of string | `COIN_CLP | `COIN_CBC | `COIN_SYMPHONY ]
 
 let default_solver = `GLPK
 
@@ -90,6 +90,8 @@ let get_solver_id ?(solver=default_solver) () =
   match solver with
   | `GLPK -> "glpk"
   | `LP cmd -> Printf.sprintf "lp+%s" cmd
-  | `COIN -> "coin"
+  | `COIN_CLP -> "coin/clp"
+  | `COIN_CBC -> "coin/cbc"
+  | `COIN_SYMPHONY -> "coin/symphony"
 
 let solver_id = get_solver_id ()

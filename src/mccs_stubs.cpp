@@ -433,8 +433,12 @@ Solver ml2c_solver(value ml_solver)
     else caml_failwith("invalid solver backend");
   else if (ml_solver == caml_hash_variant("GLPK"))
     return { GLPK, NULL };
-  else if (ml_solver == caml_hash_variant("COIN"))
-    return { COIN, NULL };
+  else if (ml_solver == caml_hash_variant("COIN_CLP"))
+    return { CLP, NULL };
+  else if (ml_solver == caml_hash_variant("COIN_CBC"))
+    return { CBC, NULL };
+  else if (ml_solver == caml_hash_variant("COIN_SYMPHONY"))
+    return { SYMPHONY, NULL };
   else
     caml_failwith("invalid solver backend");
 }

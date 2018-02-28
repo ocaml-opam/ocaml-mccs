@@ -16,6 +16,7 @@
 #include <coin/OsiSolverInterface.hpp>
 #include <coin/CoinPackedVector.hpp>
 
+template<class OsiSolver>
 class osi_solver: public abstract_solver  {
  public:
   // Solver initialization
