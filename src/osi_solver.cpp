@@ -53,7 +53,7 @@ int osi_solver<OsiSolver>::init_solver(CUDFVersionedPackageList *all_versioned_p
 
   solver = new OsiSolver;
 
-  matrix = new CoinPackedMatrix(false,0,0);
+  matrix = new CoinPackedMatrix(false,100.,0);
   matrix->setDimensions(0, nb_vars);
 
   return 0;
