@@ -77,7 +77,7 @@ let resolve_cudf
     | None -> 0
     | Some f -> int_of_float (1000. *. f)
   in
-  set_verbosity 10;(* (if verbose then 1 else 0); *)
+  set_verbosity (if verbose then 1 else 0);
   let pb = problem_of_cudf cudf in
   match call_solver solver criteria timeout pb with
   | None -> None

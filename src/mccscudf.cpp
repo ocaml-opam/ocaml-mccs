@@ -36,7 +36,6 @@ extern abstract_solver *new_glpk_solver(bool use_exact);
 
 #ifdef USECOIN
   #include <osi_solver.h>
-  #include <osi_solver.cpp>
   #ifdef USECLP
     #include <coin/OsiClpSolverInterface.hpp>
   #endif
@@ -330,17 +329,17 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
 #endif
 #ifdef USECOIN
 #ifdef USECLP
-  case CLP: solver = new osi_solver<OsiClpSolverInterface>(false); break;
+  case CLP: solver = new osi_solver<OsiClpSolverInterface>(); break;
 #else
   case CLP: ret.error = "This mccs is built without COIN/CLP support"; return ret;
 #endif
 #ifdef USECBC
-  case CBC: solver = new osi_solver<OsiCbcSolverInterface>(false); break;
+  case CBC: solver = new osi_solver<OsiCbcSolverInterface>(); break;
 #else
   case CBC: ret.error = "This mccs is built without COIN/CBC support"; return ret;
 #endif
 #ifdef USESYM
-  case SYMPHONY: solver = new osi_solver<OsiSymSolverInterface>(false); break;
+  case SYMPHONY: solver = new osi_solver<OsiSymSolverInterface>(); break;
 #else
   case SYMPHONY: ret.error = "This mccs is built without COIN/SYMPHONY support"; return ret;
 #endif
