@@ -42,6 +42,9 @@ int osi_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, in
   // Coefficient initialization
   // initialize_coeffs(nb_packages + other_vars);
 
+  col_lb = (double *)calloc(nb_vars, sizeof(double));
+  col_ub = (double *)calloc(nb_vars, sizeof(double));
+
   this->all_versioned_packages = all_versioned_packages;
 
   solver = new OsiClpSolverInterface;
@@ -57,8 +60,8 @@ bool osi_solver::has_intvars() { return true; }
 
 // Set range of an integer variable
 int osi_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper) {
-  col_lb.insert(rank, lower);
-  col_ub.insert(rank, upper);
+  col_lb[rank] = lower;
+  col_ub[rank] = upper;
   return 0;
 }
 
@@ -125,12 +128,12 @@ int osi_solver::solve(int timeout) {
     close(1);
   }
 
-  double * col_lb_v = col_lb.denseVector(nb_vars);
-  double * col_ub_v = col_ub.denseVector(nb_vars);
   double * obj_v = objectives[0].denseVector(nb_vars);
-  double * row_lb_v = row_lb.denseVector(nb_rows);
-  double * row_ub_v = row_ub.denseVector(nb_rows);
-  solver->assignProblem(matrix, col_lb_v, col_ub_v, obj_v, row_lb_v, row_ub_v);
+  double * row_lb_v = (double *)malloc(nb_rows * sizeof(double));
+  double * row_ub_v = (double *)malloc(nb_rows * sizeof(double));
+  std::copy(row_lb.begin(), row_lb.end(), row_lb_v);
+  std::copy(row_ub.begin(), row_ub.end(), row_ub_v);
+  solver->assignProblem(matrix, col_lb, col_ub, obj_v, row_lb_v, row_ub_v);
 
   int i = 0;
   for (CUDFVersionedPackageListIterator ipkg = all_versioned_packages->begin();
@@ -259,11 +262,9 @@ int osi_solver::set_constraint_coeff(int rank, CUDFcoefficient value) {
 // add current constraint as a greater or equal constraint
 int osi_solver::add_constraint_geq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
-
-    int i = matrix->getNumRows();
     matrix->appendRow(coefficients);
-    row_lb.insert (i, bound);
-    row_ub.insert (i, solver->getInfinity());
+    row_lb.push_back(bound);
+    row_ub.push_back(solver->getInfinity());
   }
   return 0;
 }
@@ -271,10 +272,9 @@ int osi_solver::add_constraint_geq(CUDFcoefficient bound) {
 // add current constraint as a less or equal constraint
 int osi_solver::add_constraint_leq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
-    int i = matrix->getNumRows();
     matrix->appendRow(coefficients);
-    row_lb.insert (i, -solver->getInfinity());
-    row_ub.insert (i, bound);
+    row_lb.push_back(-solver->getInfinity());
+    row_ub.push_back(bound);
   }
   return 0;
 }
@@ -284,8 +284,8 @@ int osi_solver::add_constraint_eq(CUDFcoefficient bound) {
   if (coefficients.getNumElements() > 0 ) {
     int i = matrix->getNumRows();
     matrix->appendRow(coefficients);
-    row_lb.insert (i, bound);
-    row_ub.insert (i, bound);
+    row_lb.push_back(bound);
+    row_ub.push_back(bound);
   }
   return 0;
 }

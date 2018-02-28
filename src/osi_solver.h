@@ -92,6 +92,7 @@ class osi_solver: public abstract_solver  {
     aborted = false;
     solution = (const double *)NULL;
     matrix = (CoinPackedMatrix *)NULL;
+    col_lb = col_ub = (double *)NULL;
   }
 
   ~osi_solver();
@@ -103,9 +104,8 @@ class osi_solver: public abstract_solver  {
  private:
   bool aborted;
   const double *solution;
-  /* glp_iocp mip_params; */
-  CoinPackedVector col_lb, col_ub;
-  CoinPackedVector row_lb, row_ub;
+  double * col_lb, * col_ub;
+  vector<double> row_lb, row_ub;
   CoinPackedMatrix *matrix;
   CoinPackedVector coefficients; // intermediate line coefficients storage
                                  // (constraint being defined, or current
