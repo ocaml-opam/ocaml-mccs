@@ -4,8 +4,9 @@
  ((name      mccs_test)
   (libraries (mccs))))
 
+(rule
+  (with-stdout-to test.result (run ${exe:mccs_test.exe} ${path:test.cudf})))
+
 (alias
- ((name    runtest)
-  (deps    (mccs_test.exe test.cudf test.reference))
-  (action  (progn (with-stdout-to test.result (run ${<} test.cudf))
-                  (system "diff --ignore-trailing-space test.result test.reference")))))
+ ((name runtest)
+  (action (system "diff --ignore-trailing-space ${path:test.result} ${path:test.reference}"))))
