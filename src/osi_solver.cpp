@@ -23,8 +23,7 @@
 abstract_solver *new_osi_solver(bool use_exact) { return new osi_solver(use_exact); }
 
 int setIndex(CoinPackedVector &v, int rank, CUDFcoefficient value) {
-  if (! v.isExistingIndex(rank)) v.insert (rank, value);
-  // else v.setElement (rank, value);
+  try { v.insert (rank, value); } catch (...) {}
   return 0;
 }
 
