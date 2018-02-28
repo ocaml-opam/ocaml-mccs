@@ -54,9 +54,9 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     cp tools/msvs-promote-path $ROOT_CYG/
     cd ..
     FLEXDLL_VER=0.37
-    CPPO_VER=1.6.0
+    CPPO_VER=1.6.2
     FINDLIB_VER=1.7.3
-    JBUILDER_VER=1.0-beta16
+    DUNE_VER=1.0-beta17
     OCAMLBUILD_VER=0.12.0
     # NB CUDF URL will also need updating
     CUDF_VER=0.9
@@ -64,7 +64,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/$FLEXDLL_VER/flexdll-bin-$FLEXDLL_VER.zip" -FileName flexdll-bin-$FLEXDLL_VER.zip
     appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v$CPPO_VER.tar.gz" -FileName cppo-$CPPO_VER.tar.gz
     appveyor DownloadFile "http://download.camlcity.org/download/findlib-$FINDLIB_VER.tar.gz" -FileName findlib-$FINDLIB_VER.tar.gz
-    appveyor DownloadFile "https://github.com/janestreet/jbuilder/archive/${JBUILDER_VER/-/+}.tar.gz" -FileName jbuilder-$JBUILDER_VER.tar.gz
+    appveyor DownloadFile "https://github.com/ocaml/dune/archive/${DUNE_VER/-/+}.tar.gz" -FileName dune-$DUNE_VER.tar.gz
     appveyor DownloadFile "https://github.com/ocaml/ocamlbuild/archive/$OCAMLBUILD_VER.tar.gz" -FileName ocamlbuild-$OCAMLBUILD_VER.tar.gz
     appveyor DownloadFile "https://gforge.inria.fr/frs/download.php/file/36602/cudf-0.9.tar.gz" -FileName cudf-$CUDF_VER.tar.gz
     appveyor DownloadFile "https://github.com/ygrek/ocaml-extlib/releases/download/$EXTLIB_VER/extlib-$EXTLIB_VER.tar.gz" -FileName extlib-$EXTLIB_VER.tar.gz
@@ -127,11 +127,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   # Not yet upstreamed
   sed -i -e 's/\.a/$(LIB_SUFFIX)/g' src/findlib/Makefile
   cd ..
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/jbuilder-$JBUILDER_VER.tar.gz
-  cd jbuilder-$JBUILDER_VER
-  # Upstreamed (#353)
-  patch -p1 -i ../../../jbuilder-1.0+beta16.patch
-  cd ..
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/dune-$DUNE_VER.tar.gz
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
     tar -xzf $APPVEYOR_BUILD_FOLDER/../src/ocamlbuild-$OCAMLBUILD_VER.tar.gz
   fi
@@ -162,7 +158,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   fi
   cd ../findlib-$FINDLIB_VER
   quietly_log "./configure && make all opt && make install"
-  cd ../jbuilder-$JBUILDER_VER
+  cd ../dune-$DUNE_VER
   quietly_log "ocaml bootstrap.ml && ./boot.exe && cp _build/default/bin/main.exe $PREFIX/bin/jbuilder.exe"
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
     cd ../ocamlbuild-$OCAMLBUILD_VER
@@ -170,7 +166,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     rm $PREFIX/bin/ocamlbuild.{byte,native}.exe
   fi
   cd ../cppo-$CPPO_VER
-  quietly_log "jbuilder build @install && cp _build/install/default/bin/cppo.exe $PREFIX/bin/"
+  quietly_log "jbuilder build @install -p cppo && cp _build/install/default/bin/cppo.exe $PREFIX/bin/"
   cd ../extlib-$EXTLIB_VER
   quietly_log "make minimal=1 build install"
   cd ../cudf-$CUDF_VER
