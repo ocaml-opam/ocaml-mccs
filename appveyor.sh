@@ -53,13 +53,21 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     mkdir -p $PREFIX
     cp tools/msvs-promote-path $ROOT_CYG/
     cd ..
-    appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/0.37/flexdll-bin-0.37.zip" -FileName flexdll-bin-0.37.zip
-    appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v1.6.0.tar.gz" -FileName cppo-1.6.0.tar.gz
-    appveyor DownloadFile "http://download.camlcity.org/download/findlib-1.7.3.tar.gz" -FileName findlib-1.7.3.tar.gz
-    appveyor DownloadFile "https://github.com/janestreet/jbuilder/archive/1.0+beta16.tar.gz" -FileName jbuilder-1.0-beta16.tar.gz
-    appveyor DownloadFile "https://github.com/ocaml/ocamlbuild/archive/0.12.0.tar.gz" -FileName ocamlbuild-0.12.0.tar.gz
-    appveyor DownloadFile "https://gforge.inria.fr/frs/download.php/file/36602/cudf-0.9.tar.gz" -FileName cudf-0.9.tar.gz
-    appveyor DownloadFile "https://github.com/ygrek/ocaml-extlib/releases/download/1.7.2/extlib-1.7.2.tar.gz" -FileName extlib-1.7.2.tar.gz
+    FLEXDLL_VER=0.37
+    CPPO_VER=1.6.0
+    FINDLIB_VER=1.7.3
+    JBUILDER_VER=1.0-beta16
+    OCAMLBUILD_VER=0.12.0
+    # NB CUDF URL will also need updating
+    CUDF_VER=0.9
+    EXTLIB_VER=1.7.2
+    appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/$FLEXDLL_VER/flexdll-bin-$FLEXDLL_VER.zip" -FileName flexdll-bin-$FLEXDLL_VER.zip
+    appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v$CPPO_VER.tar.gz" -FileName cppo-$CPPO_VER.tar.gz
+    appveyor DownloadFile "http://download.camlcity.org/download/findlib-$FINDLIB_VER.tar.gz" -FileName findlib-$FINDLIB_VER.tar.gz
+    appveyor DownloadFile "https://github.com/janestreet/jbuilder/archive/${JBUILDER_VER/-/+}.tar.gz" -FileName jbuilder-$JBUILDER_VER.tar.gz
+    appveyor DownloadFile "https://github.com/ocaml/ocamlbuild/archive/$OCAMLBUILD_VER.tar.gz" -FileName ocamlbuild-$OCAMLBUILD_VER.tar.gz
+    appveyor DownloadFile "https://gforge.inria.fr/frs/download.php/file/36602/cudf-0.9.tar.gz" -FileName cudf-$CUDF_VER.tar.gz
+    appveyor DownloadFile "https://github.com/ygrek/ocaml-extlib/releases/download/$EXTLIB_VER/extlib-$EXTLIB_VER.tar.gz" -FileName extlib-$EXTLIB_VER.tar.gz
     cp $APPVEYOR_BUILD_FOLDER/appveyor/*.patch $APPVEYOR_BUILD_FOLDER/../src/
     [[ -e $PREFIX/../version ]] || echo $OCAML_VERSION-$SERIAL> $PREFIX/../version
   fi
@@ -103,7 +111,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
       *)
         MANIFEST=;;
     esac
-    unzip $APPVEYOR_BUILD_FOLDER/../src/flexdll-bin-0.37.zip flexdll_*$PORT.* flexdll.h flexlink.exe $MANIFEST
+    unzip $APPVEYOR_BUILD_FOLDER/../src/flexdll-bin-$FLEXDLL_VER.zip flexdll_*$PORT.* flexdll.h flexlink.exe $MANIFEST
     popd > /dev/null
     PRE_WORLD=
   else
@@ -112,28 +120,28 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   sed -e "s|PREFIX=[^\r]*|PREFIX=$ROOT|" config/Makefile.$PORT > config/Makefile
   msvs_promote_path $PORT
   cd ..
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/findlib-1.7.3.tar.gz
-  cd findlib-1.7.3
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/findlib-$FINDLIB_VER.tar.gz
+  cd findlib-$FINDLIB_VER
   # Upstreamed; not merged
   patch -p1 -i ../../../findlib-1.7.3.patch
   # Not yet upstreamed
   sed -i -e 's/\.a/$(LIB_SUFFIX)/g' src/findlib/Makefile
   cd ..
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/jbuilder-1.0-beta16.tar.gz
-  cd jbuilder-1.0-beta16
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/jbuilder-$JBUILDER_VER.tar.gz
+  cd jbuilder-$JBUILDER_VER
   # Upstreamed (#353)
   patch -p1 -i ../../../jbuilder-1.0+beta16.patch
   cd ..
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
-    tar -xzf $APPVEYOR_BUILD_FOLDER/../src/ocamlbuild-0.12.0.tar.gz
+    tar -xzf $APPVEYOR_BUILD_FOLDER/../src/ocamlbuild-$OCAMLBUILD_VER.tar.gz
   fi
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/cppo-1.6.0.tar.gz
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/cudf-0.9.tar.gz
-  cd cudf-0.9
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/cppo-$CPPO_VER.tar.gz
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/cudf-$CUDF_VER.tar.gz
+  cd cudf-$CUDF_VER
   # Upstreamed; not merged
   patch -p1 -i ../../../cudf-0.9.patch
   cd ..
-  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/extlib-1.7.2.tar.gz
+  tar -xzf $APPVEYOR_BUILD_FOLDER/../src/extlib-$EXTLIB_VER.tar.gz
   cd ocaml
 
   LOG_FILE=OCaml-$OCAML_VERSION-$PORT.log
@@ -152,20 +160,20 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
       mv $i ${i%.opt.exe}.exe
     done
   fi
-  cd ../findlib-1.7.3
+  cd ../findlib-$FINDLIB_VER
   quietly_log "./configure && make all opt && make install"
-  cd ../jbuilder-1.0-beta16
+  cd ../jbuilder-$JBUILDER_VER
   quietly_log "ocaml bootstrap.ml && ./boot.exe && cp _build/default/bin/main.exe $PREFIX/bin/jbuilder.exe"
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
-    cd ../ocamlbuild-0.12.0
+    cd ../ocamlbuild-$OCAMLBUILD_VER
     quietly_log "make -f configure.make all OCAMLBUILD_PREFIX=$ROOT OCAMLBUILD_BINDIR=$ROOT/bin OCAMLBUILD_LIBDIR=$(ocamlfind printconf path | cygpath -f - -m) OCAML_NATIVE=true OCAML_NATIVE_TOOLS=false && make all findlib-install"
     rm $PREFIX/bin/ocamlbuild.{byte,native}.exe
   fi
-  cd ../cppo-1.6.0
+  cd ../cppo-$CPPO_VER
   quietly_log "jbuilder build @install && cp _build/install/default/bin/cppo.exe $PREFIX/bin/"
-  cd ../extlib-1.7.2
+  cd ../extlib-$EXTLIB_VER
   quietly_log "make minimal=1 build install"
-  cd ../cudf-0.9
+  cd ../cudf-$CUDF_VER
   quietly_log "make DOC= BINDIR=$PREFIX/bin all opt install"
   # Remove unnecessary commands to keep the build cache size down
   rm $PREFIX/bin/{ocamlcp,ocamldebug,ocamldoc,ocamlmktop,ocamlobjinfo,ocamloptp,ocamlprof}.exe $PREFIX/lib/{expunge,extract_crc,objinfo_helper}.exe
