@@ -11,13 +11,13 @@ environment:
     CYG_MIRROR: http://mirrors.kernel.org/sourceware/cygwin/
     CYG_CACHE: C:/cygwin/var/cache/setup
   matrix:
-    - OCAML_VERSION: 4.06.0
+    - OCAML_VERSION: 4.06.1
       PORT: mingw
-    - OCAML_VERSION: 4.06.0
+    - OCAML_VERSION: 4.06.1
       PORT: mingw64
-    - OCAML_VERSION: 4.06.0
+    - OCAML_VERSION: 4.06.1
       PORT: msvc
-    - OCAML_VERSION: 4.06.0
+    - OCAML_VERSION: 4.06.1
       PORT: msvc64
 
 cache:
