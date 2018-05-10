@@ -14,11 +14,12 @@ The binding enables interoperation with binary CUDF data from
 [the OCaml CUDF library](https://gforge.inria.fr/projects/cudf/), and removes
 the native C++ parsers and printers from mccs.
 
-While mccs itself natively supports a wide array of underlying solvers (integer
-programming or pseudo-boolean), at the moment, the build system is set to link
-with [GLPK](https://www.gnu.org/software/glpk/) only. It's planned to extend it
-again to bring back support for lpsolve, and external lp solvers such as cplex,
-coinor-cbc or scip.
+Only the GLPK backend and the `lpsolve` interface are compiled by default, but
+that can be tuned by setting the MCCS_BACKENDS environment variable, at
+compile-time, to a space-separated list of the following: `GLPK`, `COIN`, `CLP`,
+`CBC`, `SYMPHONY`. Note that, apart from `GLPK`, you will need the corresponding
+libraries installed, the backends will be dynamically linked, and these are
+experimental may not work as expected.
 
 NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
 `mccs -h`), assuming `-lexagregate[CRITERIA]`. There are two important

@@ -5,12 +5,6 @@
 /* (c) Claude Michel I3S (UNSA-CNRS) 2009,2010,2011    */
 /*******************************************************/
 
-#define USEGLPK
-#define USECOIN
-#define USECLP
-#define USECBC
-#define USESYM
-
 // main CUDF include file
 
 #ifndef _CUDF_H
