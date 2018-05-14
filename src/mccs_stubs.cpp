@@ -711,3 +711,17 @@ extern "C" value call_solver
     CAMLreturn (Val_some(results));
   }
 }
+
+extern "C" value backends_list (value unit)
+{
+  CAMLparam1 (unit);
+  CAMLlocal1 (r);
+  r = Val_emptylist;
+  if (has_backend(GLPK)) r = Val_pair (caml_hash_variant("GLPK"), r);
+  if (has_backend(LP))
+    r = Val_pair (Val_pair (caml_hash_variant("LP"), caml_copy_string("")), r);
+  if (has_backend(CLP)) r = Val_pair (caml_hash_variant("COIN_CLP"), r);
+  if (has_backend(CBC)) r = Val_pair (caml_hash_variant("COIN_CBC"), r);
+  if (has_backend(SYMPHONY)) r = Val_pair (caml_hash_variant("COIN_SYMPHONY"), r);
+  CAMLreturn (r);
+}

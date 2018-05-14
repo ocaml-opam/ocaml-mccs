@@ -19,7 +19,10 @@ that can be tuned by setting the MCCS_BACKENDS environment variable, at
 compile-time, to a space-separated list of the following: `GLPK`, `COIN`, `CLP`,
 `CBC`, `SYMPHONY`. Note that, apart from `GLPK`, you will need the corresponding
 libraries installed, the backends will be dynamically linked, and these are
-experimental may not work as expected.
+experimental may not work as expected. Additionally, the compilation of the
+included GLPK version can be disabled by removing `src/glpk/jbuild`, and
+replaced by dynamic/static linking by renaming one of the `jbuild-shared` and
+`jbuild-static` files.
 
 NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
 `mccs -h`), assuming `-lexagregate[CRITERIA]`. There are two important

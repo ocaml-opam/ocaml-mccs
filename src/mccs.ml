@@ -63,6 +63,10 @@ external call_solver:
   solver_backend -> string -> int -> problem -> Cudf.package list option
   = "call_solver"
 
+external backends_list:
+  unit -> solver_backend list
+  = "backends_list"
+
 let problem_of_cudf cudf =
   let preamble, universe, request = cudf in
   let pb = gen_problem preamble in
@@ -95,3 +99,5 @@ let get_solver_id ?(solver=default_solver) () =
   | `COIN_SYMPHONY -> "coin/symphony"
 
 let solver_id = get_solver_id ()
+
+let supported_backends = backends_list ()

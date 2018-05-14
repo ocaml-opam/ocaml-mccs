@@ -26,3 +26,5 @@ val resolve_cudf:
 val solver_id: string
 
 val get_solver_id: ?solver:solver_backend -> unit -> string
+
+val supported_backends: solver_backend list

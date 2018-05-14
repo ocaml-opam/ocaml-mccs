@@ -425,3 +425,52 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
   ret.solution = solver;
   return ret;
 }
+
+int has_backend (Solver_backend backend) {
+  switch(backend) {
+  case LP:
+    return 1;
+  case CPLEX:
+#ifdef USECPLEX
+    return 1;
+#else
+    return 0;
+#endif
+  case GUROBI:
+#ifdef USEGUROBI
+    return 1;
+#else
+    return 0;
+#endif
+  case LPSOLVE:
+#ifdef USELPSOLVE
+    return 1;
+#else
+    return 0;
+#endif
+  case GLPK:
+#ifdef USEGLPK
+    return 1;
+#else
+    return 0;
+#endif
+  case CLP:
+#ifdef USECLP
+    return 1;
+#else
+    return 0;
+#endif
+  case CBC:
+#ifdef USECBC
+    return 1;
+#else
+    return 0;
+#endif
+  case SYMPHONY:
+#ifdef USESYM
+    return 1;
+#else
+    return 0;
+#endif
+  }
+}
