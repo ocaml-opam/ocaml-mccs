@@ -5,6 +5,7 @@
 /* (c) Claude Michel I3S (UNSA-CNRS) 2009,2010,2011    */
 /*******************************************************/
 
+#ifdef USEGLPK
 
 #ifdef _WIN32
 #include <io.h>
@@ -290,3 +291,5 @@ glpk_solver::~glpk_solver() {
   glp_delete_prob(lp);
   glp_free_env();
 }
+
+#endif // USEGLPK

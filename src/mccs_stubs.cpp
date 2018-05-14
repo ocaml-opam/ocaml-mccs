@@ -16,8 +16,12 @@
 #include <abstract_solver.h>
 #include <cudf_reductions.h>
 #include <mccscudf.h>
+#ifdef USEGLPK
 #include <glpk_solver.h>
+#endif
+#ifdef USECOIN
 #include <osi_solver.h>
+#endif
 
 #define Val_none Val_int(0)
 #define Some_val(v)  Field(v,0)

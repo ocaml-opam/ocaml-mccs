@@ -7,6 +7,7 @@
 
 // concrete class which implements an interface to COIN-OR Open Solver Interface
 // compliant solvers
+#ifdef USECOIN
 
 #ifndef _OSI_SOLVER_H
 #define _OSI_SOLVER_H
@@ -432,3 +433,4 @@ osi_solver<OsiSolver>::~osi_solver() {
 }
 
 #endif
+#endif // USECOIN

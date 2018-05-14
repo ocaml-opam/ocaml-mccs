@@ -21,7 +21,7 @@
   (c_library_flags (:standard (:include clibs.sexp)))
   (library_flags   (:standard (:include flags.sexp)))
   (wrapped         false)
-  (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _))
+  (libraries       (cudf (select _ from (mccs.glpk.internal -> _) (mccs.glpk.shared -> _) (mccs.glpk.static -> _) (-> _))
 ))))
 
 (copy_files# glpk/glpk.h)
