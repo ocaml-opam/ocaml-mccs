@@ -30,6 +30,8 @@ class lp_solver: public abstract_solver, public scoeff_solver<CUDFcoefficient, 0
   // Get the solution for a package
   CUDFcoefficient get_solution(CUDFVersionedPackage *package);
 
+  void abort();
+
   // Does the solver use integer variables
   bool has_intvars();
   // Allocate some columns for integer variables

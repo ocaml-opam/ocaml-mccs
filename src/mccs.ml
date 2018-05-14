@@ -93,7 +93,7 @@ let get_solver_id ?(solver=default_solver) () =
   "mccs+" ^
   match solver with
   | `GLPK -> "glpk"
-  | `LP cmd -> Printf.sprintf "lp+%s" cmd
+  | `LP cmd -> Printf.sprintf "lp(%s)" cmd
   | `COIN_CLP -> "coin/clp"
   | `COIN_CBC -> "coin/cbc"
   | `COIN_SYMPHONY -> "coin/symphony"

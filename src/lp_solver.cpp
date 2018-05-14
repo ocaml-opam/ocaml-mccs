@@ -232,6 +232,12 @@ int lp_solver::solve(int timeout) {
 // get objective function value
 CUDFcoefficient lp_solver::objective_value() { return objval; }
 
+void lp_solver::abort() {
+  // SIGINT is normally sent directly to the child (solver) process while it
+  // runs using system()
+  return;
+}
+
 // solution initialisation
 int lp_solver::init_solutions() { return 0; }
 
