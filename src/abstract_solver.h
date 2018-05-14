@@ -95,7 +95,7 @@ class abstract_solver {
   // ******************************************************************
   // abort should, if possible, do something which causes solve to
   // terminate.
-  virtual void abort(void) {return;}
+  virtual void abort() = 0;
 
   // ******************************************************************
   // initialisation of the solutions (called before reading them)
