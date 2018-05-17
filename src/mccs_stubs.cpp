@@ -431,20 +431,24 @@ CUDFProperties * ml2c_propertydeflist(Virtual_packages * tbl, value ml_pdeflist)
 
 Solver ml2c_solver(value ml_solver)
 {
+  Solver ret = { GLPK, NULL };
   if (Is_block(ml_solver))
-    if (Field (ml_solver, 0) == caml_hash_variant("LP"))
-      return { LP, String_val (Field (ml_solver, 1)) };
+    if (Field (ml_solver, 0) == caml_hash_variant("LP")) {
+      ret.backend = LP;
+      ret.lp_solver = String_val (Field (ml_solver, 1));
+    }
     else caml_failwith("invalid solver backend");
   else if (ml_solver == caml_hash_variant("GLPK"))
-    return { GLPK, NULL };
+    ret.backend = GLPK;
   else if (ml_solver == caml_hash_variant("COIN_CLP"))
-    return { CLP, NULL };
+    ret.backend = CLP;
   else if (ml_solver == caml_hash_variant("COIN_CBC"))
-    return { CBC, NULL };
+    ret.backend = CBC;
   else if (ml_solver == caml_hash_variant("COIN_SYMPHONY"))
-    return { SYMPHONY, NULL };
+    ret.backend = SYMPHONY;
   else
     caml_failwith("invalid solver backend");
+  return ret;
 }
 
 // get an enum from its name in an enum list
