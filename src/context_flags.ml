@@ -38,7 +38,7 @@ let clibs =
     (ifc (Config.ccomp_type = "cc") ["-lstdc++"]) @
     (ifc useCOIN ["-lCoinUtils"]) @
     (ifc useCLP  ["-lOsiClp"]) @
-    (ifc useCBC  ["-lOsiCbc"]) @
+    (ifc useCBC  ["-lOsiCbc";"-lCbc"]) @
     (ifc useSYM  ["-lgomp";"-lOsiSym"])
   in
   "(" ^ String.concat " " flags ^ ")"
