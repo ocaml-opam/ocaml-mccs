@@ -1,4 +1,4 @@
-(* usage: mccs_test CUDF_FILE [CRITERIA [SOLVER]] *)
+(* usage: mccs_test CUDF_FILE [SOLVER [CRITERIA]] *)
 
 let (preamble, universe, request) as cudf =
   match Cudf_parser.load_from_file Sys.argv.(1) with
@@ -12,12 +12,12 @@ let (preamble, universe, request) as cudf =
  *   Printf.printf "####\n\n%!" *)
 
 let criteria =
-  if Array.length Sys.argv <= 2 then "-removed,-count[version-lag,request],-count[version-lag,changed],-changed"
-  else Sys.argv.(2)
+  if Array.length Sys.argv <= 3 then "-removed,-count[version-lag,request],-count[version-lag,changed],-changed"
+  else Sys.argv.(3)
 
 let solver =
-  if Array.length Sys.argv <= 3 then `GLPK
-  else match Sys.argv.(3) with
+  if Array.length Sys.argv <= 2 then `GLPK
+  else match Sys.argv.(2) with
     | "glpk" -> `GLPK
     | "coin" -> `COIN_CBC
     | "coin/clp" -> `COIN_CLP
