@@ -164,6 +164,18 @@ opam-version: 0.15.4
 opam-name: conduit
 version-lag: 1
 
+package: ppx%5fderiving
+version: 13
+depends: ocamlbuild , ocamlfind >= 16 , cppo , cppo%5focamlbuild , ocaml-migrate-parsetree , ppx%5fderivers , ppx%5ftools >= 6 , result
+conflicts: ppx%5fderiving
+installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 4.2.1
+opam-name: ppx_deriving
+
 package: cohttp
 version: 47
 depends: base-bytes , ocamlfind , ocamlbuild , cmdliner >= 4 , re , uri >= 19 , fieldslib , sexplib , conduit >= 22 , conduit < 34 , ppx%5ffields%5fconv , ppx%5fderiving , ppx%5fsexp%5fconv , stringext , base64 >= 3 , magic-mime , fmt , logs , lwt
@@ -227,18 +239,6 @@ installed-root: false
 reinstall: false
 opam-version: 1.0+beta16
 opam-name: jbuilder
-
-package: ppx%5fderiving
-version: 11
-depends: ocamlbuild , ocamlfind >= 16 , cppo , cppo%5focamlbuild , ppx%5ftools >= 6 , result
-conflicts: ppx%5fderiving
-installed: true
-pinned: false
-installed-root: false
-reinstall: false
-opam-version: 4.1.5
-opam-name: ppx_deriving
-version-lag: 1
 
 package: ipaddr
 version: 14
@@ -380,6 +380,18 @@ installed-root: false
 reinstall: false
 opam-version: 1.2
 opam-name: result
+
+package: ppx%5fderivers
+version: 1
+depends: jbuilder >= 7
+conflicts: ppx%5fderivers
+installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0
+opam-name: ppx_derivers
 
 package: zed
 version: 5

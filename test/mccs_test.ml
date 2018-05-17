@@ -12,7 +12,7 @@ let (preamble, universe, request) as cudf =
  *   Printf.printf "####\n\n%!" *)
 
 let criteria =
-  if Array.length Sys.argv <= 2 then "-removed,-changed"
+  if Array.length Sys.argv <= 2 then "-removed,-count[version-lag,request],-count[version-lag,changed],-changed"
   else Sys.argv.(2)
 
 let solver =
