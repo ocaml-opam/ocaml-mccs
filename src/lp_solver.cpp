@@ -9,7 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #define CLEAN_FILES 1
 #define TMP_FILES_PATH "/tmp/"
