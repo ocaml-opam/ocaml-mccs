@@ -3,7 +3,7 @@
 TERM=st
 
 # Increment whenever the OCaml version or a package is updated to invalidate the caches
-SERIAL=1
+SERIAL=2
 
 ROOT=C:/OCaml
 ROOT_CYG=$(echo $ROOT| cygpath -f -)
@@ -56,7 +56,7 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     FLEXDLL_VER=0.37
     CPPO_VER=1.6.2
     FINDLIB_VER=1.7.3
-    DUNE_VER=1.0-beta17
+    DUNE_VER=1.0-beta20
     OCAMLBUILD_VER=0.12.0
     # NB CUDF URL will also need updating
     CUDF_VER=0.9
