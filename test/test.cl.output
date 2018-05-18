@@ -1,0 +1,730 @@
+
+## SOLUTION ##
+preamble: 
+property: version-lag: nat = [0], pinned: bool = [false], installed-root: bool = [false], reinstall: bool = [false], opam-version: string, opam-name: string
+
+package: ppx.ast
+version: 3
+depends: jbuilder >= 2 , ocaml.compiler.libs >= 1 , ocaml.compiler.libs < 3 , ocaml.migrate.parsetree >= 6
+conflicts: ppx.ast
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.2
+opam-name: ppx_ast
+
+package: ppx.type.conv
+version: 13
+depends: jbuilder >= 4 , ppx.core >= 11 , ppx.core < 15 , ppx.driver >= 13 , ppx.driver < 17 , ppx.metaquot >= 1 , ppx.metaquot < 3 , ocaml.migrate.parsetree >= 1
+conflicts: ppx.type.conv , ppx.deriving < 10
+installed: true
+was-installed: true
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_type_conv
+version-lag: 1
+
+package: camomile
+version: 4
+depends: jbuilder >= 7 , cppo , base.bytes
+conflicts: camomile
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.8.7
+opam-name: camomile
+
+package: magic.mime
+version: 4
+depends: jbuilder >= 9
+conflicts: magic.mime
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.1.0
+opam-name: magic-mime
+
+package: owee
+version: 2
+depends: ocamlfind
+conflicts: owee
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.2
+opam-name: owee
+
+package: topkg
+version: 12
+depends: ocamlfind >= 17 , ocamlbuild , result
+conflicts: topkg
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.9.1
+opam-name: topkg
+
+package: fieldslib
+version: 26
+depends: base >= 1 , base < 6 , jbuilder >= 4 , ppx.driver >= 13 , ppx.driver < 17 , ocaml.migrate.parsetree >= 1
+conflicts: fieldslib
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: fieldslib
+
+package: base64
+version: 5
+depends: base.bytes , jbuilder >= 10
+conflicts: base64
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 2.2.0
+opam-name: base64
+
+package: base.bytes
+version: 1
+depends: ocamlfind >= 12
+conflicts: base.bytes
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: base
+opam-name: base-bytes
+
+package: ppx.traverse.builtins
+version: 2
+depends: jbuilder >= 4
+conflicts: ppx.traverse.builtins
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_traverse_builtins
+
+package: ppx.core
+version: 13
+depends: base >= 5 , base < 6 , jbuilder >= 2 , ocaml.compiler.libs >= 1 , ocaml.compiler.libs < 3 , ppx.ast >= 3 , ppx.ast < 4 , ppx.traverse.builtins >= 1 , ppx.traverse.builtins < 3 , stdio >= 3 , stdio < 4
+conflicts: ppx.core
+installed: true
+was-installed: true
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.2
+opam-name: ppx_core
+version-lag: 1
+
+package: base.unix
+version: 1
+conflicts: base.unix
+installed: true
+was-installed: true
+keep: version
+version-lag: 0
+pinned: false
+reinstall: false
+opam-version: base
+opam-name: base-unix
+installed-root: true
+
+package: raw.spacetime
+version: 1
+depends: ocamlfind >= 20
+conflicts: raw.spacetime
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: base
+opam-name: raw_spacetime
+
+package: ppx.optcomp
+version: 12
+depends: jbuilder >= 4 , ppx.core >= 11 , ppx.core < 15
+conflicts: ppx.optcomp
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_optcomp
+
+package: ppx.sexp.conv
+version: 14
+depends: jbuilder >= 4 , ppx.core >= 11 , ppx.core < 15 , ppx.driver >= 13 , ppx.driver < 17 , ppx.metaquot >= 1 , ppx.metaquot < 3 , ppx.type.conv >= 12 , ppx.type.conv < 15 , sexplib >= 51 , sexplib < 55 , ocaml.migrate.parsetree >= 1
+conflicts: ppx.sexp.conv
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_sexp_conv
+
+package: jsonm
+version: 3
+depends: ocamlfind , ocamlbuild , topkg , uchar , uutf >= 2
+conflicts: jsonm
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.1
+opam-name: jsonm
+
+package: ppx.driver
+version: 16
+depends: jbuilder >= 7 , ppx.core >= 13 , ppx.core < 15 , ppx.optcomp >= 11 , ppx.optcomp < 13 , ocaml.migrate.parsetree >= 4 , ocamlbuild
+conflicts: ppx.driver
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.2
+opam-name: ppx_driver
+
+package: jbuilder
+version: 16
+depends: ocamlfind
+conflicts: jbuilder
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0+beta16
+opam-name: jbuilder
+
+package: ppx.metaquot
+version: 2
+depends: jbuilder >= 4 , ppx.core >= 11 , ppx.core < 15 , ppx.driver >= 13 , ppx.driver < 17 , ppx.traverse.builtins >= 1 , ppx.traverse.builtins < 3 , ocaml.migrate.parsetree >= 1
+conflicts: ppx.metaquot
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_metaquot
+
+package: ipaddr
+version: 14
+depends: jbuilder >= 7 , base.bytes , ppx.sexp.conv >= 14 , base.unix
+conflicts: ipaddr
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 2.8.0
+opam-name: ipaddr
+
+package: stringext
+version: 11
+depends: jbuilder >= 10 , base.bytes
+conflicts: stringext
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.5.0
+opam-name: stringext
+
+package: ocaml.migrate.parsetree
+version: 7
+depends: result , ocamlfind , jbuilder >= 10
+conflicts: ocaml.migrate.parsetree
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.7
+opam-name: ocaml-migrate-parsetree
+
+package: lwt.react
+version: 3
+depends: jbuilder >= 10 , lwt >= 22 , react >= 1
+conflicts: lwt.react
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.1.0
+opam-name: lwt_react
+
+package: base.threads
+version: 1
+conflicts: base.threads
+installed: true
+was-installed: true
+keep: version
+version-lag: 0
+pinned: false
+reinstall: false
+opam-version: base
+opam-name: base-threads
+installed-root: true
+
+package: ppx.fields.conv
+version: 9
+depends: fieldslib >= 25 , fieldslib < 27 , jbuilder >= 4 , ppx.core >= 11 , ppx.core < 15 , ppx.driver >= 13 , ppx.driver < 17 , ppx.metaquot >= 1 , ppx.metaquot < 3 , ppx.type.conv >= 12 , ppx.type.conv < 15 , ocaml.migrate.parsetree >= 1
+conflicts: ppx.fields.conv
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ppx_fields_conv
+
+package: cppo
+version: 15
+depends: jbuilder >= 10 , base.bytes , base.unix
+conflicts: cppo
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.6.0
+opam-name: cppo
+
+package: base
+version: 5
+depends: jbuilder >= 7 , sexplib >= 54 , sexplib < 55
+conflicts: base
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.4
+opam-name: base
+
+package: conduit
+version: 36
+depends: jbuilder >= 9 , ppx.sexp.conv , sexplib , uri , result , astring , logs >= 2 , ipaddr >= 10
+conflicts: conduit
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.0
+opam-name: conduit
+
+package: react
+version: 2
+depends: ocamlfind , ocamlbuild , topkg >= 11
+conflicts: react
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.2.1
+opam-name: react
+
+package: result
+version: 3
+conflicts: result
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.2
+opam-name: result
+
+package: conduit.lwt
+version: 1
+depends: base.unix , jbuilder >= 9 , ppx.sexp.conv , conduit >= 36 , lwt >= 22
+conflicts: conduit.lwt
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.0
+opam-name: conduit-lwt
+
+package: conf.m4
+version: 1
+conflicts: conf.m4
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1
+opam-name: conf-m4
+
+package: zed
+version: 5
+depends: jbuilder >= 9 , base.bytes , camomile >= 1 , react
+conflicts: zed
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.6
+opam-name: zed
+
+package: biniou
+version: 4
+depends: conf.which , jbuilder , easy.format
+conflicts: biniou
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.2.0
+opam-name: biniou
+
+package: re
+version: 14
+depends: ocamlfind , ocamlbuild , base.bytes
+conflicts: re
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.7.1
+opam-name: re
+
+package: sexplib
+version: 54
+depends: jbuilder >= 10 , num
+conflicts: sexplib
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.3
+opam-name: sexplib
+
+package: astring
+version: 2
+depends: ocamlfind , ocamlbuild , topkg
+conflicts: astring
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.8.3
+opam-name: astring
+
+package: uri
+version: 23
+depends: base.bytes , ocamlfind , jbuilder >= 7 , ppx.sexp.conv >= 14 , re , sexplib >= 52 , stringext >= 7
+conflicts: uri
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.9.5
+opam-name: uri
+
+package: logs
+version: 4
+depends: ocamlfind , ocamlbuild , topkg , result , lwt , cmdliner , fmt
+conflicts: logs , cmdliner < 8
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.6.2
+opam-name: logs
+
+package: uchar
+version: 1
+depends: ocamlbuild
+conflicts: uchar
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.0.2
+opam-name: uchar
+
+package: lwt
+version: 23
+depends: cppo >= 4 , jbuilder >= 10 , ocamlfind >= 9 , ocaml.migrate.parsetree , ppx.tools.versioned , result , base.unix , base.threads
+conflicts: lwt
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 3.1.0
+opam-name: lwt
+
+package: conduit.lwt.unix
+version: 2
+depends: base.unix , jbuilder >= 9 , ppx.sexp.conv , conduit.lwt , lwt >= 22 , uri >= 22 , ipaddr >= 14
+conflicts: conduit.lwt.unix , tls < 12
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.2
+opam-name: conduit-lwt-unix
+
+package: ocaml.compiler.libs
+version: 2
+depends: jbuilder >= 4
+conflicts: ocaml.compiler.libs
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.0
+opam-name: ocaml-compiler-libs
+
+package: ppx.tools.versioned
+version: 5
+depends: ocamlfind >= 9 , ocaml.migrate.parsetree >= 3
+conflicts: ppx.tools.versioned
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 5.0.1
+opam-name: ppx_tools_versioned
+
+package: fmt
+version: 6
+depends: ocamlfind , ocamlbuild , topkg >= 11 , result , uchar , cmdliner , base.unix
+conflicts: fmt , cmdliner < 8
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.8.4
+opam-name: fmt
+
+package: easy.format
+version: 5
+depends: jbuilder
+conflicts: easy.format
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.3.0
+opam-name: easy-format
+
+package: base.bigarray
+version: 1
+conflicts: base.bigarray
+installed: true
+was-installed: true
+keep: version
+version-lag: 0
+pinned: false
+reinstall: false
+opam-version: base
+opam-name: base-bigarray
+installed-root: true
+
+package: lambda.term
+version: 6
+depends: lwt >= 20 , react , zed >= 1 , camomile , lwt.react , jbuilder >= 9
+conflicts: lambda.term
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.12.0
+opam-name: lambda-term
+
+package: conf.which
+version: 1
+conflicts: conf.which
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1
+opam-name: conf-which
+
+package: num
+version: 3
+depends: ocamlfind >= 22
+conflicts: num , base.num
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.1
+opam-name: num
+
+package: ocamlbuild
+version: 6
+conflicts: ocamlbuild , base.ocamlbuild , ocamlfind < 18
+installed: true
+was-installed: true
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 0.11.0
+opam-name: ocamlbuild
+version-lag: 1
+
+package: cmdliner
+version: 12
+depends: ocamlfind , ocamlbuild , topkg , result
+conflicts: cmdliner
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.2
+opam-name: cmdliner
+
+package: yojson
+version: 10
+depends: jbuilder , cppo , easy.format , biniou >= 4
+conflicts: yojson
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.4.0
+opam-name: yojson
+
+package: ocamlfind
+version: 22
+depends: conf.m4
+conflicts: ocamlfind
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.7.3
+opam-name: ocamlfind
+
+package: uutf
+version: 3
+depends: ocamlfind , ocamlbuild , topkg , uchar , cmdliner
+conflicts: uutf , cmdliner < 6
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: 1.0.1
+opam-name: uutf
+
+package: stdio
+version: 3
+depends: base >= 5 , base < 6 , jbuilder >= 2
+conflicts: stdio
+installed: true
+was-installed: true
+version-lag: 0
+pinned: false
+installed-root: false
+reinstall: false
+opam-version: v0.9.1
+opam-name: stdio
+
+####

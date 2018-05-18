@@ -2,7 +2,7 @@
 
 case $TRAVIS_OS_NAME in
   linux)
-    sudo apt-get install coinor-libclp-dev coinor-libcbc-dev coinor-libsymphony-dev
+    sudo apt-get install coinor-libclp-dev coinor-libcbc-dev coinor-libsymphony-dev mccs
     ;;
   osx)
     brew install diffutils

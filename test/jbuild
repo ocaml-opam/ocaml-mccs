@@ -4,9 +4,13 @@
  ((name      mccs_test)
   (libraries (mccs))))
 
+(include jbuild.inc)
+
 (rule
-  (with-stdout-to test.result (run ${exe:mccs_test.exe} ${path:test.cudf})))
+ ((targets (jbuild.inc.gen))
+  (deps    (gen_tests.ml (universe)))
+  (action  (with-stdout-to ${@} (run ocaml gen_tests.ml)))))
 
 (alias
- ((name runtest)
-  (action (system "diff --ignore-trailing-space ${path:test.result} ${path:test.reference}"))))
+ ((name   settests)
+  (action (diff jbuild.inc jbuild.inc.gen))))
