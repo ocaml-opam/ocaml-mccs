@@ -18,7 +18,7 @@
 #define CLEAN_FILES 1
 #ifdef _WIN32
 #define TMP_FILES_PATH temp_files_path
-static char temp_files_path[MAX_PATH+1] = NULL;
+static char temp_files_path[MAX_PATH+1];
 #else
 #define TMP_FILES_PATH "/tmp/"
 #endif
@@ -134,10 +134,14 @@ int lp_solver::solve() {
     fclose(lpfile);
 
     if (verbosity < 2)
+#ifdef _WIN32
+      sprintf(command, "cat %s >> %s && %s %s > %s 2> nul",
+#else
       sprintf(command, "cat %s >> %s; %s %s > %s 2> /dev/null",
+#endif
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
     else
-      sprintf(command, "cat %s >> %s; %s %s | tee %s",
+      sprintf(command, "cat %s >> %s && %s %s | tee %s",
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
 
     if (system(command) == -1) {
