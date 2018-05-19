@@ -42,6 +42,8 @@ set PATH=C:\OCaml\%OCAML_VERSION%\%PORT%\bin;%PATH%
 if "%PORT%" equ "mingw" set PATH=%CYG_ROOT%\usr\i686-w64-mingw32\sys-root\mingw\bin;%PATH%
 if "%PORT%" equ "mingw64" set PATH=%CYG_ROOT%\usr\x86_64-w64-mingw32\sys-root\mingw\bin;%PATH%
 
+set MCCS_LPSOLVER=%APPVEYOR_BUILD_FOLDER%\_build\default\test\cbclp.exe
+
 goto :EOF
 
 :SaveVars

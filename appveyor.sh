@@ -61,6 +61,8 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     # NB CUDF URL will also need updating
     CUDF_VER=0.9
     EXTLIB_VER=1.7.4
+    CBC_VER=2.9.9
+    appveyor DownloadFile "https://bintray.com/coin-or/download/download_file?file_path=Cbc-$CBC_VER-win32-msvc14.zip" -FileName Cbc-$CBC_VER-win32-msvc14.zip
     appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/$FLEXDLL_VER/flexdll-bin-$FLEXDLL_VER.zip" -FileName flexdll-bin-$FLEXDLL_VER.zip
     appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v$CPPO_VER.tar.gz" -FileName cppo-$CPPO_VER.tar.gz
     appveyor DownloadFile "http://download.camlcity.org/download/findlib-$FINDLIB_VER.tar.gz" -FileName findlib-$FINDLIB_VER.tar.gz
@@ -173,6 +175,10 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   quietly_log "make minimal=1 build install"
   cd ../cudf-$CUDF_VER
   quietly_log "make DOC= BINDIR=$PREFIX/bin all opt install"
+  pushd $PREFIX > /dev/null
+  unzip $APPVEYOR_BUILD_FOLDER/../src/Cbc-$CBC_VER-win32-msvc14.zip bin/cbc.exe
+  chmod +x bin/cbc.exe
+  popd > /dev/null
   # Remove unnecessary commands to keep the build cache size down
   rm $PREFIX/bin/{ocamlcp,ocamldebug,ocamldoc,ocamlmktop,ocamlobjinfo,ocamloptp,ocamlprof}.exe $PREFIX/lib/{expunge,extract_crc,objinfo_helper}.exe
   # Remove unnecessary files

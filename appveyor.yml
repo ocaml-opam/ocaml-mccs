@@ -28,8 +28,10 @@ install:
 
 build_script:
   - jbuilder build
+  - jbuilder build test/cbclp.exe
 
 test_script:
+  - jbuilder build @settests --auto-promote || ver>nul
   - jbuilder runtest
 
 # Uncomment this to enable Remote Desktop on the build worker at the end of the
