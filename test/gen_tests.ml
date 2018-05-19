@@ -56,7 +56,9 @@ let () =
   then test "glpk" ();
   if List.mem "SYMPHONY" backends
   then test "symphony" ~solver:"coin/symphony" ();
+  (* These backends aren't stable enough for CI yet...
   if List.mem "CLP" backends
   then test "clp" ~solver:"coin/clp" ~ignore:"Clp0032I" ~ref:".cl" ();
   if List.mem "CBC" backends
   then test "cbc" ~solver:"coin/cbc" ~ignore:"'Coin3007W\\|Clp0032I'" ~ref:".cl" ()
+  *)
