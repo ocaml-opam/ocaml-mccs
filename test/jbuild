@@ -2,7 +2,13 @@
 
 (executable
  ((name      mccs_test)
+  (modules   (mccs_test))
   (libraries (mccs))))
+
+(executable
+ ((name      cbclp)
+  (modules   (cbclp))
+  (libraries (unix))))
 
 (include jbuild.inc)
 
