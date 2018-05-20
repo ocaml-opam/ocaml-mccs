@@ -66,7 +66,7 @@ goto :EOF
 
 :UpgradeCygwin
 if "%CYGWIN_INSTALL_PACKAGES%" neq "" "%CYG_ROOT%\setup-x86_64.exe" --quiet-mode --no-shortcuts --no-startmenu --no-desktop --only-site --root "%CYG_ROOT%" --site "%CYG_MIRROR%" --local-package-dir "%CYG_CACHE%" --packages %CYGWIN_INSTALL_PACKAGES:~1% > nul
-for %%P in (%CYGWIN_COMMANDS%) do "%CYG_ROOT%\bin\%%P.exe" --version > nul || set CYGWIN_UPGRADE_REQUIRED=1
+for %%P in (%CYGWIN_COMMANDS%) do "%CYG_ROOT%\bin\%%P.exe" --version > nul 2>&1 || "%CYG_ROOT%\bin\%%P.exe" -v > nul 2>&1 || set CYGWIN_UPGRADE_REQUIRED=1
 "%CYG_ROOT%\bin\bash.exe" -lc "cygcheck -dc %CYGWIN_PACKAGES%"
 if %CYGWIN_UPGRADE_REQUIRED% equ 1 (
   echo Cygwin package upgrade required - please go and drink coffee
