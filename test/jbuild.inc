@@ -4,7 +4,7 @@
   (with-stdout-to test-glpk.result (run ${exe:mccs_test.exe} ${path:test.cudf})))
 
 (rule
-  (with-stdout-to test.glpk.reference (progn (cat ${path:test.glpk}) (cat ${path:test.output}))))
+  (with-stdout-to test.glpk.reference (cat ${path:test.output})))
 
 (alias
  ((name runtest)

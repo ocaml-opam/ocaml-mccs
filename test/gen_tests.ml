@@ -22,23 +22,26 @@ let test name ?solver ?ignore ?(ref="") () =
     | None ->
         Printf.printf "
 (rule
-  (with-stdout-to test-%s.result (run ${exe:mccs_test.exe} ${path:test.cudf}%s)))\n" name solver
+  (with-stdout-to test-%s.result (run ${exe:mccs_test.exe} ${path:test.cudf}%s)))
+
+(rule
+  (with-stdout-to test.%s.reference (cat ${path:test%s.output})))" name solver name ref
     | Some ignore ->
         Printf.printf "
 (rule
   (with-stdout-to test-%s.raw (run ${exe:mccs_test.exe} ${path:test.cudf}%s)))
 
 (rule
-  (with-stdout-to test-%s.result (system \"grep -v %s ${path:test-%s.raw}\")))\n" name solver name ignore name
-  in
-  Printf.printf "\
+  (with-stdout-to test-%s.result (system \"grep -v %s ${path:test-%s.raw}\")))
 
 (rule
-  (with-stdout-to test.%s.reference (progn (cat ${path:test.%s}) (cat ${path:test%s.output}))))
+  (with-stdout-to test.%s.reference (progn (cat ${path:test.%s}) (cat ${path:test%s.output}))))" name solver name ignore name name name ref
+  in
+  Printf.printf "
 
 (alias
  ((name runtest)
-  (action (system \"diff --ignore-trailing-space ${path:test-%s.result} ${path:test.%s.reference}\"))))\n" name name ref name name
+  (action (system \"diff --ignore-trailing-space ${path:test-%s.result} ${path:test.%s.reference}\"))))\n" name name
 
 let () =
   print_endline "; This file is generated using `MCCS_BACKENDS=jbuilder build @settests --auto-promote`";
@@ -52,7 +55,7 @@ let () =
   if List.mem "GLPK" backends
   then test "glpk" ();
   if List.mem "SYMPHONY" backends
-  then test "symphony" ~solver:"coin/symphony" ~ignore:"Time" ();
+  then test "symphony" ~solver:"coin/symphony" ();
   if List.mem "CLP" backends
   then test "clp" ~solver:"coin/clp" ~ignore:"Clp0032I" ~ref:".cl" ();
   if List.mem "CBC" backends

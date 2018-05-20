@@ -28,7 +28,7 @@ let solver =
     | s -> Printf.ksprintf failwith "Unknown solver %s" s
 
 let solve () =
-  Mccs.resolve_cudf ~solver ~verbose:true criteria cudf
+  Mccs.resolve_cudf ~solver criteria cudf
 
 let () =
   try
