@@ -265,7 +265,7 @@ int lp_solver::solve() {
 
 int lp_solver::solve(int timeout) {
   // warning: timeout unimplemented
-  solve();
+  return solve();
 }
 // get objective function value
 CUDFcoefficient lp_solver::objective_value() { return objval; }
