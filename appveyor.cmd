@@ -1,7 +1,7 @@
 @rem Do not call setlocal!
 @echo off
 
-set Path=C:\cygwin\bin;%Path%
+set Path=%CYG_ROOT%\bin;%Path%
 set OCAML_PREV_PATH=%PATH%
 set OCAML_PREV_LIB=%LIB%
 set OCAML_PREV_INCLUDE=%INCLUDE%
@@ -11,8 +11,8 @@ rem in the list just so that the Cygwin version is always displayed on the log).
 rem CYGWIN_COMMANDS is a corresponding command to run with --version to test
 rem whether the package works. This is used to verify whether the installation
 rem needs upgrading.
-set CYGWIN_PACKAGES=cygwin make diffutils
-set CYGWIN_COMMANDS=cygcheck make diff
+set CYGWIN_PACKAGES=cygwin make diffutils unzip patch
+set CYGWIN_COMMANDS=cygcheck make diff unzip patch
 
 if "%PORT%" equ "mingw" (
   set CYGWIN_PACKAGES=%CYGWIN_PACKAGES% mingw64-i686-gcc-core
@@ -39,8 +39,8 @@ if errorlevel 1 exit /b 1
 
 set PATH=C:\OCaml\%OCAML_VERSION%\%PORT%\bin;%PATH%
 
-if "%PORT%" equ "mingw" set PATH=C:\cygwin\usr\i686-w64-mingw32\sys-root\mingw\bin;%PATH%
-if "%PORT%" equ "mingw64" set PATH=C:\cygwin\usr\x86_64-w64-mingw32\sys-root\mingw\bin;%PATH%
+if "%PORT%" equ "mingw" set PATH=%CYG_ROOT%\usr\i686-w64-mingw32\sys-root\mingw\bin;%PATH%
+if "%PORT%" equ "mingw64" set PATH=%CYG_ROOT%\usr\x86_64-w64-mingw32\sys-root\mingw\bin;%PATH%
 
 goto :EOF
 
