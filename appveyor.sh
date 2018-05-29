@@ -3,7 +3,7 @@
 TERM=st
 
 # Increment whenever the OCaml version or a package is updated to invalidate the caches
-SERIAL=1
+SERIAL=2
 
 ROOT=C:/OCaml
 ROOT_CYG=$(echo $ROOT| cygpath -f -)
@@ -54,13 +54,15 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     cp tools/msvs-promote-path $ROOT_CYG/
     cd ..
     FLEXDLL_VER=0.37
-    CPPO_VER=1.6.2
-    FINDLIB_VER=1.7.3
-    DUNE_VER=1.0-beta17
+    CPPO_VER=1.6.4
+    FINDLIB_VER=1.8.0
+    DUNE_VER=1.0-beta20
     OCAMLBUILD_VER=0.12.0
     # NB CUDF URL will also need updating
     CUDF_VER=0.9
-    EXTLIB_VER=1.7.2
+    EXTLIB_VER=1.7.4
+    CBC_VER=2.9.9
+    appveyor DownloadFile "https://bintray.com/coin-or/download/download_file?file_path=Cbc-$CBC_VER-win32-msvc14.zip" -FileName Cbc-$CBC_VER-win32-msvc14.zip
     appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/$FLEXDLL_VER/flexdll-bin-$FLEXDLL_VER.zip" -FileName flexdll-bin-$FLEXDLL_VER.zip
     appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v$CPPO_VER.tar.gz" -FileName cppo-$CPPO_VER.tar.gz
     appveyor DownloadFile "http://download.camlcity.org/download/findlib-$FINDLIB_VER.tar.gz" -FileName findlib-$FINDLIB_VER.tar.gz
@@ -122,8 +124,6 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   cd ..
   tar -xzf $APPVEYOR_BUILD_FOLDER/../src/findlib-$FINDLIB_VER.tar.gz
   cd findlib-$FINDLIB_VER
-  # Upstreamed; not merged
-  patch -p1 -i ../../../findlib-1.7.3.patch
   # Not yet upstreamed
   sed -i -e 's/\.a/$(LIB_SUFFIX)/g' src/findlib/Makefile
   cd ..
@@ -138,6 +138,10 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   patch -p1 -i ../../../cudf-0.9.patch
   cd ..
   tar -xzf $APPVEYOR_BUILD_FOLDER/../src/extlib-$EXTLIB_VER.tar.gz
+  cd extlib-$EXTLIB_VER
+  # Fixed upstream but not yet released
+  patch -p1 -i ../../../extlib-1.7.4.patch
+  cd ..
   cd ocaml
 
   LOG_FILE=OCaml-$OCAML_VERSION-$PORT.log
@@ -171,6 +175,10 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   quietly_log "make minimal=1 build install"
   cd ../cudf-$CUDF_VER
   quietly_log "make DOC= BINDIR=$PREFIX/bin all opt install"
+  pushd $PREFIX > /dev/null
+  unzip $APPVEYOR_BUILD_FOLDER/../src/Cbc-$CBC_VER-win32-msvc14.zip bin/cbc.exe
+  chmod +x bin/cbc.exe
+  popd > /dev/null
   # Remove unnecessary commands to keep the build cache size down
   rm $PREFIX/bin/{ocamlcp,ocamldebug,ocamldoc,ocamlmktop,ocamlobjinfo,ocamloptp,ocamlprof}.exe $PREFIX/lib/{expunge,extract_crc,objinfo_helper}.exe
   # Remove unnecessary files

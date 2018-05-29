@@ -3,3 +3,7 @@
 
 appveyor.sh text eol=lf
 appveyor/*.patch text eol=lf
+
+# This is neater than having to put all the line-endings manually
+# in the generated jbuild fragments
+test/gen_tests.ml text eol=lf

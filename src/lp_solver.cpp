@@ -9,10 +9,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 #define CLEAN_FILES 1
+#ifdef _WIN32
+#define TMP_FILES_PATH temp_files_path
+static char temp_files_path[MAX_PATH+1];
+#else
 #define TMP_FILES_PATH "/tmp/"
+#endif
+
+static unsigned long pid = 0;
+static unsigned long uid = 0;
 
 // external function for solver creation
 abstract_solver *new_lp_solver(char *lpsolver) { return new lp_solver(lpsolver); }
@@ -33,9 +45,31 @@ int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int
   lb = (CUDFcoefficient *)malloc(nb_vars*sizeof(CUDFcoefficient));
   ub = (CUDFcoefficient *)malloc(nb_vars*sizeof(CUDFcoefficient));
 
+#ifdef _WIN32
+  // GetTempPath's output includes a terminating slash
+  if (!GetTempPath(MAX_PATH + 1, temp_files_path)) {
+    fprintf(stderr, "lp_solver: unable to determine TEMP directory.\n");
+    exit(-1);
+  }
+#endif
+
+#ifndef _WIN32
+  if (!uid) {
+    uid = (unsigned long)getuid();
+  }
+#endif
+
+  if (!pid) {
+#ifdef _WIN32
+    pid = GetCurrentProcessId();
+#else
+    pid = (unsigned long)getpid();
+#endif
+  }
+
   for (int i = 0; i < nb_vars; i++) { lb[i] = 0; ub[i] = 1; }
 
-  sprintf(ctlpfilename, TMP_FILES_PATH "ctlp_%lu_%lu.lp", (long unsigned)getuid(), (long unsigned)getpid());
+  sprintf(ctlpfilename, "%sctlp_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
   ctlpfile = fopen(ctlpfilename, "w");
 
   if ((solution == (CUDFcoefficient *)NULL) ||
@@ -62,8 +96,8 @@ int lp_solver::solve() {
   CUDFcoefficient objvals[20];
   unsigned int nb_objectives = objectives.size();
 
-  sprintf(lpfilename, TMP_FILES_PATH "lppbs_%lu_%lu.lp", (long unsigned)getuid(), (long unsigned)getpid());
-  sprintf(lpoutfilename, TMP_FILES_PATH "lppbs_%lu_%lu.out", (long unsigned)getuid(), (long unsigned)getpid());
+  sprintf(lpfilename, "%slppbs_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
+  sprintf(lpoutfilename, "%slppbs_%lu_%lu.out", TMP_FILES_PATH, uid, pid);
 
   for (unsigned int iobj = 0; iobj < nb_objectives; iobj++) {
     if (objectives[iobj]->nb_coeffs == 0) continue;
@@ -100,10 +134,14 @@ int lp_solver::solve() {
     fclose(lpfile);
 
     if (verbosity < 2)
+#ifdef _WIN32
+      sprintf(command, "cat %s >> %s && %s %s > %s 2> nul",
+#else
       sprintf(command, "cat %s >> %s; %s %s > %s 2> /dev/null",
+#endif
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
     else
-      sprintf(command, "cat %s >> %s; %s %s | tee %s",
+      sprintf(command, "cat %s >> %s && %s %s | tee %s",
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
 
     if (system(command) == -1) {
@@ -227,7 +265,7 @@ int lp_solver::solve() {
 
 int lp_solver::solve(int timeout) {
   // warning: timeout unimplemented
-  solve();
+  return solve();
 }
 // get objective function value
 CUDFcoefficient lp_solver::objective_value() { return objval; }

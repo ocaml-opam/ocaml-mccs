@@ -472,5 +472,7 @@ int has_backend (Solver_backend backend) {
 #else
     return 0;
 #endif
+  default:
+    return 0;
   }
 }

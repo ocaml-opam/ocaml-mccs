@@ -7,7 +7,7 @@ clone_depth: 1
 
 environment:
   global:
-    CYG_ROOT: C:/cygwin
+    CYG_ROOT: C:\cygwin64
     CYG_MIRROR: http://mirrors.kernel.org/sourceware/cygwin/
     CYG_CACHE: C:/cygwin/var/cache/setup
   matrix:
@@ -28,6 +28,13 @@ install:
 
 build_script:
   - jbuilder build
+  - jbuilder build test/cbclp.exe
 
 test_script:
+  - jbuilder build @settests --auto-promote || ver>nul
   - jbuilder runtest
+
+# Uncomment this to enable Remote Desktop on the build worker at the end of the
+# build. The worker is available for the remainder of the allocated hour.
+#on_finish:
+#    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
