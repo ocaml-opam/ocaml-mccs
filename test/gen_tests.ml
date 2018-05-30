@@ -17,6 +17,14 @@ let test name ?solver ?ignore ?(ref="") () =
     | None -> ""
     | Some solver -> Printf.sprintf " \"%s\"" solver
   in
+  let ignore_eol =
+    (* This means that an LF check-out on Windows won't cause a problem with
+       CRLF output from the test program. Assume GNU diff present on Windows. *)
+    if Sys.win32 || Sys.cygwin then
+      "--ignore-trailing-space "
+    else
+      ""
+  in
   let () =
     match ignore with
     | None ->
@@ -41,7 +49,7 @@ let test name ?solver ?ignore ?(ref="") () =
 
 (alias
  ((name runtest)
-  (action (system \"diff --ignore-trailing-space ${path:test-%s.result} ${path:test.%s.reference}\"))))\n" name name
+  (action (system \"diff %s${path:test-%s.result} ${path:test.%s.reference}\"))))\n" ignore_eol name name
 
 let () =
   print_endline "; This file is generated using `MCCS_BACKENDS=jbuilder build @settests --auto-promote`";
