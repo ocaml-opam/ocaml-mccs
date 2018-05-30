@@ -8,4 +8,4 @@
 
 (alias
  ((name runtest)
-  (action (system "diff --ignore-trailing-space ${path:test-glpk.result} ${path:test.glpk.reference}"))))
+  (action (system "diff ${path:test-glpk.result} ${path:test.glpk.reference}"))))
