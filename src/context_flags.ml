@@ -25,6 +25,7 @@ let ifc c x = if c then x else []
 let cxxflags =
   let flags =
     (ifc (Sys.win32 && Config.ccomp_type = "msvc") ["/EHsc"]) @
+    (ifc (Config.system = "mingw" || Config.system = "mingw64") ["-fno-rtti"]) @
     (ifc useGLPK ["-DUSEGLPK"]) @
     (ifc useCOIN ["-DUSECOIN"]) @
     (ifc useCLP  ["-DUSECLP"]) @
