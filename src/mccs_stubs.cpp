@@ -161,14 +161,16 @@ CUDFVpkg * ml2c_vpkg(Virtual_packages * tbl, value ml_vpkg)
 value c2ml_vpkg(CUDFVpkg * vpkg)
 {
   CAMLparam0 ();
-  CAMLlocal2(ml_name, ml_cstr);
+  CAMLlocal4(ml_name, ml_cstr, ml_p, ml_s);
   ml_name = caml_copy_string(vpkg->virtual_package->name);
   if (vpkg->op == op_none)
-    CAMLreturn(Val_pair(ml_name, Val_none));
+    ml_p = Val_pair(ml_name, Val_none);
   else {
     ml_cstr = Val_pair(c2ml_relop(vpkg->op), Val_int(vpkg->version));
-    CAMLreturn(Val_pair(ml_name, Val_some(ml_cstr)));
+    ml_s = Val_some(ml_cstr);
+    ml_p = Val_pair(ml_name, ml_s);
   }
+  CAMLreturn(ml_p);
 }
 
 CUDFVpkgList * ml2c_vpkglist(Virtual_packages * tbl, value ml_vpkglist)
