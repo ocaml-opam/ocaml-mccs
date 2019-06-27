@@ -25,7 +25,7 @@ let ifc c x = if c then x else []
 let cxxflags =
   let flags =
     (ifc (Config.system = "macosx") ["-x"; "c++"]) @
-    (ifc (Sys.win32 && Config.ccomp_type = "msvc") ["/EHsc"]) @
+    (ifc (Sys.win32 && Config.ccomp_type = "msvc") ["\"/EHsc\""]) @
     (ifc useGLPK ["-DUSEGLPK"]) @
     (ifc useCOIN ["-DUSECOIN"]) @
     (ifc useCLP  ["-DUSECLP"]) @

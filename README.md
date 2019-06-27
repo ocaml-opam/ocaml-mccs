@@ -5,7 +5,7 @@ developed at UNS during the European MANCOOSI project.
 
 This repository contains a stripped-down version of the
 [mccs solver](http://www.i3s.unice.fr/~cpjm/misc/mccs.html), taken from snapshot
-1.1, with a binding as an OCaml library, and building with `jbuilder`. The
+1.1, with a binding as an OCaml library, and building with `dune`. The
 [GLPK](https://www.gnu.org/software/glpk/glpk.html) source it links against is
 also included within src/glpk, at version 4.63 (unmodified, apart from many
 removed modules, corresponding to the parts that we don't use).
@@ -20,9 +20,9 @@ compile-time, to a space-separated list of the following: `GLPK`, `COIN`, `CLP`,
 `CBC`, `SYMPHONY`. Note that, apart from `GLPK`, you will need the corresponding
 libraries installed, the backends will be dynamically linked, and these are
 experimental may not work as expected. Additionally, the compilation of the
-included GLPK version can be disabled by removing `src/glpk/jbuild`, and
-replaced by dynamic/static linking by renaming one of the `jbuild-shared` and
-`jbuild-static` files.
+included GLPK version can be disabled by removing `src/glpk/dune`, and
+replaced by dynamic/static linking by renaming one of the `dune-shared` and
+`dune-static` files.
 
 NOTE: the lib takes criteria as a string, in the format accepted by mccs (see
 `mccs -h`), assuming `-lexagregate[CRITERIA]`. There are two important

@@ -1,0 +1,24 @@
+(executable
+ (name mccs_test)
+ (modules mccs_test)
+ (libraries mccs))
+
+(executable
+ (name cbclp)
+ (modules cbclp)
+ (libraries unix))
+
+(include dune.inc)
+
+(rule
+ (targets dune.inc.gen)
+ (deps gen_tests.ml (universe))
+ (action
+  (with-stdout-to
+   %{targets}
+   (run ocaml gen_tests.ml))))
+
+(alias
+ (name settests)
+ (action
+  (diff dune.inc dune.inc.gen)))
