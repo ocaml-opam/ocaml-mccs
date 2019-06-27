@@ -11,13 +11,13 @@ environment:
     CYG_MIRROR: http://mirrors.kernel.org/sourceware/cygwin/
     CYG_CACHE: C:/cygwin/var/cache/setup
   matrix:
-    - OCAML_VERSION: 4.06.1
+    - OCAML_VERSION: 4.07.1
       PORT: mingw
-    - OCAML_VERSION: 4.06.1
+    - OCAML_VERSION: 4.07.1
       PORT: mingw64
-    - OCAML_VERSION: 4.06.1
+    - OCAML_VERSION: 4.07.1
       PORT: msvc
-    - OCAML_VERSION: 4.06.1
+    - OCAML_VERSION: 4.07.1
       PORT: msvc64
 
 cache:
@@ -27,12 +27,12 @@ install:
   - call "%APPVEYOR_BUILD_FOLDER%\appveyor.cmd"
 
 build_script:
-  - jbuilder build
-  - jbuilder build test/cbclp.exe
+  - dune build
+  - dune build test/cbclp.exe
 
 test_script:
-  - jbuilder build @settests --auto-promote || ver>nul
-  - jbuilder runtest
+  - dune build @settests --auto-promote || ver>nul
+  - dune runtest
 
 # Uncomment this to enable Remote Desktop on the build worker at the end of the
 # build. The worker is available for the remainder of the allocated hour.

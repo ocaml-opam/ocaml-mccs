@@ -54,19 +54,19 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
     cp tools/msvs-promote-path $ROOT_CYG/
     cd ..
     FLEXDLL_VER=0.37
-    CPPO_VER=1.6.4
+    CPPO_VER=1.6.6
     FINDLIB_VER=1.8.0
-    DUNE_VER=1.0-beta20
-    OCAMLBUILD_VER=0.12.0
+    DUNE_VER=1.10.0
+    OCAMLBUILD_VER=0.14.0
     # NB CUDF URL will also need updating
     CUDF_VER=0.9
-    EXTLIB_VER=1.7.4
+    EXTLIB_VER=1.7.6
     CBC_VER=2.9.9
     appveyor DownloadFile "https://bintray.com/coin-or/download/download_file?file_path=Cbc-$CBC_VER-win32-msvc14.zip" -FileName Cbc-$CBC_VER-win32-msvc14.zip
     appveyor DownloadFile "https://github.com/alainfrisch/flexdll/releases/download/$FLEXDLL_VER/flexdll-bin-$FLEXDLL_VER.zip" -FileName flexdll-bin-$FLEXDLL_VER.zip
     appveyor DownloadFile "https://github.com/mjambon/cppo/archive/v$CPPO_VER.tar.gz" -FileName cppo-$CPPO_VER.tar.gz
     appveyor DownloadFile "http://download.camlcity.org/download/findlib-$FINDLIB_VER.tar.gz" -FileName findlib-$FINDLIB_VER.tar.gz
-    appveyor DownloadFile "https://github.com/ocaml/dune/archive/${DUNE_VER/-/+}.tar.gz" -FileName dune-$DUNE_VER.tar.gz
+    appveyor DownloadFile "https://github.com/ocaml/dune/archive/$DUNE_VER.tar.gz" -FileName dune-$DUNE_VER.tar.gz
     appveyor DownloadFile "https://github.com/ocaml/ocamlbuild/archive/$OCAMLBUILD_VER.tar.gz" -FileName ocamlbuild-$OCAMLBUILD_VER.tar.gz
     appveyor DownloadFile "https://gforge.inria.fr/frs/download.php/file/36602/cudf-0.9.tar.gz" -FileName cudf-$CUDF_VER.tar.gz
     appveyor DownloadFile "https://github.com/ygrek/ocaml-extlib/releases/download/$EXTLIB_VER/extlib-$EXTLIB_VER.tar.gz" -FileName extlib-$EXTLIB_VER.tar.gz
@@ -138,10 +138,6 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   patch -p1 -i ../../../cudf-0.9.patch
   cd ..
   tar -xzf $APPVEYOR_BUILD_FOLDER/../src/extlib-$EXTLIB_VER.tar.gz
-  cd extlib-$EXTLIB_VER
-  # Fixed upstream but not yet released
-  patch -p1 -i ../../../extlib-1.7.4.patch
-  cd ..
   cd ocaml
 
   LOG_FILE=OCaml-$OCAML_VERSION-$PORT.log
@@ -163,14 +159,14 @@ if [[ ! -e $ROOT_CYG/$OCAML_VERSION/$PORT/bin/ocamlopt.exe || ! -e $ROOT_CYG/$OC
   cd ../findlib-$FINDLIB_VER
   quietly_log "./configure && make all opt && make install"
   cd ../dune-$DUNE_VER
-  quietly_log "ocaml bootstrap.ml && ./boot.exe && cp _build/default/bin/main.exe $PREFIX/bin/jbuilder.exe"
+  quietly_log "ocaml bootstrap.ml && ./boot.exe --release && cp _boot/install/default/bin/dune.exe $PREFIX/bin/dune.exe"
   if [[ $OCAML_BRANCH -ge 403 ]] ; then
     cd ../ocamlbuild-$OCAMLBUILD_VER
     quietly_log "make -f configure.make all OCAMLBUILD_PREFIX=$ROOT OCAMLBUILD_BINDIR=$ROOT/bin OCAMLBUILD_LIBDIR=$(ocamlfind printconf path | cygpath -f - -m) OCAML_NATIVE=true OCAML_NATIVE_TOOLS=false && make all findlib-install"
     rm $PREFIX/bin/ocamlbuild.{byte,native}.exe
   fi
   cd ../cppo-$CPPO_VER
-  quietly_log "jbuilder build @install -p cppo && cp _build/install/default/bin/cppo.exe $PREFIX/bin/"
+  quietly_log "dune build @install -p cppo && cp _build/install/default/bin/cppo.exe $PREFIX/bin/"
   cd ../extlib-$EXTLIB_VER
   quietly_log "make minimal=1 build install"
   cd ../cudf-$CUDF_VER

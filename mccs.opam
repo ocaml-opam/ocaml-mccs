@@ -9,12 +9,12 @@ homepage: "http://www.i3s.unice.fr/~cpjm/misc/"
 bug-reports: "https://github.com/AltGr/ocaml-mccs/issues"
 license: "LGPL-2.1 with OCaml linking exception, BSD-3-clause, GPL-3.0"
 dev-repo: "https://github.com/AltGr/ocaml-mccs.git"
-build: ["jbuilder" "build" "-p" name]
+build: ["dune" "build" "-p" name "-j" jobs]
 build-test: [
-  ["sh" "-c" "jbuilder build @settests --auto-promote || true"]
-  ["jbuilder" "runtest"]
+  ["sh" "-c" "dune build @settests --auto-promote || true"]
+  ["dune" "runtest" "-p" name "-j" jobs]
 ]
 depends: [
-  "jbuilder" {build}
+  "dune" {>= "1.0"}
   "cudf" {>= "0.7"}
 ]
