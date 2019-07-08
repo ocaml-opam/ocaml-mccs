@@ -12,7 +12,7 @@
 
 #include <abstract_solver.h>
 #include <scoeff_solver.h>
-#include <glpk.h>
+#include "config.h"
 
 class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
  public:

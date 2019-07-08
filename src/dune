@@ -20,14 +20,18 @@
  (libraries
   cudf
   (select
-   _
+   config.h
    from
-   (mccs.glpk.internal -> _)
-   (mccs.glpk.shared -> _)
-   (mccs.glpk.static -> _)
+   (mccs.glpk.internal -> config_internal.h)
+   (mccs.glpk.shared -> config_external.h)
+   (mccs.glpk.static -> config_external.h)
    (-> _))))
 
-(copy_files# glpk/glpk.h)
+(rule
+  (with-stdout-to config_internal.h (echo "#include \"glpk/glpk.h\"")))
+
+(rule
+  (with-stdout-to config_external.h (echo "#include <glpk.h>")))
 
 (rule
  (targets cxxflags.sexp clibs.sexp flags.sexp)
