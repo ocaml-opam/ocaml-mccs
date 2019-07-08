@@ -27,6 +27,8 @@ install:
   - call "%APPVEYOR_BUILD_FOLDER%\appveyor.cmd"
 
 build_script:
+  - del "src\glpk-shared\dune"
+  - del "src\glpk-static\dune"
   - dune build
   - dune build test/cbclp.exe
 
