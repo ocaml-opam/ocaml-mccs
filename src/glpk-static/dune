@@ -1,0 +1,48 @@
+(library
+ (name mccs_static)
+ (public_name mccs.static)
+ (implements mccs)
+ (modules :standard \ static_linking)
+ (c_library_flags
+  :standard
+  (:include clibs-static.sexp))
+ (libraries mccs_static_solver))
+
+(library
+ (name mccs_static_solver)
+ (public_name mccs.static.solver)
+ (modules static_linking)
+ (cxx_names changed_criteria constraint_generation count_criteria
+   cudf_reductions cudf_tools glpk_solver lp_solver lexagregate_combiner
+   new_criteria notuptodate_criteria removed_criteria mccscudf mccs_stubs)
+ (cxx_flags
+  :standard
+  -I
+  .
+  (:include cxxflags.sexp))
+  (wrapped false))
+
+(rule
+  (with-stdout-to static_linking.ml (echo "")))
+
+(copy_files# ../mccs/*.{cpp,h})
+
+(rule
+ (targets clibs-static.sexp)
+ (deps ../context_flags.ml)
+ (action
+  (with-stdout-to
+   %{targets}
+   (run ocaml %{deps} clibs static))))
+
+(rule
+  (with-stdout-to config.h (echo "#include <glpk.h>")))
+
+(rule
+ (targets cxxflags.sexp clibs.sexp flags.sexp)
+ (deps ../context_flags_all.ml (universe) config.h)
+ (action
+  (run ocaml %{deps})))
+
+(rule
+ (with-stdout-to glpk.ml (echo "")))
