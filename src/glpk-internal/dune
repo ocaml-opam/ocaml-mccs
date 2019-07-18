@@ -1,7 +1,8 @@
 (library
- (name mccs_glpk)
- (public_name mccs.glpk.internal)
- (modules ocaml_mccs_glpk)
+ (name mccs_internal)
+ (public_name mccs.internal)
+ (implements mccs)
+ (modules glpk)
  (c_names ; Core GLPK
   bfd
   glpapi06
@@ -88,10 +89,23 @@
   spychuzc
   spychuzr
   spydual)
+ (cxx_names changed_criteria constraint_generation count_criteria
+   cudf_reductions cudf_tools glpk_solver lp_solver lexagregate_combiner
+   new_criteria notuptodate_criteria removed_criteria mccscudf mccs_stubs)
+  (cxx_flags
+  :standard
+  -I
+  .
+  (:include cxxflags.sexp))
+ (c_library_flags
+  :standard
+  (:include clibs.sexp))
+ (library_flags
+  :standard
+  (:include flags.sexp))
  (c_flags
   :standard
-  (:include cflags.sexp))
- (wrapped false))
+  (:include cflags.sexp)))
 
 (copy_files# api/*.{c,h})
 
@@ -107,10 +121,24 @@
 
 (copy_files# simplex/*.{c,h})
 
+(copy_files# ../mccs/*.{cpp,h})
+
 (rule
  (targets cflags.sexp)
- (deps context_flags.ml)
+ (deps ../context_flags.ml)
  (action
   (with-stdout-to
    %{targets}
    (run ocaml %{deps} cflags))))
+
+(rule
+ (targets cxxflags.sexp clibs.sexp flags.sexp)
+ (deps ../context_flags_all.ml (universe) config.h)
+ (action
+  (run ocaml %{deps})))
+
+(rule
+  (with-stdout-to config.h (echo "#include \"glpk.h\"")))
+
+(rule
+ (with-stdout-to glpk.ml (echo "")))
