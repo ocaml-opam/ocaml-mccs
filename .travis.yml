@@ -1,5 +1,6 @@
 sudo: required
 language: c
+dist: bionic
 install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
 before_install:
   - $TRAVIS_BUILD_DIR/.travis-ci.sh
