@@ -92,12 +92,12 @@ class lp_solver: public abstract_solver, public scoeff_solver<CUDFcoefficient, 0
   char lpoutfilename[256];
   FILE *lpfile, *ctlpfile;
 
-  char *lpsolver; // name of the solver to call
+  const char *lpsolver; // name of the solver to call
 
   char mult;
 
   // solver creation
-  lp_solver(char *lpsolver) {
+  lp_solver(const char *lpsolver) {
     this->lpsolver = lpsolver;
     nb_packages = 0;
     all_versioned_packages = (CUDFVersionedPackageList *)NULL;

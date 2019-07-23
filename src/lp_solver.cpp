@@ -27,7 +27,7 @@ static unsigned long pid = 0;
 static unsigned long uid = 0;
 
 // external function for solver creation
-abstract_solver *new_lp_solver(char *lpsolver) { return new lp_solver(lpsolver); }
+abstract_solver *new_lp_solver(const char *lpsolver) { return new lp_solver(lpsolver); }
 
 // solver initialisation
 int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int other_vars) {

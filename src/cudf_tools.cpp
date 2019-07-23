@@ -117,7 +117,7 @@ CUDFVirtualPackage::~CUDFVirtualPackage() {
 
 // User property constructor
 // requires property name and type of the property
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -135,7 +135,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype) {
 
 // User property constructor
 // requires property name, type of the property (must be an int subtype) and int default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, int tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -169,8 +169,8 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
 CUDFProperty::~CUDFProperty() {
   free(name);
   if (type_id == pt_enum) {
-    for (vector<char*>::iterator it = enuml->begin(); it != enuml->end(); it++)
-      free(*it);
+    for (vector<const char*>::iterator it = enuml->begin(); it != enuml->end(); it++)
+      free((char*)*it);
     delete enuml;
   }
   delete default_value;
@@ -178,7 +178,7 @@ CUDFProperty::~CUDFProperty() {
 
 // User property constructor
 // requires property name, type of the property (must be a string subtype) and string default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, const char *tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -194,7 +194,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault) 
 
 // User property constructor
 // requires property name, type of the property (must be a enum type) and enum default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -213,7 +213,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
 // User property constructor
 // requires property name, type of the property (must be a enum type), the list of allowed enum values and enum default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, char *tident) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, const char *tident) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -227,7 +227,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
   enuml = tenum;
 
-  char *defval = get_enum(tenum, tident);
+  const char *defval = get_enum(tenum, tident);
   if (defval == (char *)NULL) {
     PRINT_ERR("CUDF error: property %s default value can not be %s.\n", tname, tident);
     exit(-1);
@@ -238,7 +238,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
 // User property constructor
 // requires property name, type of the property (must be a vpkg type) and vpkg default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -255,7 +255,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefau
 
 // User property constructor
 // requires property name, type of the property (must be a vpkglist type) and vpkglist default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -272,7 +272,7 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *td
 
 // User property constructor
 // requires property name, type of the property (must be a vpkgformula type) and vpkgformula default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault) {
   int lgth = strlen(tname);
 
   if ((name = (char *)malloc(lgth+1)) == NULL) {
@@ -296,7 +296,7 @@ CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, int the_value) 
 
 // User property value constructor
 // requires a pointer to the user property (must be a string subtype) and its string value
-CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, char *the_value) {
+CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, const char *the_value) {
   char *the_nvalue = (char *)malloc(strlen(the_value)+1);
 
   property = the_property;

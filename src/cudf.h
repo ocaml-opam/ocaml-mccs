@@ -163,11 +163,11 @@ typedef vector<CUDFVirtualPackage *> CUDFVirtualPackageList;
 typedef CUDFVirtualPackageList::iterator CUDFVirtualPackageListIterator;
 
 // type of an enums and its iterator type
-typedef vector<char *> CUDFEnums;
-typedef vector<char *>::iterator CUDFEnumsIterator;
+typedef vector<const char *> CUDFEnums;
+typedef vector<const char *>::iterator CUDFEnumsIterator;
 
 // get enum "estr" from "e" enum list
-extern char *get_enum(CUDFEnums *e, char *estr);
+extern const char *get_enum(CUDFEnums *e, const char *estr);
 
 
 // a property mapping type and its iterator type
@@ -194,7 +194,7 @@ class CUDFPropertyValue {
   CUDFVpkgFormula *vpkgformula;     // use to store property value when its basic type is a vpkgformula
 
   CUDFPropertyValue(CUDFProperty *the_property, int the_value);              // constructor for int valued properties
-  CUDFPropertyValue(CUDFProperty *the_property, char *the_value);            // constructor for string valued properties
+  CUDFPropertyValue(CUDFProperty *the_property, const char *the_value);      // constructor for string valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkg *the_value);        // constructor for vpkg valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgList *the_value);    // constructor for vpkglist valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgFormula *the_value); // constructor for vpkgformula valued properties
@@ -214,14 +214,14 @@ class CUDFProperty {
 
   CUDFPropertyValue *default_value;   // default property value
 
-  CUDFProperty(char *tname, CUDFPropertyType ttype);                                 // CUDF property constructors (without and with default value)
-  CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, char *tident);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype);                           // CUDF property constructors (without and with default value)
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, int tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, const char *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, const char *tident);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault);
 
   ~CUDFProperty();
 
