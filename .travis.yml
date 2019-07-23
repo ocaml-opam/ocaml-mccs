@@ -34,6 +34,8 @@ matrix:
     env: OCAML_VERSION=4.07 MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
   - os: linux
     env: OCAML_VERSION=4.08 MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
+  - os: linux
+    env: OCAML_VERSION=4.08 OPAM_SWITCH=ocaml-variants.4.08.0+force-safe-string MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
 addons:
   apt:
     update: true
