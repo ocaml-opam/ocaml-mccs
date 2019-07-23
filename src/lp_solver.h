@@ -18,7 +18,7 @@ class lp_solver: public abstract_solver, public scoeff_solver<CUDFcoefficient, 0
   // Solver initialization
   int init_solver(CUDFVersionedPackageList *all_versioned_packages, int other_vars);
   // Write the lp on a file
-  int writelp(char *filename);
+  int writelp(const char *filename);
 
   // Solve the problem
   int solve();

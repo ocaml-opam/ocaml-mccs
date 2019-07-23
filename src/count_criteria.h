@@ -22,7 +22,7 @@ class count_criteria: public abstract_criteria {
   CUDFproblem *problem;      // a pointer to the problem
   abstract_solver *solver;   // a pointer to the solver
 
-  char *property_name;       // name of the property
+  const char *property_name; // name of the property
   bool has_property;         // is the property available ?
   // list of all versioned packages which have the property
   CUDFVersionedPackageList *versioned_pkg_with_property;
@@ -61,13 +61,13 @@ class count_criteria: public abstract_criteria {
   Count_scope scope;
 
   // Criteria initialization
-  count_criteria(char *property_name) { 
+  count_criteria(const char *property_name) {
     this->property_name = property_name;
     this->lambda_crit = +1; 
   };
 
   // Criteria initialization
-  count_criteria(char *property_name, Count_scope scope, CUDFcoefficient lambda_crit) { 
+  count_criteria(const char *property_name, Count_scope scope, CUDFcoefficient lambda_crit) {
     this->property_name = property_name;
     this->lambda_crit = lambda_crit; 
     this->scope = scope;

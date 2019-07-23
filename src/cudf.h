@@ -74,9 +74,9 @@ extern CUDFVpkg *vpkg_false;
 // A package i.e. either a versioned package or a virtual package
 class CUDFPackage {
  public:
-  char *name;              // package name as provided by the CUDF problem file
-  int rank;                // rank of the package, i.e., column number in a simplex matrix or variable id
-  char *versioned_name;    // internal name of the package
+  const char *name;           // package name as provided by the CUDF problem file
+  int rank;                   // rank of the package, i.e., column number in a simplex matrix or variable id
+  const char *versioned_name; // internal name of the package
 
   bool in_reduced;
 
@@ -188,7 +188,7 @@ class CUDFPropertyValue {
  public:
   CUDFProperty *property;           // type of the property value
   int intval;                       // use to store property value when its basic type is an int
-  char *strval;                     // use to store property value when its basic type is a string
+  const char *strval;               // use to store property value when its basic type is a string
   CUDFVpkg *vpkg;                   // use to store property value when its basic type is a vpkg
   CUDFVpkgList *vpkglist;           // use to store property value when its basic type is a vpkglist
   CUDFVpkgFormula *vpkgformula;     // use to store property value when its basic type is a vpkgformula
@@ -205,7 +205,7 @@ class CUDFPropertyValue {
 // Class to describe user defined properties
 class CUDFProperty {
  public:
-  char *name;                         // property name
+  const char *name;                   // property name
 
   CUDFPropertyType type_id;           // property type
   CUDFEnums *enuml;                   // allowed enum values for enum type properties
@@ -275,7 +275,7 @@ public:
 extern int parse_cudf(FILE *input_file);
 
 /* // parse the CUDF problem from a string */
-extern int parse_cudf_string(char *str);
+extern int parse_cudf_string(const char *str);
 
 // operations to compare a package version to another one
 extern bool op_none_comp(CUDFVersion v1, CUDFVersion v2);

@@ -36,7 +36,7 @@ class osi_solver: public abstract_solver  {
   int set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper);
 
   // Write the lp on a file
-  // int writelp(char *filename);
+  // int writelp(const char *filename);
 
   // Solve the problem
   int solve();
@@ -223,7 +223,7 @@ int osi_solver<OsiSolver>::end_objectives(void) {
 }
 
 // write the problem into a file
-// int osi_solver<OsiSolver>::writelp(char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
+// int osi_solver<OsiSolver>::writelp(const char *filename) { glp_write_lp(lp, NULL, filename); return 0; }
 
 template<class OsiSolver>
 void osi_solver<OsiSolver>::abort(void) {

@@ -85,7 +85,7 @@ int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int
 }
 
 // write the problem into a file
-int lp_solver::writelp(char *filename) { return 0; }
+int lp_solver::writelp(const char *filename) { return 0; }
 
 // solve the current problem
 int lp_solver::solve() {

@@ -25,7 +25,7 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
   int set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper);
 
   // Write the lp on a file
-  // int writelp(char *filename);
+  // int writelp(const char *filename);
 
   // Solve the problem
   int solve();
