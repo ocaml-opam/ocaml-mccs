@@ -74,9 +74,9 @@ extern CUDFVpkg *vpkg_false;
 // A package i.e. either a versioned package or a virtual package
 class CUDFPackage {
  public:
-  char *name;              // package name as provided by the CUDF problem file
-  int rank;                // rank of the package, i.e., column number in a simplex matrix or variable id
-  char *versioned_name;    // internal name of the package
+  const char *name;           // package name as provided by the CUDF problem file
+  int rank;                   // rank of the package, i.e., column number in a simplex matrix or variable id
+  const char *versioned_name; // internal name of the package
 
   bool in_reduced;
 
@@ -163,11 +163,11 @@ typedef vector<CUDFVirtualPackage *> CUDFVirtualPackageList;
 typedef CUDFVirtualPackageList::iterator CUDFVirtualPackageListIterator;
 
 // type of an enums and its iterator type
-typedef vector<char *> CUDFEnums;
-typedef vector<char *>::iterator CUDFEnumsIterator;
+typedef vector<const char *> CUDFEnums;
+typedef vector<const char *>::iterator CUDFEnumsIterator;
 
 // get enum "estr" from "e" enum list
-extern char *get_enum(CUDFEnums *e, char *estr);
+extern const char *get_enum(CUDFEnums *e, const char *estr);
 
 
 // a property mapping type and its iterator type
@@ -188,13 +188,13 @@ class CUDFPropertyValue {
  public:
   CUDFProperty *property;           // type of the property value
   int intval;                       // use to store property value when its basic type is an int
-  char *strval;                     // use to store property value when its basic type is a string
+  const char *strval;               // use to store property value when its basic type is a string
   CUDFVpkg *vpkg;                   // use to store property value when its basic type is a vpkg
   CUDFVpkgList *vpkglist;           // use to store property value when its basic type is a vpkglist
   CUDFVpkgFormula *vpkgformula;     // use to store property value when its basic type is a vpkgformula
 
   CUDFPropertyValue(CUDFProperty *the_property, int the_value);              // constructor for int valued properties
-  CUDFPropertyValue(CUDFProperty *the_property, char *the_value);            // constructor for string valued properties
+  CUDFPropertyValue(CUDFProperty *the_property, const char *the_value);      // constructor for string valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkg *the_value);        // constructor for vpkg valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgList *the_value);    // constructor for vpkglist valued properties
   CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgFormula *the_value); // constructor for vpkgformula valued properties
@@ -205,7 +205,7 @@ class CUDFPropertyValue {
 // Class to describe user defined properties
 class CUDFProperty {
  public:
-  char *name;                         // property name
+  const char *name;                   // property name
 
   CUDFPropertyType type_id;           // property type
   CUDFEnums *enuml;                   // allowed enum values for enum type properties
@@ -214,14 +214,14 @@ class CUDFProperty {
 
   CUDFPropertyValue *default_value;   // default property value
 
-  CUDFProperty(char *tname, CUDFPropertyType ttype);                                 // CUDF property constructors (without and with default value)
-  CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, char *tident);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault);
-  CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype);                           // CUDF property constructors (without and with default value)
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, int tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, const char *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, const char *tident);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault);
+  CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault);
 
   ~CUDFProperty();
 
@@ -275,7 +275,7 @@ public:
 extern int parse_cudf(FILE *input_file);
 
 /* // parse the CUDF problem from a string */
-extern int parse_cudf_string(char *str);
+extern int parse_cudf_string(const char *str);
 
 // operations to compare a package version to another one
 extern bool op_none_comp(CUDFVersion v1, CUDFVersion v2);

@@ -27,7 +27,7 @@ static unsigned long pid = 0;
 static unsigned long uid = 0;
 
 // external function for solver creation
-abstract_solver *new_lp_solver(char *lpsolver) { return new lp_solver(lpsolver); }
+abstract_solver *new_lp_solver(const char *lpsolver) { return new lp_solver(lpsolver); }
 
 // solver initialisation
 int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int other_vars) {
@@ -85,7 +85,7 @@ int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int
 }
 
 // write the problem into a file
-int lp_solver::writelp(char *filename) { return 0; }
+int lp_solver::writelp(const char *filename) { return 0; }
 
 // solve the current problem
 int lp_solver::solve() {

@@ -6,7 +6,7 @@ typedef enum {CPLEX, GUROBI, LPSOLVE, GLPK, LP, CLP, CBC, SYMPHONY} Solver_backe
 
 typedef struct {
   Solver_backend backend;
-  char * lp_solver;
+  const char * lp_solver;
 } Solver;
 
 typedef struct {

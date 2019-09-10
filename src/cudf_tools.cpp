@@ -20,9 +20,9 @@ CUDFVpkg *vpkg_true = new CUDFVpkg((CUDFVirtualPackage *)NULL, op_none, 0);
 CUDFVpkg *vpkg_false = new CUDFVpkg((CUDFVirtualPackage *)NULL, op_none, 0);
 
 CUDFPackage::~CUDFPackage() {
-  free(name);
+  free((char *)name);
   if (versioned_name != NULL && versioned_name != name)
-    free(versioned_name);
+    free((char *)versioned_name);
 }
 
 // Versioned package constructor
@@ -30,11 +30,10 @@ CUDFPackage::~CUDFPackage() {
 CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
 
   // Get some piece of memory to store package name
-  if ((name = (char *)malloc(strlen(pkg_name)+1)) == NULL) {
+  if (!(name = strdup(pkg_name))) {
     PRINT_ERR("error: cannot alloc name for CUDFVersionedPackage.\n");
     exit(-1);
   }
-  strcpy(name, pkg_name);
   
   // Default initialization of variables
   versioned_name = (char *)NULL;
@@ -83,11 +82,11 @@ void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
   static char temp[50];
 
   sprintf(temp, "%" CUDFint64"u", pkg_version);
-  if ((versioned_name = (char *)malloc(strlen(name)+strlen(temp)+2)) == NULL) {
+  if ((versioned_name = (const char *)malloc(strlen(name)+strlen(temp)+2)) == NULL) {
     PRINT_ERR("error: cannot alloc versioned_name for CUDFVersionedPackage.\n");
     exit(-1);
   }
-  sprintf(versioned_name, "%s_%s", name, temp);
+  sprintf((char *)versioned_name, "%s_%s", name, temp);
     
   version = pkg_version;
 }
@@ -95,11 +94,10 @@ void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
 // Virtual package constructor
 // requires virtual package name and virtual package rank
 CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {    
-  if ((name = (char *)malloc(strlen(pkg_name)+1)) == NULL) {
+  if (!(name = strdup(pkg_name))) {
     PRINT_ERR("error: cannot alloc name for CUDFVirtualPackage.\n");
     exit(-1);
   }
-  strcpy(name, pkg_name);
   versioned_name = name;
   
   highest_installed = (CUDFVersionedPackage *)NULL;
@@ -117,14 +115,11 @@ CUDFVirtualPackage::~CUDFVirtualPackage() {
 
 // User property constructor
 // requires property name and type of the property
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = true;
@@ -135,14 +130,11 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype) {
 
 // User property constructor
 // requires property name, type of the property (must be an int subtype) and int default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, int tdefault) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = false;
@@ -167,10 +159,10 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, int tdefault) {
 }
 
 CUDFProperty::~CUDFProperty() {
-  free(name);
+  free((char *)name);
   if (type_id == pt_enum) {
-    for (vector<char*>::iterator it = enuml->begin(); it != enuml->end(); it++)
-      free(*it);
+    for (vector<const char*>::iterator it = enuml->begin(); it != enuml->end(); it++)
+      free((char*)*it);
     delete enuml;
   }
   delete default_value;
@@ -178,14 +170,11 @@ CUDFProperty::~CUDFProperty() {
 
 // User property constructor
 // requires property name, type of the property (must be a string subtype) and string default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, const char *tdefault) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = false;
@@ -194,14 +183,11 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, char *tdefault) 
 
 // User property constructor
 // requires property name, type of the property (must be a enum type) and enum default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = true;
@@ -213,22 +199,19 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
 // User property constructor
 // requires property name, type of the property (must be a enum type), the list of allowed enum values and enum default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, char *tident) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums *tenum, const char *tident) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = true;
 
   enuml = tenum;
 
-  char *defval = get_enum(tenum, tident);
-  if (defval == (char *)NULL) {
+  const char *defval = get_enum(tenum, tident);
+  if (defval == NULL) {
     PRINT_ERR("CUDF error: property %s default value can not be %s.\n", tname, tident);
     exit(-1);
   } else
@@ -238,14 +221,11 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFEnums *tenum
 
 // User property constructor
 // requires property name, type of the property (must be a vpkg type) and vpkg default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefault) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = false;
@@ -255,14 +235,11 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkg *tdefau
 
 // User property constructor
 // requires property name, type of the property (must be a vpkglist type) and vpkglist default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgList *tdefault) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = false;
@@ -272,14 +249,11 @@ CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgList *td
 
 // User property constructor
 // requires property name, type of the property (must be a vpkgformula type) and vpkgformula default value
-CUDFProperty::CUDFProperty(char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault) {
-  int lgth = strlen(tname);
-
-  if ((name = (char *)malloc(lgth+1)) == NULL) {
+CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgFormula *tdefault) {
+  if (!(name = strdup(tname))) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-  strcpy(name, tname);
     
   type_id = ttype;
   required = false;
@@ -296,7 +270,7 @@ CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, int the_value) 
 
 // User property value constructor
 // requires a pointer to the user property (must be a string subtype) and its string value
-CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, char *the_value) {
+CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, const char *the_value) {
   char *the_nvalue = (char *)malloc(strlen(the_value)+1);
 
   property = the_property;
@@ -327,7 +301,7 @@ CUDFPropertyValue::CUDFPropertyValue(CUDFProperty *the_property, CUDFVpkgFormula
 
 CUDFPropertyValue::~CUDFPropertyValue() {
   switch (property->type_id) {
-  case pt_string: free(strval); break;
+  case pt_string: free((char *)strval); break;
   case pt_vpkg: case pt_veqpkg: delete vpkg; break;
   case pt_vpkglist: case pt_veqpkglist: delete vpkglist; break;
   case pt_vpkgformula: delete vpkgformula; break;

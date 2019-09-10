@@ -148,7 +148,7 @@ CUDFPropertyType ml2c_propertytype(value pt)
 
 CUDFVpkg * ml2c_vpkg(Virtual_packages * tbl, value ml_vpkg)
 {
-  char * name = String_val(Field(ml_vpkg, 0));
+  const char * name = String_val(Field(ml_vpkg, 0));
   CUDFVirtualPackage * virt = tbl->get(name);
   value constr_opt = Field(ml_vpkg, 1);
   if (constr_opt == Val_none) return new CUDFVpkg(virt, op_none, 0);
@@ -219,7 +219,7 @@ value c2ml_vpkgformula(CUDFVpkgFormula * form)
 
 CUDFPropertyValue * ml2c_property(Virtual_packages * tbl, CUDFProperties * properties, value ml_prop)
 {
-  char * prop_name = String_val(Field(ml_prop,0));
+  const char * prop_name = String_val(Field(ml_prop,0));
   CUDFPropertiesIterator prop_it;
   CUDFProperty * prop;
   value ml_v = Field(ml_prop,1);
@@ -304,7 +304,7 @@ value c2ml_propertylist (CUDFPropertyValueList * plist)
 
 CUDFVersionedPackage * ml2c_package(Virtual_packages * tbl, CUDFProperties * properties, int &max_rank, value ml_package)
 {
-  char * package = String_val(Field(ml_package, 0));
+  const char * package = String_val(Field(ml_package, 0));
   unsigned int version = Int_val(Field(ml_package, 1));
   bool installed = Bool_val(Field(ml_package, 5));
 
@@ -373,7 +373,7 @@ value c2ml_package(CUDFVersionedPackage * pkg)
 
 CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
 {
-  char * property_name = String_val(Field(ml_pdef,0));
+  const char * property_name = String_val(Field(ml_pdef,0));
   value def = Field(ml_pdef,1);
   CUDFPropertyType ty = ml2c_propertytype(Field(def,0));
   value arg = Field(def,1);
@@ -390,7 +390,7 @@ CUDFProperty * ml2c_propertydef(Virtual_packages * tbl, value ml_pdef)
       p = new CUDFProperty(property_name, ty, String_val(Some_val(arg))); break;
     case pt_enum: {
       CUDFEnums * enuml = new CUDFEnums;
-      char * dft;
+      const char * dft;
       for (value l = Field(arg, 0); l != Val_emptylist; l = Field(l, 1))
         enuml->push_back(String_val(Field(l,0)));
       if (Field(arg, 1) == Val_none)
@@ -454,10 +454,10 @@ Solver ml2c_solver(value ml_solver)
 }
 
 // get an enum from its name in an enum list
-char *get_enum(CUDFEnums *e, char *estr) {
+const char *get_enum(CUDFEnums *e, const char *estr) {
   for (CUDFEnumsIterator ei = e->begin(); ei != e->end(); ei++)
     if (strcmp((*ei), estr) == 0) return (*ei);
-  return (char *)NULL;
+  return (const char *)NULL;
 }
 
 typedef struct {

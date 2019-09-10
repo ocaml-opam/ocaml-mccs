@@ -1,9 +1,14 @@
 sudo: required
 language: c
+dist: bionic
 install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
 before_install:
   - $TRAVIS_BUILD_DIR/.travis-ci.sh
 script: bash -ex .travis-opam.sh
+env:
+  global:
+    - FORK_USER=dra27
+    - FORK_BRANCH=fix-bubblewrap
 matrix:
   include:
   - os: osx
@@ -34,6 +39,8 @@ matrix:
     env: OCAML_VERSION=4.07 MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
   - os: linux
     env: OCAML_VERSION=4.08 MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
+  - os: linux
+    env: OCAML_VERSION=4.08 OPAM_SWITCH=ocaml-variants.4.08.0+force-safe-string MCCS_BACKENDS="GLPK CBC CLP SYMPHONY" MCCS_LPSOLVER=/usr/share/mccs/cbclp
 addons:
   apt:
     update: true

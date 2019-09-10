@@ -18,7 +18,7 @@
 
 // underlying solver declaration
 // allows using solvers withour having to include the whole solver classes
-extern abstract_solver *new_lp_solver(char *lpsolver);
+extern abstract_solver *new_lp_solver(const char *lpsolver);
 /* extern abstract_solver *new_pblib_solver(char *pbsolver); */
 //extern abstract_solver *new_ampl_solver(char *amplsolver);
 #ifdef USECPLEX 
