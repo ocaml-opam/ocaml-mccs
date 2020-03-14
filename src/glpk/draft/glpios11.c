@@ -4,9 +4,9 @@
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2017 Andrew Makhorin, Department for Applied
-*  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
-*  reserved. E-mail: <mao@gnu.org>.
+*  2009, 2010, 2011, 2013, 2017, 2018 Andrew Makhorin, Department for
+*  Applied Informatics, Moscow Aviation Institute, Moscow, Russia. All
+*  rights reserved. E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "draft.h"
 #include "env.h"
-#include "glpios.h"
+#include "ios.h"
 
 /***********************************************************************
 *  NAME
@@ -70,11 +66,7 @@ struct info
       /* lower bound to objective degradation */
 };
 
-#ifndef _MSC_VER
-static int fcmp(const void *arg1, const void *arg2)
-#else
-static int __cdecl fcmp(const void *arg1, const void *arg2)
-#endif
+static int CDECL fcmp(const void *arg1, const void *arg2)
 {     const struct info *info1 = arg1, *info2 = arg2;
       if (info1->deg == 0.0 && info2->deg == 0.0)
       {  if (info1->eff > info2->eff) return -1;
@@ -89,6 +81,138 @@ static int __cdecl fcmp(const void *arg1, const void *arg2)
 
 static double parallel(IOSCUT *a, IOSCUT *b, double work[]);
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+void ios_process_cuts(glp_tree *T)
+{     IOSPOOL *pool;
+      IOSCUT *cut;
+      GLPAIJ *aij;
+      struct info *info;
+      int k, kk, max_cuts, len, ret, *ind;
+      double *val, *work, rhs;
+      /* the current subproblem must exist */
+      xassert(T->curr != NULL);
+      /* the pool must exist and be non-empty */
+      pool = T->local;
+      xassert(pool != NULL);
+      xassert(pool->m > 0);
+      /* allocate working arrays */
+      info = xcalloc(1+pool->m, sizeof(struct info));
+      ind = xcalloc(1+T->n, sizeof(int));
+      val = xcalloc(1+T->n, sizeof(double));
+      work = xcalloc(1+T->n, sizeof(double));
+      for (k = 1; k <= T->n; k++) work[k] = 0.0;
+      /* build the list of cuts stored in the cut pool */
+      for (k = 1; k <= pool->m; k++)
+         info[k].cut = pool->row[k], info[k].flag = 0;
+      /* estimate efficiency of all cuts in the cut pool */
+      for (k = 1; k <= pool->m; k++)
+      {  double temp, dy, dz;
+         cut = info[k].cut;
+         /* build the vector of cut coefficients and compute its
+            Euclidean norm */
+         len = 0; temp = 0.0;
+         for (aij = cut->ptr; aij != NULL; aij = aij->r_next)
+         {  xassert(1 <= aij->col->j && aij->col->j <= T->n);
+            len++, ind[len] = aij->col->j, val[len] = aij->val;
+            temp += aij->val * aij->val;
+         }
+         if (temp < DBL_EPSILON * DBL_EPSILON) temp = DBL_EPSILON;
+         /* transform the cut to express it only through non-basic
+            (auxiliary and structural) variables */
+         len = glp_transform_row(T->mip, len, ind, val);
+         /* determine change in the cut value and in the objective
+            value for the adjacent basis by simulating one step of the
+            dual simplex */
+         switch (cut->type)
+         {  case GLP_LO: rhs = cut->lb; break;
+            case GLP_UP: rhs = cut->ub; break;
+            default: xassert(cut != cut);
+         }
+         ret = _glp_analyze_row(T->mip, len, ind, val, cut->type,
+            rhs, 1e-9, NULL, NULL, NULL, NULL, &dy, &dz);
+         /* determine normalized residual and lower bound to objective
+            degradation */
+         if (ret == 0)
+         {  info[k].eff = fabs(dy) / sqrt(temp);
+            /* if some reduced costs violates (slightly) their zero
+               bounds (i.e. have wrong signs) due to round-off errors,
+               dz also may have wrong sign being close to zero */
+            if (T->mip->dir == GLP_MIN)
+            {  if (dz < 0.0) dz = 0.0;
+               info[k].deg = + dz;
+            }
+            else /* GLP_MAX */
+            {  if (dz > 0.0) dz = 0.0;
+               info[k].deg = - dz;
+            }
+         }
+         else if (ret == 1)
+         {  /* the constraint is not violated at the current point */
+            info[k].eff = info[k].deg = 0.0;
+         }
+         else if (ret == 2)
+         {  /* no dual feasible adjacent basis exists */
+            info[k].eff = 1.0;
+            info[k].deg = DBL_MAX;
+         }
+         else
+            xassert(ret != ret);
+         /* if the degradation is too small, just ignore it */
+         if (info[k].deg < 0.01) info[k].deg = 0.0;
+      }
+      /* sort the list of cuts by decreasing objective degradation and
+         then by decreasing efficacy */
+      qsort(&info[1], pool->m, sizeof(struct info), fcmp);
+      /* only first (most efficient) max_cuts in the list are qualified
+         as candidates to be added to the current subproblem */
+      max_cuts = (T->curr->level == 0 ? 90 : 10);
+      if (max_cuts > pool->m) max_cuts = pool->m;
+      /* add cuts to the current subproblem */
+#if 0
+      xprintf("*** adding cuts ***\n");
+#endif
+      for (k = 1; k <= max_cuts; k++)
+      {  int i, len;
+         /* if this cut seems to be inefficient, skip it */
+         if (info[k].deg < 0.01 && info[k].eff < 0.01) continue;
+         /* if the angle between this cut and every other cut included
+            in the current subproblem is small, skip this cut */
+         for (kk = 1; kk < k; kk++)
+         {  if (info[kk].flag)
+            {  if (parallel(info[k].cut, info[kk].cut, work) > 0.90)
+                  break;
+            }
+         }
+         if (kk < k) continue;
+         /* add this cut to the current subproblem */
+#if 0
+         xprintf("eff = %g; deg = %g\n", info[k].eff, info[k].deg);
+#endif
+         cut = info[k].cut, info[k].flag = 1;
+         i = glp_add_rows(T->mip, 1);
+         if (cut->name != NULL)
+            glp_set_row_name(T->mip, i, cut->name);
+         xassert(T->mip->row[i]->origin == GLP_RF_CUT);
+         T->mip->row[i]->klass = cut->klass;
+         len = 0;
+         for (aij = cut->ptr; aij != NULL; aij = aij->r_next)
+            len++, ind[len] = aij->col->j, val[len] = aij->val;
+         glp_set_mat_row(T->mip, i, len, ind, val);
+         switch (cut->type)
+         {  case GLP_LO: rhs = cut->lb; break;
+            case GLP_UP: rhs = cut->ub; break;
+            default: xassert(cut != cut);
+         }
+         glp_set_row_bnds(T->mip, i, cut->type, rhs, rhs);
+      }
+      /* free working arrays */
+      xfree(info);
+      xfree(ind);
+      xfree(val);
+      xfree(work);
+      return;
+}
+#else
 void ios_process_cuts(glp_tree *T)
 {     IOSPOOL *pool;
       IOSCUT *cut;
@@ -211,6 +335,7 @@ void ios_process_cuts(glp_tree *T)
       xfree(work);
       return;
 }
+#endif
 
 #if 0
 /***********************************************************************
@@ -269,6 +394,25 @@ static double efficacy(glp_tree *T, IOSCUT *cut)
 *  i.e. with disjoint support, while requirement cos phi <= 0.999 means
 *  only avoiding duplicate (parallel) cuts [1]. */
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+static double parallel(IOSCUT *a, IOSCUT *b, double work[])
+{     GLPAIJ *aij;
+      double s = 0.0, sa = 0.0, sb = 0.0, temp;
+      for (aij = a->ptr; aij != NULL; aij = aij->r_next)
+      {  work[aij->col->j] = aij->val;
+         sa += aij->val * aij->val;
+      }
+      for (aij = b->ptr; aij != NULL; aij = aij->r_next)
+      {  s += work[aij->col->j] * aij->val;
+         sb += aij->val * aij->val;
+      }
+      for (aij = a->ptr; aij != NULL; aij = aij->r_next)
+         work[aij->col->j] = 0.0;
+      temp = sqrt(sa) * sqrt(sb);
+      if (temp < DBL_EPSILON * DBL_EPSILON) temp = DBL_EPSILON;
+      return s / temp;
+}
+#else
 static double parallel(IOSCUT *a, IOSCUT *b, double work[])
 {     IOSAIJ *aij;
       double s = 0.0, sa = 0.0, sb = 0.0, temp;
@@ -286,5 +430,6 @@ static double parallel(IOSCUT *a, IOSCUT *b, double work[])
       if (temp < DBL_EPSILON * DBL_EPSILON) temp = DBL_EPSILON;
       return s / temp;
 }
+#endif
 
 /* eof */

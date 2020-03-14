@@ -1,12 +1,11 @@
-/* glpk.h (GLPK API) */
+/* glpk.h */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@gnu.org>.
+*  Copyright (C) 2000-2018 Andrew Makhorin, Department for Applied
+*  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
+*  reserved. E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -34,7 +33,7 @@ extern "C" {
 
 /* library version numbers: */
 #define GLP_MAJOR_VERSION  4
-#define GLP_MINOR_VERSION  63
+#define GLP_MINOR_VERSION  65
 
 typedef struct glp_prob glp_prob;
 /* LP/MIP problem object */
@@ -107,7 +106,7 @@ typedef struct
 } glp_bfcp;
 
 typedef struct
-{     /* simplex method control parameters */
+{     /* simplex solver control parameters */
       int msg_lev;            /* message level: */
 #define GLP_MSG_OFF        0  /* no output */
 #define GLP_MSG_ERR        1  /* warning and error messages only */
@@ -296,6 +295,11 @@ typedef struct
       double foo_bar[20];
       /* (reserved for use in the future) */
 } glp_cpxcp;
+
+#if 1 /* 10/XII-2017 */
+typedef struct glp_prep glp_prep;
+/* LP/MIP preprocessor workspace */
+#endif
 
 typedef struct glp_tran glp_tran;
 /* MathProg translator workspace */
@@ -666,6 +670,30 @@ void glp_analyze_coef(glp_prob *P, int k, double *coef1, int *var1,
       double *value1, double *coef2, int *var2, double *value2);
 /* analyze objective coefficient at basic variable */
 
+#if 1 /* 10/XII-2017 */
+glp_prep *glp_npp_alloc_wksp(void);
+/* allocate the preprocessor workspace */
+
+void glp_npp_load_prob(glp_prep *prep, glp_prob *P, int sol,
+      int names);
+/* load original problem instance */
+
+int glp_npp_preprocess1(glp_prep *prep, int hard);
+/* perform basic LP/MIP preprocessing */
+
+void glp_npp_build_prob(glp_prep *prep, glp_prob *Q);
+/* build resultant problem instance */
+
+void glp_npp_postprocess(glp_prep *prep, glp_prob *Q);
+/* postprocess solution to resultant problem */
+
+void glp_npp_obtain_sol(glp_prep *prep, glp_prob *P);
+/* obtain solution to original problem */
+
+void glp_npp_free_wksp(glp_prep *prep);
+/* free the preprocessor workspace */
+#endif
+
 int glp_ios_reason(glp_tree *T);
 /* determine reason for calling the callback routine */
 
@@ -739,52 +767,46 @@ void glp_ios_terminate(glp_tree *T);
 int glp_gmi_cut(glp_prob *P, int j, int ind[], double val[], double
       phi[]);
 /* generate Gomory's mixed integer cut (core routine) */
-#endif
 
-#ifdef GLP_UNDOC
 int glp_gmi_gen(glp_prob *P, glp_prob *pool, int max_cuts);
 /* generate Gomory's mixed integer cuts */
-#endif
 
-#ifdef GLP_UNDOC
+typedef struct glp_cov glp_cov;
+/* cover cur generator workspace */
+
+glp_cov *glp_cov_init(glp_prob *P);
+/* create and initialize cover cut generator */
+
+void glp_cov_gen1(glp_prob *P, glp_cov *cov, glp_prob *pool);
+/* generate locally valid simple cover cuts */
+
+void glp_cov_free(glp_cov *cov);
+/* delete cover cut generator workspace */
+
 typedef struct glp_mir glp_mir;
 /* MIR cut generator workspace */
-#endif
 
-#ifdef GLP_UNDOC
 glp_mir *glp_mir_init(glp_prob *P);
 /* create and initialize MIR cut generator */
-#endif
 
-#ifdef GLP_UNDOC
 int glp_mir_gen(glp_prob *P, glp_mir *mir, glp_prob *pool);
 /* generate mixed integer rounding (MIR) cuts */
-#endif
 
-#ifdef GLP_UNDOC
 void glp_mir_free(glp_mir *mir);
 /* delete MIR cut generator workspace */
-#endif
 
-#ifdef GLP_UNDOC
 typedef struct glp_cfg glp_cfg;
 /* conflict graph descriptor */
-#endif
 
-#ifdef GLP_UNDOC
 glp_cfg *glp_cfg_init(glp_prob *P);
 /* create and initialize conflict graph */
-#endif
 
-#ifdef GLP_UNDOC
 void glp_cfg_free(glp_cfg *G);
 /* delete conflict graph descriptor */
-#endif
 
-#ifdef GLP_UNDOC
 int glp_clq_cut(glp_prob *P, glp_cfg *G, int ind[], double val[]);
 /* generate clique cut from conflict graph */
-#endif
+#endif /* GLP_UNDOC */
 
 void glp_init_mpscp(glp_mpscp *parm);
 /* initialize MPS format control parameters */

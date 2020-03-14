@@ -7,7 +7,7 @@ This repository contains a stripped-down version of the
 [mccs solver](http://www.i3s.unice.fr/~cpjm/misc/mccs.html), taken from snapshot
 1.1, with a binding as an OCaml library, and building with `dune`. The
 [GLPK](https://www.gnu.org/software/glpk/glpk.html) source it links against is
-also included within src/glpk, at version 4.63 (unmodified, apart from many
+also included within src/glpk, at version 4.65 (unmodified, apart from many
 removed modules, corresponding to the parts that we don't use).
 
 The binding enables interoperation with binary CUDF data from

@@ -1,10 +1,9 @@
-/* glpios10.c (feasibility pump heuristic) */
+/* fpump.c (feasibility pump heuristic) */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2017 Andrew Makhorin, Department for Applied
+*  Copyright (C) 2009-2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -22,12 +21,8 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "env.h"
-#include "glpios.h"
+#include "ios.h"
 #include "rng.h"
 
 /***********************************************************************
@@ -60,11 +55,7 @@ struct VAR
       /* sorting key */
 };
 
-#ifndef _MSC_VER
-static int fcmp(const void *x, const void *y)
-#else
-static int __cdecl fcmp(const void *x, const void *y)
-#endif
+static int CDECL fcmp(const void *x, const void *y)
 {     /* comparison routine */
       const struct VAR *vx = x, *vy = y;
       if (vx->d > vy->d)

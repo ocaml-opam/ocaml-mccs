@@ -1,10 +1,9 @@
-/* glpnpp.h (LP/MIP preprocessor) */
+/* npp.h (LP/MIP preprocessor) */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  Copyright (C) 2009-2017 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -22,19 +21,27 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef GLPNPP_H
-#define GLPNPP_H
+#ifndef NPP_H
+#define NPP_H
 
 #include "prob.h"
 
+#if 0 /* 20/XI-2017 */
 typedef struct NPP NPP;
+#else
+typedef struct glp_prep NPP;
+#endif
 typedef struct NPPROW NPPROW;
 typedef struct NPPCOL NPPCOL;
 typedef struct NPPAIJ NPPAIJ;
 typedef struct NPPTSE NPPTSE;
 typedef struct NPPLFE NPPLFE;
 
+#if 0 /* 20/XI-2017 */
 struct NPP
+#else
+struct glp_prep
+#endif
 {     /* LP/MIP preprocessor workspace */
       /*--------------------------------------------------------------*/
       /* original problem segment */

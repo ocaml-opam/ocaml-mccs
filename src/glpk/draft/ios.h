@@ -1,10 +1,10 @@
-/* glpios.h (integer optimization suite) */
+/* ios.h (integer optimization suite) */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -22,10 +22,18 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef GLPIOS_H
-#define GLPIOS_H
+#ifndef IOS_H
+#define IOS_H
 
 #include "prob.h"
+
+#if 1 /* 02/II-2018 */
+#define NEW_LOCAL 1
+#endif
+
+#if 1 /* 15/II-2018 */
+#define NEW_COVER 1
+#endif
 
 typedef struct IOSLOT IOSLOT;
 typedef struct IOSNPD IOSNPD;
@@ -33,8 +41,13 @@ typedef struct IOSBND IOSBND;
 typedef struct IOSTAT IOSTAT;
 typedef struct IOSROW IOSROW;
 typedef struct IOSAIJ IOSAIJ;
+#ifdef NEW_LOCAL /* 02/II-2018 */
+typedef glp_prob IOSPOOL;
+typedef GLPROW IOSCUT;
+#else
 typedef struct IOSPOOL IOSPOOL;
 typedef struct IOSCUT IOSCUT;
+#endif
 
 struct glp_tree
 {     /* branch-and-bound tree */
@@ -148,19 +161,14 @@ struct glp_tree
       /* built-in cut generators segment */
       IOSPOOL *local;
       /* local cut pool */
-#if 0 /* 06/III-2016 */
-      void *mir_gen;
-#else
-      glp_mir *mir_gen;
+#if 1 /* 13/II-2018 */
+      glp_cov *cov_gen;
+      /* pointer to working area used by the cover cut generator */
 #endif
+      glp_mir *mir_gen;
       /* pointer to working area used by the MIR cut generator */
-#if 0 /* 08/III-2016 */
-      void *clq_gen;
-      /* pointer to working area used by the clique cut generator */
-#else
       glp_cfg *clq_gen;
       /* pointer to conflict graph used by the clique cut generator */
-#endif
       /*--------------------------------------------------------------*/
       void *pcost;
       /* pointer to working area used on pseudocost branching */
@@ -172,18 +180,10 @@ struct glp_tree
       /* control parameters and statistics */
       const glp_iocp *parm;
       /* copy of control parameters passed to the solver */
-#if 0 /* 10/VI-2013 */
-      glp_long tm_beg;
-#else
       double tm_beg;
-#endif
       /* starting time of the search, in seconds; the total time of the
          search is the difference between xtime() and tm_beg */
-#if 0 /* 10/VI-2013 */
-      glp_long tm_lag;
-#else
       double tm_lag;
-#endif
       /* the most recent time, in seconds, at which the progress of the
          the search was displayed */
       int sol_cnt;
@@ -373,6 +373,7 @@ struct IOSAIJ
       /* pointer to next coefficient for the same row */
 };
 
+#ifndef NEW_LOCAL /* 02/II-2018 */
 struct IOSPOOL
 {     /* cut pool */
       int size;
@@ -386,7 +387,9 @@ struct IOSPOOL
       IOSCUT *curr;
       /* pointer to the current cut */
 };
+#endif
 
+#ifndef NEW_LOCAL /* 02/II-2018 */
 struct IOSCUT
 {     /* cut (cutting plane constraint) */
       char *name;
@@ -407,6 +410,7 @@ struct IOSCUT
       IOSCUT *next;
       /* pointer to next cut */
 };
+#endif
 
 #define ios_create_tree _glp_ios_create_tree
 glp_tree *ios_create_tree(glp_prob *mip, const glp_iocp *parm);

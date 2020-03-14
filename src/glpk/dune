@@ -3,6 +3,7 @@
  (public_name mccs.glpk.internal)
  (modules ocaml_mccs_glpk)
  (c_names ; Core GLPK
+  ; draft
   bfd
   glpapi06
   glpapi09
@@ -14,14 +15,8 @@
   glpios03
   glpios07
   glpios09
-  glpios10
   glpios11
   glpios12
-  glpnpp01
-  glpnpp02
-  glpnpp03
-  glpnpp04
-  glpnpp05
   glpscl
   ; api
   advbas
@@ -30,6 +25,7 @@
   prob2
   prob4
   prob5
+  wrmip
   ; bflib
   btf
   btfint
@@ -43,11 +39,13 @@
   scfint
   sgf
   sva
-  ; cglib
+  ; intopt
   cfg
   cfg1
   cfg2
   clqcut
+  covgen
+  fpump
   gmicut
   gmigen
   mirgen
@@ -59,6 +57,7 @@
   error
   stdc
   stdout
+  stream
   time
   tls
   ; misc
@@ -66,14 +65,22 @@
   dmp
   gcd
   jd
+  ks
   mc13d
   mc21a
+  mt1
   rng
   rng1
   round2n
   triang
   wclique
   wclique1
+  ; npp
+  npp1
+  npp2
+  npp3
+  npp4
+  npp5
   ; proxy
   proxy
   proxy1
@@ -97,11 +104,15 @@
 
 (copy_files# bflib/*.{c,h})
 
-(copy_files# cglib/*.{c,h})
+(copy_files# draft/*.{c,h})
 
 (copy_files# env/*.{c,h})
 
+(copy_files# intopt/*.{c,h})
+
 (copy_files# misc/*.{c,h})
+
+(copy_files# npp/*.{c,h})
 
 (copy_files# proxy/*.{c,h})
 

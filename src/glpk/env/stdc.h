@@ -57,6 +57,17 @@ char *xstrerr(int);
 char *xstrtok(char *, const char *);
 #endif
 
+#if 1 /* 06/II-2018 */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#ifndef __WOE__
+#define CDECL
+#else
+#define CDECL __cdecl
+#endif
+#endif
+
 #endif
 
 /* eof */

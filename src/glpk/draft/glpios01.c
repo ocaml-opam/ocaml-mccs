@@ -4,7 +4,7 @@
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -23,7 +23,7 @@
 ***********************************************************************/
 
 #include "env.h"
-#include "glpios.h"
+#include "ios.h"
 #include "misc.h"
 
 static int lpx_eval_tab_row(glp_prob *lp, int k, int ind[],
@@ -125,13 +125,16 @@ glp_tree *ios_create_tree(glp_prob *mip, const glp_iocp *parm)
       tree->pred_type = NULL;
       tree->pred_lb = tree->pred_ub = NULL;
       tree->pred_stat = NULL;
-      /* cut generator */
+      /* cut generators */
       tree->local = ios_create_pool(tree);
       /*tree->first_attempt = 1;*/
       /*tree->max_added_cuts = 0;*/
       /*tree->min_eff = 0.0;*/
       /*tree->miss = 0;*/
       /*tree->just_selected = 0;*/
+#ifdef NEW_COVER /* 13/II-2018 */
+      tree->cov_gen = NULL;
+#endif
       tree->mir_gen = NULL;
       tree->clq_gen = NULL;
       /*tree->round = 0;*/
@@ -1384,6 +1387,15 @@ int ios_solve_node(glp_tree *tree)
 
 /**********************************************************************/
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+IOSPOOL *ios_create_pool(glp_tree *tree)
+{     /* create cut pool */
+      IOSPOOL *pool;
+      pool = glp_create_prob();
+      glp_add_cols(pool, tree->mip->n);
+      return pool;
+}
+#else
 IOSPOOL *ios_create_pool(glp_tree *tree)
 {     /* create cut pool */
       IOSPOOL *pool;
@@ -1398,7 +1410,23 @@ IOSPOOL *ios_create_pool(glp_tree *tree)
       pool->ord = 0, pool->curr = NULL;
       return pool;
 }
+#endif
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+int ios_add_row(glp_tree *tree, IOSPOOL *pool,
+      const char *name, int klass, int flags, int len, const int ind[],
+      const double val[], int type, double rhs)
+{     /* add row (constraint) to the cut pool */
+      int i;
+      i = glp_add_rows(pool, 1);
+      glp_set_row_name(pool, i, name);
+      pool->row[i]->klass = klass;
+      xassert(flags == 0);
+      glp_set_mat_row(pool, i, len, ind, val);
+      glp_set_row_bnds(pool, i, type, rhs, rhs);
+      return i;
+}
+#else
 int ios_add_row(glp_tree *tree, IOSPOOL *pool,
       const char *name, int klass, int flags, int len, const int ind[],
       const double val[], int type, double rhs)
@@ -1457,7 +1485,14 @@ int ios_add_row(glp_tree *tree, IOSPOOL *pool,
       pool->size++;
       return pool->size;
 }
+#endif
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+IOSCUT *ios_find_row(IOSPOOL *pool, int i)
+{     /* find row (constraint) in the cut pool */
+      xassert(0);
+}
+#else
 IOSCUT *ios_find_row(IOSPOOL *pool, int i)
 {     /* find row (constraint) in the cut pool */
       /* (smart linear search) */
@@ -1509,7 +1544,14 @@ IOSCUT *ios_find_row(IOSPOOL *pool, int i)
       xassert(pool->curr != NULL);
       return pool->curr;
 }
+#endif
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+void ios_del_row(glp_tree *tree, IOSPOOL *pool, int i)
+{     /* remove row (constraint) from the cut pool */
+      xassert(0);
+}
+#else
 void ios_del_row(glp_tree *tree, IOSPOOL *pool, int i)
 {     /* remove row (constraint) from the cut pool */
       IOSCUT *cut;
@@ -1553,7 +1595,22 @@ void ios_del_row(glp_tree *tree, IOSPOOL *pool, int i)
       pool->size--;
       return;
 }
+#endif
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+void ios_clear_pool(glp_tree *tree, IOSPOOL *pool)
+{     /* remove all rows (constraints) from the cut pool */
+      if (pool->m > 0)
+      {  int i, *num;
+         num = talloc(1+pool->m, int);
+         for (i = 1; i <= pool->m; i++)
+            num[i] = i;
+         glp_del_rows(pool, pool->m, num);
+         tfree(num);
+      }
+      return;
+}
+#else
 void ios_clear_pool(glp_tree *tree, IOSPOOL *pool)
 {     /* remove all rows (constraints) from the cut pool */
       xassert(pool != NULL);
@@ -1574,7 +1631,16 @@ void ios_clear_pool(glp_tree *tree, IOSPOOL *pool)
       pool->ord = 0, pool->curr = NULL;
       return;
 }
+#endif
 
+#ifdef NEW_LOCAL /* 02/II-2018 */
+void ios_delete_pool(glp_tree *tree, IOSPOOL *pool)
+{     /* delete cut pool */
+      xassert(pool != NULL);
+      glp_delete_prob(pool);
+      return;
+}
+#else
 void ios_delete_pool(glp_tree *tree, IOSPOOL *pool)
 {     /* delete cut pool */
       xassert(pool != NULL);
@@ -1582,9 +1648,10 @@ void ios_delete_pool(glp_tree *tree, IOSPOOL *pool)
       xfree(pool);
       return;
 }
+#endif
 
 #if 1 /* 11/VII-2013 */
-#include "glpnpp.h"
+#include "npp.h"
 
 void ios_process_sol(glp_tree *T)
 {     /* process integer feasible solution just found */
@@ -1596,6 +1663,21 @@ void ios_process_sol(glp_tree *T)
       }
       xassert(T->P != NULL);
       /* save solution to text file, if requested */
+      if (T->save_sol != NULL)
+      {  char *fn, *mark;
+         fn = talloc(strlen(T->save_sol) + 50, char);
+         mark = strrchr(T->save_sol, '*');
+         if (mark == NULL)
+            strcpy(fn, T->save_sol);
+         else
+         {  memcpy(fn, T->save_sol, mark - T->save_sol);
+            fn[mark - T->save_sol] = '\0';
+            sprintf(fn + strlen(fn), "%03d", ++(T->save_cnt));
+            strcat(fn, &mark[1]);
+         }
+         glp_write_mip(T->P, fn);
+         tfree(fn);
+      }
       return;
 }
 #endif
