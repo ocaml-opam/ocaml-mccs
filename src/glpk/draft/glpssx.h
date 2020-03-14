@@ -4,7 +4,7 @@
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  2009, 2010, 2011, 2013, 2017 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -27,6 +27,9 @@
 
 #include "bfx.h"
 #include "env.h"
+#if 1 /* 25/XI-2017 */
+#include "glpk.h"
+#endif
 
 typedef struct SSX SSX;
 
@@ -305,6 +308,14 @@ struct SSX
       /* actual change of xN[q] in the adjacent basis (it has the same
          sign as q_dir) */
 /*--------------------------------------------------------------------*/
+#if 1 /* 25/XI-2017 */
+      int msg_lev;
+      /* verbosity level:
+         GLP_MSG_OFF no output
+         GLP_MSG_ERR report errors and warnings
+         GLP_MSG_ON  normal output
+         GLP_MSG_ALL highest verbosity */
+#endif
       int it_lim;
       /* simplex iterations limit; if this value is positive, it is
          decreased by one each time when one simplex iteration has been

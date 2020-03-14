@@ -85,7 +85,7 @@ double glp_time(void)
 
 /* MS Windows version *************************************************/
 
-#elif defined(_MSC_VER)
+#elif defined(__WOE__)
 
 #include <windows.h>
 

@@ -3,7 +3,7 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2012-2017 Andrew Makhorin, Department for Applied
+*  Copyright (C) 2012-2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -20,10 +20,6 @@
 *  You should have received a copy of the GNU General Public License
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include "cfg.h"
 #include "env.h"
@@ -201,11 +197,7 @@
 struct term { int ind; double val; };
 /* term a[j] * z[j] used to sort a[j]'s */
 
-#ifndef _MSC_VER
-static int fcmp(const void *e1, const void *e2)
-#else
-static int __cdecl fcmp(const void *e1, const void *e2)
-#endif
+static int CDECL fcmp(const void *e1, const void *e2)
 {     /* auxiliary routine called from qsort */
       const struct term *t1 = e1, *t2 = e2;
       if (t1->val > t2->val)

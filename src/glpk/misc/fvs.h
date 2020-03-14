@@ -36,7 +36,7 @@ struct FVS
       /* ind[0] is not used;
        * ind[k] = j, 1 <= k <= nnz, means that vec[j] != 0
        * non-zero indices in the array ind are stored in arbitrary
-       * order; if vec[j] = 0, its index j should NOT be presented in
+       * order; if vec[j] = 0, its index j SHOULD NOT be presented in
        * the array ind */
       double *vec; /* double vec[1+n]; */
       /* vec[0] is not used;

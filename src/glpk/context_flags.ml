@@ -4,7 +4,7 @@
 match Sys.argv.(1) with
 | "clibs" ->
     if Sys.win32 && Config.ccomp_type = "msvc" then
-      print_string "(glpk_4_63.lib)"
+      print_string "(glpk_4_65.lib)"
     else
       let glpk =
         if Array.length Sys.argv > 2 && Sys.argv.(2) = "static" then

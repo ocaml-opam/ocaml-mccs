@@ -4,7 +4,7 @@
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -23,7 +23,7 @@
 ***********************************************************************/
 
 #include "env.h"
-#include "glpios.h"
+#include "ios.h"
 
 /***********************************************************************
 *  show_progress - display current progress of the search
@@ -72,7 +72,10 @@ static void show_progress(glp_tree *T, int bingo)
          else if (temp == +DBL_MAX)
             sprintf(best_bound, "%17s", "+inf");
          else
+         {  if (fabs(temp) < 1e-9)
+               temp = 0;
             sprintf(best_bound, "%17.9e", temp);
+         }
       }
       /* choose the relation sign between global bounds */
       if (T->mip->dir == GLP_MIN)
@@ -633,60 +636,6 @@ done: tfree(x);
       return ret;
 }
 
-#if 0
-#define round_heur round_heur2
-static int round_heur(glp_tree *T)
-{     glp_prob *lp;
-      int *ind, ret, i, j, len;
-      double *val;
-      lp = glp_create_prob();
-      ind = talloc(1+T->mip->n, int);
-      val = talloc(1+T->mip->n, double);
-      glp_add_rows(lp, T->orig_m);
-      glp_add_cols(lp, T->n);
-      for (i = 1; i <= T->orig_m; i++)
-      {  glp_set_row_bnds(lp, i,
-            T->orig_type[i], T->orig_lb[i], T->orig_ub[i]);
-         len = glp_get_mat_row(T->mip, i, ind, val);
-         glp_set_mat_row(lp, i, len, ind, val);
-      }
-      for (j = 1; j <= T->n; j++)
-      {  GLPCOL *col = T->mip->col[j];
-         glp_set_obj_coef(lp, j, col->coef);
-         if (col->kind == GLP_IV)
-         {  /* integer variable */
-            glp_set_col_bnds(lp, j, GLP_FX, floor(col->prim + .5), 0);
-         }
-         else
-         {  glp_set_col_bnds(lp, j, T->orig_type[T->orig_m+j],
-               T->orig_lb[T->orig_m+j], T->orig_ub[T->orig_m+j]);
-         }
-      }
-glp_term_out(GLP_OFF);
-      glp_adv_basis(lp, 0);
-      ret = glp_simplex(lp, NULL);
-glp_term_out(GLP_ON);
-      if (ret != 0)
-      {  ret = 1;
-         goto done;
-      }
-      if (glp_get_status(lp) != GLP_OPT)
-      {  ret = 2;
-         goto done;
-      }
-      for (j = 1; j <= lp->n; j++)
-         val[j] = lp->col[j]->prim;
-      if (glp_ios_heur_sol(T, val) == 0)
-         ret = 0;
-      else
-         ret = 3;
-done: glp_delete_prob(lp);
-      tfree(ind);
-      tfree(val);
-      return ret;
-}
-#endif
-
 /**********************************************************************/
 
 #if 1 /* 08/III-2016 */
@@ -706,6 +655,34 @@ static void gmi_gen(glp_tree *T)
          {  len = glp_get_mat_row(pool, i, ind, val);
             glp_ios_add_row(T, NULL, GLP_RF_GMI, 0, len, ind, val,
                GLP_LO, pool->row[i]->lb);
+         }
+         xfree(ind);
+         xfree(val);
+      }
+      glp_delete_prob(pool);
+      return;
+}
+#endif
+
+#ifdef NEW_COVER /* 13/II-2018 */
+static void cov_gen(glp_tree *T)
+{     /* generate cover cuts */
+      glp_prob *P, *pool;
+      if (T->cov_gen == NULL)
+         return;
+      P = T->mip;
+      pool = glp_create_prob();
+      glp_add_cols(pool, P->n);
+      glp_cov_gen1(P, T->cov_gen, pool);
+      if (pool->m > 0)
+      {  int i, len, *ind;
+         double *val;
+         ind = xcalloc(1+P->n, sizeof(int));
+         val = xcalloc(1+P->n, sizeof(double));
+         for (i = 1; i <= pool->m; i++)
+         {  len = glp_get_mat_row(pool, i, ind, val);
+            glp_ios_add_row(T, NULL, GLP_RF_COV, 0, len, ind, val,
+               GLP_UP, pool->row[i]->ub);
          }
          xfree(ind);
          xfree(val);
@@ -798,8 +775,11 @@ static void generate_cuts(glp_tree *T)
       }
       if (T->parm->cov_cuts == GLP_ON)
       {  /* cover cuts works well along with mir cuts */
-         /*if (T->round <= 5)*/
-            ios_cov_gen(T);
+#ifdef NEW_COVER /* 13/II-2018 */
+         cov_gen(T);
+#else
+         ios_cov_gen(T);
+#endif
       }
       if (T->parm->clq_cuts == GLP_ON)
       {  if (T->clq_gen != NULL)
@@ -942,7 +922,11 @@ int ios_driver(glp_tree *T)
 #endif
 #if 1 /* 16/III-2016 */
       if (((glp_iocp *)T->parm)->flip)
+#if 0 /* 20/I-2018 */
          xprintf("WARNING: LONG-STEP DUAL SIMPLEX WILL BE USED\n");
+#else
+         xprintf("Long-step dual simplex will be used\n");
+#endif
 #endif
       /* on entry to the B&B driver it is assumed that the active list
          contains the only active (i.e. root) subproblem, which is the
@@ -1038,6 +1022,10 @@ loop: /* main loop starts here */
          if (T->parm->cov_cuts == GLP_ON)
          {  if (T->parm->msg_lev >= GLP_MSG_ALL)
                xprintf("Cover cuts enabled\n");
+#ifdef NEW_COVER /* 13/II-2018 */
+            xassert(T->cov_gen == NULL);
+            T->cov_gen = glp_cov_init(T->mip);
+#endif
          }
          if (T->parm->clq_cuts == GLP_ON)
          {  xassert(T->clq_gen == NULL);
@@ -1356,7 +1344,11 @@ more: /* minor loop starts here */
 #endif
       /* it's time to generate cutting planes */
       xassert(T->local != NULL);
+#ifdef NEW_LOCAL /* 02/II-2018 */
+      xassert(T->local->m == 0);
+#else
       xassert(T->local->size == 0);
+#endif
       /* let the application program generate some cuts; note that it
          can add cuts either to the local cut pool or directly to the
          current subproblem */
@@ -1402,7 +1394,11 @@ more: /* minor loop starts here */
       }
       /* if the local cut pool is not empty, select useful cuts and add
          them to the current subproblem */
+#ifdef NEW_LOCAL /* 02/II-2018 */
+      if (T->local->m > 0)
+#else
       if (T->local->size > 0)
+#endif
       {  xassert(T->reason == 0);
          T->reason = GLP_ICUTGEN;
          ios_process_cuts(T);
@@ -1498,6 +1494,10 @@ done: /* display progress of the search on exit from the solver */
          ios_mir_term(T->mir_gen), T->mir_gen = NULL;
 #else
          glp_mir_free(T->mir_gen), T->mir_gen = NULL;
+#endif
+#ifdef NEW_COVER /* 13/II-2018 */
+      if (T->cov_gen != NULL)
+         glp_cov_free(T->cov_gen), T->cov_gen = NULL;
 #endif
       if (T->clq_gen != NULL)
 #if 0 /* 08/III-2016 */

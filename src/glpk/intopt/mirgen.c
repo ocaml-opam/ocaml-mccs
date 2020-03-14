@@ -3,7 +3,7 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2007-2017 Andrew Makhorin, Department for Applied
+*  Copyright (C) 2007-2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -20,10 +20,6 @@
 *  You should have received a copy of the GNU General Public License
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #if 1 /* 29/II-2016 by Chris */
 /*----------------------------------------------------------------------
@@ -802,11 +798,7 @@ static int cmir_ineq(const int n, const double a[], const double b,
 
 struct vset { int j; double v; };
 
-#ifndef _MSC_VER
-static int cmir_cmp(const void *p1, const void *p2)
-#else
-static int __cdecl cmir_cmp(const void *p1, const void *p2)
-#endif
+static int CDECL cmir_cmp(const void *p1, const void *p2)
 {     const struct vset *v1 = p1, *v2 = p2;
       if (v1->v < v2->v) return -1;
       if (v1->v > v2->v) return +1;

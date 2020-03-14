@@ -4,7 +4,7 @@
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
 *  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -24,8 +24,8 @@
 
 #include "draft.h"
 #include "env.h"
-#include "glpios.h"
-#include "glpnpp.h"
+#include "ios.h"
+#include "npp.h"
 
 /***********************************************************************
 *  NAME
@@ -686,8 +686,12 @@ void glp_init_iocp(glp_iocp *parm)
       parm->save_sol = NULL;
       parm->alien = GLP_OFF;
 #endif
+#if 0 /* 20/I-2018 */
 #if 1 /* 16/III-2016; not documented--should not be used */
       parm->flip = GLP_OFF;
+#endif
+#else
+      parm->flip = GLP_ON;
 #endif
       return;
 }

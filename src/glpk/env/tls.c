@@ -82,7 +82,7 @@ void *tls_get_ptr(void)
 
 /**********************************************************************/
 
-#ifdef _MSC_VER
+#ifdef __WOE__
 
 /*** Author: Heinrich Schuchardt <xypron.glpk@gmx.de> ***/
 
@@ -123,6 +123,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID
       return TRUE;
 }
 
-#endif /* _MSC_VER */
+#endif /* __WOE__ */
 
 /* eof */

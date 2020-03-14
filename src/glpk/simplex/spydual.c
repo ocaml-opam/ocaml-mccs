@@ -914,13 +914,10 @@ static void play_coef(struct csa *csa, int all)
       char *flag = lp->flag;
       double *orig_c = csa->orig_c;
       double *d = csa->d;
-#if 0 /* 29/III-2016 */
-      double *trow = csa->trow; /* was used to update d = (d[j]) */
-#else
       const double *trow = csa->trow.vec;
-#endif
+      /* this vector was used to update d = (d[j]) */
       int j, k;
-      double temp;
+      static const double eps = 1e-9;
       /* reduced costs d = (d[j]) should be valid */
       xassert(csa->d_st);
       /* walk thru the list of non-basic variables xN = (xN[j]) */
@@ -933,45 +930,33 @@ static void play_coef(struct csa *csa, int all)
                /* d[j] may have any sign */
             }
             else if (l[k] == -DBL_MAX && u[k] == +DBL_MAX)
-            {  /* xN[j] is free variable */
+            {  /* xN[j] is free (unbounded) variable */
                /* strong feasibility means d[j] = 0 */
                c[k] -= d[j], d[j] = 0.0;
+               /* in this case dual degeneracy is not critical, since
+                * if xN[j] enters the basis, it never leaves it */
             }
             else if (!flag[j])
             {  /* xN[j] has its lower bound active */
-               /* strong feasibility means d[j] >= 0 */
-               if (d[j] < 0.0)
-#if 1 /* 12/VII-2017 */
-                  c[k] -= d[j], d[j] = 0.0;
-#else
-                  c[k] -= d[j] - 1e-9, d[j] = +1e-9;
-#endif
-               else if (c[k] > orig_c[k])
-               {  /* remove/reduce perturbation of cN[j] */
-                  temp = c[k] - orig_c[k]; /* > 0 */
-                  if (temp < d[j])
-                     c[k] = orig_c[k], d[j] -= temp;
-                  else
-                     c[k] -= d[j], d[j] = 0.0;
-               }
+               xassert(l[k] != -DBL_MAX);
+               /* first, we remove current perturbation to provide
+                * c[k] = orig_c[k] */
+               d[j] -= c[k] - orig_c[k], c[k] = orig_c[k];
+               /* strong feasibility means d[j] >= 0, but we provide
+                * d[j] >= +eps to prevent dual degeneracy */
+               if (d[j] < +eps)
+                  c[k] -= d[j] - eps, d[j] = +eps;
             }
             else
             {  /* xN[j] has its upper bound active */
-               /* strong feasibility means d[j] <= 0 */
-               if (d[j] > 0.0)
-#if 1 /* 12/VII-2017 */
-                  c[k] -= d[j], d[j] = 0.0;
-#else
-                  c[k] -= d[j] + 1e-9, d[j] = -1e-9;
-#endif
-               else if (c[k] < orig_c[k])
-               {  /* remove/reduce perturbation of cN[j] */
-                  temp = c[k] - orig_c[k]; /* < 0 */
-                  if (temp > d[j])
-                     c[k] = orig_c[k], d[j] -= temp;
-                  else
-                     c[k] -= d[j], d[j] = 0.0;
-               }
+               xassert(u[k] != +DBL_MAX);
+               /* similarly, we remove current perturbation to provide
+                * c[k] = orig_c[k] */
+               d[j] -= c[k] - orig_c[k], c[k] = orig_c[k];
+               /* strong feasibility means d[j] <= 0, but we provide
+                * d[j] <= -eps to prevent dual degeneracy */
+               if (d[j] > -eps)
+                  c[k] -= d[j] + eps, d[j] = -eps;
             }
          }
       }

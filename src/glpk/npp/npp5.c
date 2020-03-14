@@ -1,10 +1,9 @@
-/* glpnpp05.c */
+/* npp5.c */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013 Andrew Makhorin, Department for Applied
+*  Copyright (C) 2009-2017 Andrew Makhorin, Department for Applied
 *  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
 *  reserved. E-mail: <mao@gnu.org>.
 *
@@ -23,7 +22,7 @@
 ***********************************************************************/
 
 #include "env.h"
-#include "glpnpp.h"
+#include "npp.h"
 
 /***********************************************************************
 *  NAME
