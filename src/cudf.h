@@ -118,7 +118,7 @@ public:
 // Compares two versioned package (used by ordered set packages likes CUDFVersionedPackageSet)
 class CUDFPackage_comparator {
 public:
-  bool operator()(CUDFVersionedPackage *p1, CUDFVersionedPackage *p2) {
+  bool operator()(CUDFVersionedPackage *p1, CUDFVersionedPackage *p2) const {
     if (p1->version < p2->version)
       return true;
     else
