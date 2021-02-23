@@ -1,7 +1,5 @@
 /* draft.h */
 
-/* (reserved for copyright notice) */
-
 #ifndef DRAFT_H
 #define DRAFT_H
 

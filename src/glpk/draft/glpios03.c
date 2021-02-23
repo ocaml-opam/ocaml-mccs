@@ -2,11 +2,8 @@
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
-*
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
-*  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
-*  reserved. E-mail: <mao@gnu.org>.
+*  Copyright (C) 2005-2018 Free Software Foundation, Inc.
+*  Written by Andrew Makhorin <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -920,13 +917,10 @@ int ios_driver(glp_tree *T)
 #if 0
       ((glp_iocp *)T->parm)->msg_lev = GLP_MSG_DBG;
 #endif
-#if 1 /* 16/III-2016 */
+#if 1 /* 01/III-2018 */
       if (((glp_iocp *)T->parm)->flip)
-#if 0 /* 20/I-2018 */
-         xprintf("WARNING: LONG-STEP DUAL SIMPLEX WILL BE USED\n");
-#else
-         xprintf("Long-step dual simplex will be used\n");
-#endif
+         if (T->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Long-step dual simplex will be used\n");
 #endif
       /* on entry to the B&B driver it is assumed that the active list
          contains the only active (i.e. root) subproblem, which is the

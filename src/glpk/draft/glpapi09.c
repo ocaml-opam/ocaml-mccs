@@ -2,11 +2,8 @@
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
-*
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
-*  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
-*  reserved. E-mail: <mao@gnu.org>.
+*  Copyright (C) 2000-2018 Free Software Foundation, Inc.
+*  Written by Andrew Makhorin <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -600,7 +597,7 @@ int glp_intopt(glp_prob *P, const glp_iocp *parm)
       {  int ni = glp_get_num_int(P);
          int nb = glp_get_num_bin(P);
          char s[50];
-         xprintf("GLPK Integer Optimizer, v%s\n", glp_version());
+         xprintf("GLPK Integer Optimizer %s\n", glp_version());
          xprintf("%d row%s, %d column%s, %d non-zero%s\n",
             P->m, P->m == 1 ? "" : "s", P->n, P->n == 1 ? "" : "s",
             P->nnz, P->nnz == 1 ? "" : "s");

@@ -2,11 +2,8 @@
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
-*
-*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
-*  2009, 2010, 2011, 2013, 2018 Andrew Makhorin, Department for Applied
-*  Informatics, Moscow Aviation Institute, Moscow, Russia. All rights
-*  reserved. E-mail: <mao@gnu.org>.
+*  Copyright (C) 2003-2018 Free Software Foundation, Inc.
+*  Written by Andrew Makhorin <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -1392,6 +1389,9 @@ IOSPOOL *ios_create_pool(glp_tree *tree)
 {     /* create cut pool */
       IOSPOOL *pool;
       pool = glp_create_prob();
+#if 1 /* 14/VII-2020 */
+      if (tree->mip->n)
+#endif
       glp_add_cols(pool, tree->mip->n);
       return pool;
 }
@@ -1662,7 +1662,6 @@ void ios_process_sol(glp_tree *T)
          npp_unload_sol(T->npp, T->P);
       }
       xassert(T->P != NULL);
-      /* save solution to text file, if requested */
       return;
 }
 #endif
