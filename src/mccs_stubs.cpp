@@ -23,8 +23,10 @@
 #include <osi_solver.h>
 #endif
 
+#if OCAML_VERSION < 41200
 #define Val_none Val_int(0)
-#define Some_val(v)  Field(v,0)
+#define Some_val(v) Field(v, 0)
+#endif
 
 value Val_some (value v)
 {
