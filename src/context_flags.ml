@@ -37,6 +37,7 @@ let cxxflags =
 let clibs =
   let flags =
     (ifc (Config.ccomp_type = "cc") ["-lstdc++"]) @
+    (ifc (Config.system = "cygwin") ["-lgcc_s"]) @
     (ifc useCOIN ["-lCoinUtils"]) @
     (ifc useCLP  ["-lOsiClp"]) @
     (ifc useCBC  ["-lOsiCbc";"-lCbc"]) @
