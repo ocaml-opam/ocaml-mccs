@@ -5,7 +5,6 @@
 /*******************************************************/
 
 
-#include <lp_solver.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -14,6 +13,8 @@
 #else
 #include <unistd.h>
 #endif
+
+#include <lp_solver.h>
 
 #define CLEAN_FILES 1
 #ifdef _WIN32
