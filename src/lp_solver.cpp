@@ -78,7 +78,7 @@ int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int
     fprintf(stderr, "lp_solver: initialize: not enough memory.\n");
     exit(-1);
   } else if (ctlpfile == (FILE *)NULL) {
-    fprintf(stderr, "lp_solver: initialize: can not open %s.\n", ctlpfilename);
+    fprintf(stderr, "lp_solver: initialize: cannot open %s.\n", ctlpfilename);
     exit(-1);
   } else
     return 0;
