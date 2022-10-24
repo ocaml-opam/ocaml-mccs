@@ -3,6 +3,7 @@
 #endif
 
 #define CAML_NAME_SPACE
+#include <caml/version.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/custom.h>
@@ -499,7 +500,10 @@ static struct custom_operations problem_ops = {
   custom_hash_default,
   custom_serialize_default,
   custom_deserialize_default,
-  custom_compare_ext_default
+  custom_compare_ext_default,
+#if OCAML_VERSION >= 40800
+  0,
+#endif
 };
 
 extern "C" value set_verbosity(value v)
