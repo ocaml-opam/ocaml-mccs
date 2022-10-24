@@ -92,7 +92,7 @@ int lp_solver::writelp(const char *filename) { return 0; }
 int lp_solver::solve() {
   int status = 0;
   int rank, iobjval;
-  char command[1024];
+  char command[2048];
   FILE *fsol = (FILE *)NULL;
   CUDFcoefficient objvals[20];
   unsigned int nb_objectives = objectives.size();
