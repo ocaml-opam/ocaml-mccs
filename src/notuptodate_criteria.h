@@ -9,7 +9,7 @@
 #ifndef _NOTUPTODATE_CRITERIA_H_
 #define _NOTUPTODATE_CRITERIA_H_
 
-#include <abstract_criteria.h>
+#include "abstract_criteria.h"
 
 // A concrete class for the notuptodate criteria
 // i.e. number of virtual packages that are not installed

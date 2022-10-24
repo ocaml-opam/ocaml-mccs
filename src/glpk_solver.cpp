@@ -12,9 +12,9 @@
 #else
 #include <unistd.h>
 #endif
-#include <math.h>
-#include <glpk_solver.h>
-#include <limits.h>
+#include <cmath>
+#include "glpk_solver.h"
+#include <climits>
 
 #define OUTPUT_MODEL 0
 

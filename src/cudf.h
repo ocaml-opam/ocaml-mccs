@@ -18,9 +18,9 @@
 #define __USE_MINGW_ANSI_STDIO 1
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include <vector>
 #include <set>
 #include <map>

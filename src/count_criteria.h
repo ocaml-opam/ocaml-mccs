@@ -10,7 +10,7 @@
 #ifndef _COUNT_CRITERIA_H_
 #define _COUNT_CRITERIA_H_
 
-#include <abstract_criteria.h>
+#include "abstract_criteria.h"
 
 typedef enum {REQUEST,NEW,CHANGED,SOLUTION} Count_scope;
 

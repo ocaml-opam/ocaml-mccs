@@ -10,9 +10,9 @@
 #ifndef _ABSTRACT_CRITERIA_H_
 #define _ABSTRACT_CRITERIA_H_
 
-#include <cudf.h>
-#include <cudf_types.h>
-#include <abstract_solver.h>
+#include "cudf.h"
+#include "cudf_types.h"
+#include "abstract_solver.h"
 
 // Abstract criteria class
 class abstract_criteria {

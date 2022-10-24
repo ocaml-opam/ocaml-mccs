@@ -9,7 +9,7 @@
 #ifndef _REMOVED_CRITERIA_H_
 #define _REMOVED_CRITERIA_H_
 
-#include <abstract_criteria.h>
+#include "abstract_criteria.h"
 
 // A concrete criteria class for the removed criteria
 // i.e. number of virtual packages that were installed in the initial

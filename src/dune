@@ -7,8 +7,6 @@
  (modules :standard \ context_flags)
  (cxx_flags
   :standard
-  -I
-  .
   (:include cxxflags.sexp))
  (c_library_flags
   :standard

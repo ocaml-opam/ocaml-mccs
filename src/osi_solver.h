@@ -12,7 +12,7 @@
 #ifndef _OSI_SOLVER_H
 #define _OSI_SOLVER_H
 
-#include <abstract_solver.h>
+#include "abstract_solver.h"
 #include <coin/OsiSolverInterface.hpp>
 #include <coin/CoinPackedVector.hpp>
 
@@ -21,8 +21,8 @@
 #else
 #include <unistd.h>
 #endif
-#include <math.h>
-#include <limits.h>
+#include <cmath>
+#include <climits>
 
 template<class OsiSolver>
 class osi_solver: public abstract_solver  {

@@ -11,8 +11,8 @@
 #ifndef _ABSTRACT_SOLVER_H
 #define _ABSTRACT_SOLVER_H
 
-#include <cudf.h>
-#include <cudf_types.h>
+#include "cudf.h"
+#include "cudf_types.h"
 
 
 // provide an abstraction of the underlying solvers

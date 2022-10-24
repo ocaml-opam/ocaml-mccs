@@ -9,7 +9,7 @@
 #ifndef _CHANGED_CRITERIA_H_
 #define _CHANGED_CRITERIA_H_
 
-#include <abstract_criteria.h>
+#include "abstract_criteria.h"
 
 // A concrete class for the changed criteria
 // i.e. number of virtual packages whose set of 

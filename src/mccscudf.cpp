@@ -5,16 +5,16 @@
 /*******************************************************/
 
 
-#include <cudf.h>
-#include <abstract_solver.h>
-#include <constraint_generation.h>
-#include <criteria.h>
-#include <combiner.h>
-#include <cudf_reductions.h>
+#include "cudf.h"
+#include "abstract_solver.h"
+#include "constraint_generation.h"
+#include "criteria.h"
+#include "combiner.h"
+#include "cudf_reductions.h"
 #include <sys/stat.h>
-#include <errno.h>
+#include <cerrno>
 #include <sstream>
-#include <mccscudf.h>
+#include "mccscudf.h"
 
 // underlying solver declaration
 // allows using solvers withour having to include the whole solver classes
@@ -35,7 +35,7 @@ extern abstract_solver *new_glpk_solver(bool use_exact);
 #endif
 
 #ifdef USECOIN
-  #include <osi_solver.h>
+  #include "osi_solver.h"
   #ifdef USECLP
     #include <coin/OsiClpSolverInterface.hpp>
   #endif

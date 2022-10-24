@@ -12,15 +12,15 @@
 #include <caml/callback.h>
 #include <signal.h>
 #include <map>
-#include <cudf.h>
-#include <abstract_solver.h>
-#include <cudf_reductions.h>
-#include <mccscudf.h>
+#include "cudf.h"
+#include "abstract_solver.h"
+#include "cudf_reductions.h"
+#include "mccscudf.h"
 #ifdef USEGLPK
-#include <glpk_solver.h>
+#include "glpk_solver.h"
 #endif
 #ifdef USECOIN
-#include <osi_solver.h>
+#include "osi_solver.h"
 #endif
 
 #if OCAML_VERSION < 41200

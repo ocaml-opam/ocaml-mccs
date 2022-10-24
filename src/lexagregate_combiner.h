@@ -10,7 +10,7 @@
 #ifndef __LEXAGREGATE_COMBINER_H
 #define __LEXAGREGATE_COMBINER_H
 
-#include <abstract_combiner.h>
+#include "abstract_combiner.h"
 
 // Concrete class to agregate a set of criteria i.e. handle it as sum \lambda_i c_i
 // Note: such an agregate could be seen either as a combiner or a criteria
