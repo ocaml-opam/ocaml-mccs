@@ -10,11 +10,11 @@
 #ifndef _CONSTRAINT_GENERATION_H_
 #define _CONSTRAINT_GENERATION_H_
 
-#include <cudf.h>
-#include <abstract_solver.h>
-#include <criteria.h>
-#include <combiner.h>
-#include <cudf_reductions.h>
+#include "cudf.h"
+#include "abstract_solver.h"
+#include "criteria.h"
+#include "combiner.h"
+#include "cudf_reductions.h"
 
 extern bool generate_desagregate_constraints;
 extern bool generate_agregate_constraints;

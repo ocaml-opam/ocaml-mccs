@@ -10,7 +10,7 @@
 #ifndef _SCOEFF_SOLVER_H
 #define _SCOEFF_SOLVER_H
 
-#include <cudf.h>
+#include "cudf.h"
 
 // Template to allow coefficient saving
 // mainly used to save objective coefficients

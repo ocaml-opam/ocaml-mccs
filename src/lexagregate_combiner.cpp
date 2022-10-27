@@ -6,8 +6,8 @@
 /*******************************************************/
 
 
-#include <stdio.h>
-#include <lexagregate_combiner.h>
+#include <cstdio>
+#include "lexagregate_combiner.h"
 
 // Compute the number of columns required to handle the combiner
 int lexagregate_combiner::column_allocation(int first_rank) {

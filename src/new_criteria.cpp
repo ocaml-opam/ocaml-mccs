@@ -6,7 +6,7 @@
 /*******************************************************/
 
 
-#include <new_criteria.h>
+#include "new_criteria.h"
 
 // Criteria initialization
 void new_criteria::initialize(CUDFproblem *problem, abstract_solver *solver) {

@@ -6,8 +6,8 @@
 /*******************************************************/
 
 
-#include <removed_criteria.h>
-#include <constraint_generation.h>
+#include "removed_criteria.h"
+#include "constraint_generation.h"
 
 // Criteria initialization
 void removed_criteria::initialize(CUDFproblem *problem, abstract_solver *solver) {

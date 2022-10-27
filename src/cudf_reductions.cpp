@@ -6,7 +6,7 @@
 /*******************************************************/
 
 
-#include <cudf_reductions.h>
+#include "cudf_reductions.h"
 #include <list>
 
 vector<CUDFPropertiesIterator> process_properties; // set of property to process

@@ -10,8 +10,8 @@
 #ifndef _GLPK_SOLVER_H
 #define _GLPK_SOLVER_H
 
-#include <abstract_solver.h>
-#include <scoeff_solver.h>
+#include "abstract_solver.h"
+#include "scoeff_solver.h"
 #include "config.h"
 
 class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {

@@ -7,7 +7,7 @@
 
 // Count a property quantity
 
-#include <count_criteria.h>
+#include "count_criteria.h"
 
 // Check property availability
 void count_criteria::check_property(CUDFproblem *problem) {
