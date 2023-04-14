@@ -20,6 +20,8 @@ class lp_solver: public abstract_solver, public scoeff_solver<CUDFcoefficient, 0
   // Write the lp on a file
   int writelp(const char *filename);
 
+  void set_mip_gap(double);
+
   // Solve the problem
   int solve();
   int solve(int timeout);

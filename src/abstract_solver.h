@@ -92,6 +92,8 @@ class abstract_solver {
   virtual int solve() { return 0; }; 
   virtual int solve(int timeout) { return 0; };
 
+  virtual void set_mip_gap(double) = 0;
+
   // ******************************************************************
   // abort should, if possible, do something which causes solve to
   // terminate.
