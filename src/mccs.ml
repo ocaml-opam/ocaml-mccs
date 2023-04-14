@@ -75,13 +75,13 @@ let problem_of_cudf cudf =
   pb
 
 let resolve_cudf
-    ?(verbose=false) ?timeout ?(solver=default_solver)
+    ?(verbosity=0) ?timeout ?(solver=default_solver)
     criteria (preamble, _, _ as cudf) =
   let timeout = match timeout with
     | None -> 0
     | Some f -> int_of_float (1000. *. f)
   in
-  set_verbosity (if verbose then 1 else 0);
+  set_verbosity (max 0 verbosity);
   let pb = problem_of_cudf cudf in
   match call_solver solver criteria timeout pb with
   | None -> None

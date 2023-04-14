@@ -19,7 +19,7 @@ type solver_backend = [ `GLPK | `LP of string | `COIN_CLP | `COIN_CBC | `COIN_SY
 (** Resolve the given problem. The timeout is in seconds, default is to never
     time out. *)
 val resolve_cudf:
-  ?verbose:bool -> ?timeout:float -> ?solver:solver_backend ->
+  ?verbosity:int -> ?timeout:float -> ?solver:solver_backend ->
   string -> Cudf.cudf -> Cudf.solution option
 
 (** Deprecated, corresponds to the default solver backend selection only *)
