@@ -24,6 +24,8 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
   // Allocate some columns for integer variables
   int set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper);
 
+  void set_mip_gap(double);
+
   // Write the lp on a file
   // int writelp(const char *filename);
 
@@ -97,6 +99,7 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
  private:
   glp_iocp mip_params;
   bool aborted;
+  double mip_gap;
 
 };
 

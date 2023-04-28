@@ -16,8 +16,8 @@ typedef struct {
   abstract_solver * solution; // May be NULL with success == 1 for unsatisfiable problems
 } Solver_return;
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem);
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem, abstract_solver **solver);
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, double mip_gap, CUDFproblem* the_problem);
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, double mip_gap, CUDFproblem* the_problem, abstract_solver **solver);
 
 int has_backend(Solver_backend backend);
 

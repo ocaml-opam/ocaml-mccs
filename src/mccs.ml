@@ -60,7 +60,7 @@ external set_problem_request: problem -> request -> unit
   = "set_problem_request"
 
 external call_solver:
-  solver_backend -> string -> int -> problem -> Cudf.package list option
+  solver_backend -> string -> int -> float -> problem -> Cudf.package list option
   = "call_solver"
 
 external backends_list:
@@ -75,7 +75,7 @@ let problem_of_cudf cudf =
   pb
 
 let resolve_cudf
-    ?(verbosity=0) ?timeout ?(solver=default_solver)
+    ?(verbosity=0) ?timeout ?(mip_gap=0.0) ?(solver=default_solver)
     criteria (preamble, _, _ as cudf) =
   let timeout = match timeout with
     | None -> 0
@@ -83,7 +83,7 @@ let resolve_cudf
   in
   set_verbosity (max 0 verbosity);
   let pb = problem_of_cudf cudf in
-  match call_solver solver criteria timeout pb with
+  match call_solver solver criteria timeout mip_gap pb with
   | None -> None
   | Some sol ->
     let univ = Cudf.load_universe sol in

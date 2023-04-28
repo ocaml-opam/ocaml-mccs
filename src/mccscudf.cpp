@@ -285,12 +285,12 @@ CriteriaList *get_criteria(char *crit_descr, bool first_level, vector<abstract_c
   return process_criteria(crit_descr, pos, first_level, criteria_with_property);
 }
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem) {
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, double mip_gap, CUDFproblem* the_problem) {
   abstract_solver *solver;
-  return call_mccs(solver_arg, criteria_arg, timeout, the_problem, &solver);
+  return call_mccs(solver_arg, criteria_arg, timeout, mip_gap, the_problem, &solver);
 }
 
-Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDFproblem* the_problem, abstract_solver **solver_ptr) {
+Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, double mip_gap, CUDFproblem* the_problem, abstract_solver **solver_ptr) {
   CUDFproblem *problem = the_problem;
   vector<abstract_criteria *> criteria_with_property;
   CriteriaList *criteria = get_criteria(criteria_arg, false, &criteria_with_property);
@@ -377,6 +377,7 @@ Solver_return call_mccs(Solver solver_arg, char *criteria_arg, int timeout, CUDF
     if (verbosity > 0) PRINT_OUT("========\nConstraint generation error.\n");
     no_solution = true;
   }
+  solver->set_mip_gap(mip_gap);
   if (! no_solution) {
     int s = (timeout > 0) ? solver->solve(timeout) : solver->solve();
     if (s <= 0) {
