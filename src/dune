@@ -31,8 +31,13 @@
 (rule
   (with-stdout-to config_external.h (echo "#include <glpk.h>")))
 
+(executable
+ (name context_flags)
+ (modules context_flags)
+ (libraries compiler-libs.common))
+
 (rule
  (targets cxxflags.sexp clibs.sexp flags.sexp)
- (deps context_flags.ml (universe))
+ (deps context_flags.exe (universe))
  (action
-  (run ocaml %{deps})))
+  (run %{deps})))

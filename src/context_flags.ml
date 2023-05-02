@@ -1,6 +1,3 @@
-#directory "+compiler-libs";;
-#load "ocamlcommon.cma";;
-
 let backends =
   try
     let be = Sys.getenv "MCCS_BACKENDS" in
