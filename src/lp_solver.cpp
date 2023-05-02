@@ -70,7 +70,7 @@ int lp_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, int
 
   for (int i = 0; i < nb_vars; i++) { lb[i] = 0; ub[i] = 1; }
 
-  sprintf(ctlpfilename, "%sctlp_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
+  snprintf(ctlpfilename, sizeof(ctlpfilename), "%sctlp_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
   ctlpfile = fopen(ctlpfilename, "w");
 
   if ((solution == (CUDFcoefficient *)NULL) ||
@@ -99,8 +99,8 @@ int lp_solver::solve() {
   CUDFcoefficient objvals[20];
   unsigned int nb_objectives = objectives.size();
 
-  sprintf(lpfilename, "%slppbs_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
-  sprintf(lpoutfilename, "%slppbs_%lu_%lu.out", TMP_FILES_PATH, uid, pid);
+  snprintf(lpfilename, sizeof(lpfilename), "%slppbs_%lu_%lu.lp", TMP_FILES_PATH, uid, pid);
+  snprintf(lpoutfilename, sizeof(lpoutfilename), "%slppbs_%lu_%lu.out", TMP_FILES_PATH, uid, pid);
 
   for (unsigned int iobj = 0; iobj < nb_objectives; iobj++) {
     if (objectives[iobj]->nb_coeffs == 0) continue;
@@ -138,13 +138,13 @@ int lp_solver::solve() {
 
     if (verbosity < 2)
 #ifdef _WIN32
-      sprintf(command, "cat %s >> %s && %s %s > %s 2> nul",
+      snprintf(command, sizeof(command), "cat %s >> %s && %s %s > %s 2> nul",
 #else
-      sprintf(command, "cat %s >> %s; %s %s > %s 2> /dev/null",
+      snprintf(command, sizeof(command), "cat %s >> %s; %s %s > %s 2> /dev/null",
 #endif
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
     else
-      sprintf(command, "cat %s >> %s && %s %s | tee %s",
+      snprintf(command, sizeof(command), "cat %s >> %s && %s %s | tee %s",
               ctlpfilename, lpfilename, lpsolver, lpfilename, lpoutfilename);
 
     if (system(command) == -1) {
