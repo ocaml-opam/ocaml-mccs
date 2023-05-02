@@ -210,7 +210,7 @@ int glpk_solver::end_objectives(void) {
     char *name;
     char buffer[20];
 
-    sprintf(buffer, "x%d", i);
+    snprintf(buffer, sizeof(buffer), "x%d", i);
     if ((name = (char *)malloc(strlen(buffer)+1)) == (char *)NULL) {
       PRINT_ERR("CUDF error: can not alloc memory for variable name in glpk_solver::end_objective.\n");
       exit(-1);
