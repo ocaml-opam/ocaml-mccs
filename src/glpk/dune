@@ -118,10 +118,15 @@
 
 (copy_files# simplex/*.{c,h})
 
+(executable
+ (name context_flags)
+ (modules context_flags)
+ (libraries compiler-libs.common))
+
 (rule
  (targets cflags.sexp)
- (deps context_flags.ml)
+ (deps context_flags.exe)
  (action
   (with-stdout-to
    %{targets}
-   (run ocaml %{deps} cflags))))
+   (run %{deps} cflags))))
