@@ -35,8 +35,8 @@ let () =
   | "cflags" ->
      if Config.ccomp_type = "cc" then
        match detect_cc () with
-       | `Gcc -> print_string "(-Wno-parentheses -Wno-stringop-overflow)"
-       | `Clang | `Unknown -> print_string "(-Wno-parentheses)"
+       | `Gcc -> print_string "(-Wall -Wno-parentheses -Wno-stringop-overflow)"
+       | `Clang | `Unknown -> print_string "(-Wall -Wno-parentheses)"
      else
        print_string "()"
   | _ ->
