@@ -10,7 +10,7 @@
 (executable
  (name context_flags)
  (modules context_flags)
- (libraries compiler-libs.common))
+ (libraries compiler-libs.common unix str))
 
 (rule
  (targets cflags.sexp)
