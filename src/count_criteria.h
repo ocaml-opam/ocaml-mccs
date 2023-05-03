@@ -63,13 +63,13 @@ class count_criteria: public abstract_criteria {
   // Criteria initialization
   count_criteria(const char *property_name) {
     this->property_name = property_name;
-    this->lambda_crit = +1; 
+    this->lambda_crit = +1;
   };
 
   // Criteria initialization
   count_criteria(const char *property_name, Count_scope scope, CUDFcoefficient lambda_crit) {
     this->property_name = property_name;
-    this->lambda_crit = lambda_crit; 
+    this->lambda_crit = lambda_crit;
     this->scope = scope;
   };
 };

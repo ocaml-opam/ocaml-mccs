@@ -53,11 +53,11 @@ class osi_solver: public abstract_solver  {
 
   // Init the objective function definitions
   int begin_objectives(void);
-  // Get current objective coefficient of package 
+  // Get current objective coefficient of package
   CUDFcoefficient get_obj_coeff(CUDFVersionedPackage *package);
   // Get current objective coefficient of a column
   CUDFcoefficient get_obj_coeff(int rank);
-  // Set current objective coefficient of package 
+  // Set current objective coefficient of package
   int set_obj_coeff(CUDFVersionedPackage *package, CUDFcoefficient value);
   // Set current objective coefficient of column
   int set_obj_coeff(int rank, CUDFcoefficient value);
@@ -185,7 +185,7 @@ CUDFcoefficient osi_solver<OsiSolver>::get_obj_coeff(CUDFVersionedPackage *packa
   return (CUDFcoefficient)coefficients[package->rank];
 }
 
-// return the package coefficient of the objective function 
+// return the package coefficient of the objective function
 template<class OsiSolver>
 CUDFcoefficient osi_solver<OsiSolver>::get_obj_coeff(int rank) {
   return (CUDFcoefficient)coefficients[rank];
@@ -202,7 +202,7 @@ int osi_solver<OsiSolver>::set_obj_coeff(int rank, CUDFcoefficient value) {
   return setCoef(rank, value);
 }
 
-// initialize an additional objective function 
+// initialize an additional objective function
 template<class OsiSolver>
 int osi_solver<OsiSolver>::new_objective(void) {
   coefficients.clear();

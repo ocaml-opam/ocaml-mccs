@@ -62,7 +62,7 @@ template <typename coeffT, int first_coeff_index, int first_tab_index> class sco
  public:
   int nb_vars;            // total amount of variables (columns)
   int nb_coeffs;          // current number of stored coefficients
-  int *tindex;            // allow to get a coefficient from its index within the problem (=-1 for unstored coefficients) 
+  int *tindex;            // allow to get a coefficient from its index within the problem (=-1 for unstored coefficients)
   int *sindex;            // column number (within the solver) of each coefficient
   coeffT *coefficients;   // stored coefficients
 
@@ -73,16 +73,16 @@ template <typename coeffT, int first_coeff_index, int first_tab_index> class sco
   };
 
   // Return the coefficient of a given package (-1 if not stored)
-  coeffT get_coeff(CUDFVersionedPackage *package) { 
-    return get_coeff(package->rank); 
+  coeffT get_coeff(CUDFVersionedPackage *package) {
+    return get_coeff(package->rank);
   };
 
   // Return the coefficient of a given rank (column) (-1 if not stored)
   coeffT get_coeff(int rank) {
-    if (tindex[rank] == -1) 
+    if (tindex[rank] == -1)
       return 0;
     else
-      return coefficients[tindex[rank]]; 
+      return coefficients[tindex[rank]];
   };
 
   // Set the coefficient of a given package to value
@@ -109,19 +109,19 @@ template <typename coeffT, int first_coeff_index, int first_tab_index> class sco
 
     this->nb_vars = nb_vars;
     nb_coeffs = 0;
-   
+
     if ((tindex = (int *)malloc(n*sizeof(int))) == 0) {
       fprintf(stderr, "scoeff_solvers: new: not enough memory to create tindex.\n");
       exit(-1);
     }
 
     for (int k = 0; k < n; k++) tindex[k] = -1;
-    
+
     if ((sindex = (int *)malloc(n*sizeof(int))) == 0) {
       fprintf(stderr, "scoeff_solvers: new: not enough memory to create rindex.\n");
       exit(-1);
     }
-    
+
     if ((coefficients = (coeffT *)malloc(n*sizeof(coeffT))) == 0) {
       fprintf(stderr, "scoeff_solvers: new: not enough memory to create coefficients.\n");
       exit(-1);
@@ -143,7 +143,7 @@ template <typename coeffT, int first_coeff_index, int first_tab_index> class sco
     free(sindex);
     free(coefficients);
   };
-  
+
 };
 
 

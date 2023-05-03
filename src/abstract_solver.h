@@ -89,7 +89,7 @@ class abstract_solver {
   // ******************************************************************
   // solve the problem (must return a value > 0 if a solution has been found, 0
   // if unsatisfiable, < 0 on error. -2 means timeout, -3 means sigint)
-  virtual int solve() { return 0; }; 
+  virtual int solve() { return 0; };
   virtual int solve(int timeout) { return 0; };
 
   virtual void set_mip_gap(double) = 0;
@@ -113,7 +113,7 @@ class abstract_solver {
   // ******************************************************************
   // abstract solver destructor
   virtual ~abstract_solver() {};
-  
+
 };
 
 
