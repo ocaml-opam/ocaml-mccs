@@ -6,9 +6,9 @@ authors: [
   "Louis Gesbert <louis.gesbert@ocamlpro.com>"
 ]
 homepage: "https://www.i3s.unice.fr/~cpjm/misc/"
-bug-reports: "https://github.com/AltGr/ocaml-mccs/issues"
+bug-reports: "https://github.com/ocaml-opam/ocaml-mccs/issues"
 license: ["LGPL-2.1-only WITH OCaml-LGPL-linking-exception" "BSD-3-clause" "GPL-3.0-only"]
-dev-repo: "git+https://github.com/AltGr/ocaml-mccs.git"
+dev-repo: "git+https://github.com/ocaml-opam/ocaml-mccs.git"
 build: [
   ["dune" "build" "-p" name "-j" jobs]
   ["sh" "-c" "dune build @settests --auto-promote || true"] {with-test}
