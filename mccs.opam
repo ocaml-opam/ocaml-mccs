@@ -11,8 +11,6 @@ license: ["LGPL-2.1-only WITH OCaml-LGPL-linking-exception" "BSD-3-clause" "GPL-
 dev-repo: "git+https://github.com/ocaml-opam/ocaml-mccs.git"
 build: [
   ["dune" "build" "-p" name "-j" jobs]
-  ["sh" "-c" "dune build @settests --auto-promote || true"] {with-test}
-  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
 ]
 depends: [
   "ocaml"

@@ -96,7 +96,7 @@ int glpk_solver::solve(int timeout) {
   this->aborted = false;
 
   for (int k = 0; k < nb_objectives; k++) {
-    glp_cpx_basis(lp);
+    glp_cpx_basis(lp, verbosity);
   
     if (status == 0) status = glp_intopt(lp, &this->mip_params);
 

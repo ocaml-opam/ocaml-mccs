@@ -256,11 +256,14 @@ static void cpx_basis(glp_prob *lp)
 *  Robert E. Bixby. Implementing the Simplex Method: The Initial Basis.
 *  ORSA Journal on Computing, Vol. 4, No. 3, 1992, pp. 267-84. */
 
-void glp_cpx_basis(glp_prob *lp)
+void glp_cpx_basis(glp_prob *lp, int verbosity)
 {     if (lp->m == 0 || lp->n == 0)
          glp_std_basis(lp);
-      else
-         cpx_basis(lp);
+      else {
+        ENV *env = get_env_ptr();
+        env->term_out = verbosity;
+        cpx_basis(lp);
+      }
       return;
 }
 

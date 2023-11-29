@@ -1018,7 +1018,14 @@ loop: /* main loop starts here */
                xprintf("Cover cuts enabled\n");
 #ifdef NEW_COVER /* 13/II-2018 */
             xassert(T->cov_gen == NULL);
-            T->cov_gen = glp_cov_init(T->mip);
+         ENV *env = get_env_ptr();
+         int term_out = env->term_out;
+         if (!term_out || T->parm->msg_lev < GLP_MSG_ALL)
+            env->term_out = GLP_OFF;
+         else
+            env->term_out = GLP_ON;
+	 T->cov_gen = glp_cov_init(T->mip);
+         env->term_out = term_out;
 #endif
          }
          if (T->parm->clq_cuts == GLP_ON)
@@ -1028,6 +1035,8 @@ loop: /* main loop starts here */
 #if 0 /* 08/III-2016 */
             T->clq_gen = ios_clq_init(T);
 #else
+	    ENV *env = get_env_ptr();
+	    env->term_out = T->parm->msg_lev;
             T->clq_gen = glp_cfg_init(T->mip);
 #endif
          }

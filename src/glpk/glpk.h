@@ -463,7 +463,7 @@ void glp_std_basis(glp_prob *P);
 void glp_adv_basis(glp_prob *P, int flags);
 /* construct advanced initial LP basis */
 
-void glp_cpx_basis(glp_prob *P);
+void glp_cpx_basis(glp_prob *P, int verbosity);
 /* construct Bixby's initial LP basis */
 
 int glp_simplex(glp_prob *P, const glp_smcp *parm);
