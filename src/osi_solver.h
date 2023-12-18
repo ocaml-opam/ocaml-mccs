@@ -242,7 +242,7 @@ int osi_solver<OsiSolver>::solve(int timeout) {
   try {
   if (verbosity == 0) {
     save_stdout = dup(1);
-    close(1);
+    fclose(stdout); /* close(1) does not close stdout on macOS since macOS 12.7.1 / 13.6.3 / 14.2 (the bug has been reported) */
   }
 
   double * obj_v = objectives[0].denseVector(nb_vars);
