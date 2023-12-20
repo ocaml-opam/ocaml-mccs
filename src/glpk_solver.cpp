@@ -79,7 +79,7 @@ int glpk_solver::solve(int timeout) {
   try {
   if (verbosity == 0) {
     save_stdout = dup(1);
-    close(1);
+    fclose(stdout); /* close(1) does not close stdout on macOS since macOS 12.7.1 / 13.6.3 / 14.2 (the bug has been reported) */
   }
   glp_init_iocp(&this->mip_params);
   this->mip_params.gmi_cuts = GLP_ON;
