@@ -31,7 +31,7 @@ int new_criteria::set_variable_range(int first_free_var) {
 // Add the criteria to the current objective function
 int new_criteria::add_criteria_to_objective(CUDFcoefficient lambda) {
   int ivpkg_rank = first_free_var;
-  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin(); 
+  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin();
        ivpkg != all_uninstalled_versioned_virtual_packages.end(); ivpkg++)
     if ((*ivpkg)->all_versions.size() == 1) {
       CUDFVersionedPackage *pkg = *((*ivpkg)->all_versions.begin());
@@ -44,9 +44,9 @@ int new_criteria::add_criteria_to_objective(CUDFcoefficient lambda) {
 // Add the criteria to the constraint set
 int new_criteria::add_criteria_to_constraint(CUDFcoefficient lambda) {
   int ivpkg_rank = first_free_var;
-  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin(); 
+  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin();
        ivpkg != all_uninstalled_versioned_virtual_packages.end(); ivpkg++)
-    if ((*ivpkg)->all_versions.size() == 1) 
+    if ((*ivpkg)->all_versions.size() == 1)
       solver->set_constraint_coeff(*((*ivpkg)->all_versions.begin()), lambda_crit * lambda);
     else
       solver->set_constraint_coeff(ivpkg_rank++, lambda_crit * lambda);
@@ -56,7 +56,7 @@ int new_criteria::add_criteria_to_constraint(CUDFcoefficient lambda) {
 // Add the constraints required by the criteria
 int new_criteria::add_constraints() {
   int ivpkg_rank = first_free_var;
-  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin(); 
+  for (CUDFVirtualPackageListIterator ivpkg = all_uninstalled_versioned_virtual_packages.begin();
        ivpkg != all_uninstalled_versioned_virtual_packages.end(); ivpkg++) {
     solver->new_constraint();
     if ((*ivpkg)->all_versions.size() > 1) {
@@ -67,7 +67,7 @@ int new_criteria::add_constraints() {
       solver->new_constraint();
       for (CUDFVersionedPackageSetIterator vers_pkg = (*ivpkg)->all_versions.begin(); vers_pkg != (*ivpkg)->all_versions.end(); vers_pkg++)
 	solver->set_constraint_coeff((*vers_pkg)->rank, +1);
-      { 
+      {
 	int n = (*ivpkg)->all_versions.size();
 	solver->set_constraint_coeff(ivpkg_rank, -n);
 	solver->add_constraint_leq(0);
@@ -82,19 +82,19 @@ int new_criteria::add_constraints() {
 CUDFcoefficient new_criteria::bound_range() { return CUDFabs(lambda_crit) * all_uninstalled_versioned_virtual_packages.size() + 1; }
 
 // Compute the criteria upper bound
-CUDFcoefficient new_criteria::upper_bound() { 
+CUDFcoefficient new_criteria::upper_bound() {
   if (lambda_crit >= 0)
-    return lambda_crit * all_uninstalled_versioned_virtual_packages.size(); 
+    return lambda_crit * all_uninstalled_versioned_virtual_packages.size();
   else
     return 0;
 }
 
 // Compute the criteria lower bound
-CUDFcoefficient new_criteria::lower_bound() { 
+CUDFcoefficient new_criteria::lower_bound() {
   if (lambda_crit >= 0)
     return 0;
   else
-    return lambda_crit * all_uninstalled_versioned_virtual_packages.size(); 
+    return lambda_crit * all_uninstalled_versioned_virtual_packages.size();
 }
 
 

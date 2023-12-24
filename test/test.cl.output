@@ -1,6 +1,6 @@
 
 ## SOLUTION ##
-preamble: 
+preamble:
 property: version-lag: nat = [0], pinned: bool = [false], installed-root: bool = [false], reinstall: bool = [false], opam-version: string, opam-name: string
 
 package: ppx.ast

@@ -52,10 +52,10 @@ int glpk_solver::init_solver(CUDFVersionedPackageList *all_versioned_packages, i
 bool glpk_solver::has_intvars() { return true; }
 
 // Set range of an integer variable
-int glpk_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper) { 
+int glpk_solver::set_intvar_range(int rank, CUDFcoefficient lower, CUDFcoefficient upper) {
   lb[rank+1] = lower;
   ub[rank+1] = upper;
-  return 0; 
+  return 0;
 }
 
 // write the problem into a file
@@ -97,7 +97,7 @@ int glpk_solver::solve(int timeout) {
 
   for (int k = 0; k < nb_objectives; k++) {
     glp_cpx_basis(lp);
-  
+
     if (status == 0) status = glp_intopt(lp, &this->mip_params);
 
     if (k + 1 < nb_objectives) {
@@ -107,17 +107,17 @@ int glpk_solver::solve(int timeout) {
       if (verbosity > 0) PRINT_OUT(">>> Objective %d value : %" CUDFint64"d\n", k, objval);
 
       // Reset objective i coefficients
-      for (int i = 1; i < objectives[k]->nb_coeffs + 1; i++) 
+      for (int i = 1; i < objectives[k]->nb_coeffs + 1; i++)
 	glp_set_obj_coef(lp, objectives[k]->sindex[i], 0);
 
       // Set objective i+1 as the actual objective function
-      for (int i = 1; i < objectives[k+1]->nb_coeffs + 1; i++) 
+      for (int i = 1; i < objectives[k+1]->nb_coeffs + 1; i++)
 	glp_set_obj_coef(lp, objectives[k+1]->sindex[i], objectives[k+1]->coefficients[i]);
 
       // Add objective i = objval constraint
       int irow = glp_add_rows(lp, 1);
       glp_set_row_bnds(lp, irow, GLP_FX, objval, objval);
-      glp_set_mat_row(lp, irow, objectives[k]->nb_coeffs, objectives[k]->sindex, objectives[k]->coefficients);    
+      glp_set_mat_row(lp, irow, objectives[k]->nb_coeffs, objectives[k]->sindex, objectives[k]->coefficients);
 
       if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs1.lp");
     }
@@ -169,15 +169,15 @@ int glpk_solver::init_solutions() { return 0; }
 CUDFcoefficient glpk_solver::get_solution(CUDFVersionedPackage *package) { return (CUDFcoefficient)CUDFnearbyint(glp_mip_col_val(lp, package->rank+1)); }
 
 // initialize objective function
-int glpk_solver::begin_objectives(void) { 
+int glpk_solver::begin_objectives(void) {
   glp_set_obj_dir(lp, GLP_MIN);  // Problem is minimization
-  return 0; 
+  return 0;
 }
 
-// return the package coefficient of the objective function 
+// return the package coefficient of the objective function
 CUDFcoefficient glpk_solver::get_obj_coeff(CUDFVersionedPackage *package) { return (CUDFcoefficient)get_coeff(package); }
 
-// return the package coefficient of the objective function 
+// return the package coefficient of the objective function
 CUDFcoefficient glpk_solver::get_obj_coeff(int rank) { return (CUDFcoefficient)get_coeff(rank); }
 
 // set package coefficient to a value
@@ -185,15 +185,15 @@ int glpk_solver::set_obj_coeff(CUDFVersionedPackage *package, CUDFcoefficient va
 // set column coefficient to a value
 int glpk_solver::set_obj_coeff(int rank, CUDFcoefficient value) { set_coeff(rank, value); return 0; }
 
-// initialize an additional objective function 
+// initialize an additional objective function
 int glpk_solver::new_objective(void) {
   reset_coeffs();
   return 0;
 }
 
 // add an additional objective function
-int glpk_solver::add_objective(void) { 
-  push_obj(); 
+int glpk_solver::add_objective(void) {
+  push_obj();
   return 0;
 }
 
@@ -247,13 +247,13 @@ CUDFcoefficient glpk_solver::get_constraint_coeff(CUDFVersionedPackage *package)
 CUDFcoefficient glpk_solver::get_constraint_coeff(int rank) { return (CUDFcoefficient)get_coeff(rank); }
 
 // set package coefficient of the current constraint
-int glpk_solver::set_constraint_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) { 
+int glpk_solver::set_constraint_coeff(CUDFVersionedPackage *package, CUDFcoefficient value) {
   set_coeff(package, value);
   return 0;
 }
 
 // set column coefficient of the current constraint
-int glpk_solver::set_constraint_coeff(int rank, CUDFcoefficient value) { 
+int glpk_solver::set_constraint_coeff(int rank, CUDFcoefficient value) {
   set_coeff(rank, value);
   return 0;
 }
@@ -289,9 +289,9 @@ int glpk_solver::add_constraint_eq(CUDFcoefficient bound) {
 }
 
 // finalize constraints
-int glpk_solver::end_add_constraints(void) { 
-  if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs.lp"); 
-  return 0; 
+int glpk_solver::end_add_constraints(void) {
+  if (OUTPUT_MODEL) glp_write_lp(lp, NULL, "glpkpbs.lp");
+  return 0;
 }
 
 glpk_solver::~glpk_solver() {

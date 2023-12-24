@@ -12,8 +12,8 @@
 #include "abstract_criteria.h"
 
 // A concrete class for the changed criteria
-// i.e. number of virtual packages whose set of 
-// installed/uninstalled versions has changed 
+// i.e. number of virtual packages whose set of
+// installed/uninstalled versions has changed
 // between the initial configuration and the final one
 class changed_criteria: public abstract_criteria {
  public:
@@ -54,7 +54,7 @@ class changed_criteria: public abstract_criteria {
   CUDFcoefficient lambda_crit ;
 
   // Criteria initialization
-  changed_criteria() { this->lambda_crit = +1; };  
+  changed_criteria() { this->lambda_crit = +1; };
   changed_criteria(CUDFcoefficient lambda_crit) { this->lambda_crit = lambda_crit; };
 };
 

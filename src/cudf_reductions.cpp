@@ -37,20 +37,20 @@ void process_package(CUDFproblem *new_pb, list<CUDFVirtualPackage *> &lvpkg, CUD
       new_pb->uninstalled_packages->push_back(pkg);
     if (! pkg->virtual_package->in_reduced) lvpkg.push_back(pkg->virtual_package);
     if (pkg->depends != (CUDFVpkgFormula *)NULL) add_vpkgs_from_vpkgformula(lvpkg, pkg->depends);
-    // process properties 
+    // process properties
     for (vector<CUDFPropertiesIterator>::iterator prop = process_properties.begin(); prop != process_properties.end(); prop++)
       for (CUDFPropertyValueListIterator propval = pkg->properties.begin();  propval != pkg->properties.end(); propval++)
 	if ((*propval)->property == (*prop)->second)
 	  switch((*prop)->second->type_id) {
-	  case pt_vpkg: 
-	  case pt_veqpkg: 
+	  case pt_vpkg:
+	  case pt_veqpkg:
 	    {
 	      CUDFVirtualPackage *vpkg = (*propval)->vpkg->virtual_package;
 	      if (! vpkg->in_reduced) lvpkg.push_back(vpkg);
 	    }
 	    break;
-	  case pt_vpkglist: 
-	  case pt_veqpkglist: 
+	  case pt_vpkglist:
+	  case pt_veqpkglist:
 	    add_vpkgs_from_vpkglist(lvpkg, (*propval)->vpkglist);
 	    break;
 	  case pt_vpkgformula:
@@ -70,7 +70,7 @@ void process_vpackage(CUDFproblem *new_pb, list<CUDFVirtualPackage *> &lvpkg, CU
     if (vpkg->all_versions.size() > 0) // all versions
       for (CUDFVersionedPackageSetIterator ipkg = vpkg->all_versions.begin(); ipkg != vpkg->all_versions.end(); ipkg++)
 	process_package(new_pb, lvpkg, (*ipkg));
-    if (vpkg->providers.size() > 0) // providers 
+    if (vpkg->providers.size() > 0) // providers
       for (CUDFProviderListIterator ipkg = vpkg->providers.begin(); ipkg != vpkg->providers.end(); ipkg++)
 	process_package(new_pb, lvpkg, (*ipkg));
     if (vpkg->versioned_providers.size() > 0) // versioned providers
@@ -87,7 +87,7 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
 
   if (verbosity > 0)
     PRINT_OUT("Initial size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
-	   problem->all_packages->size(), problem->installed_packages->size(), problem->uninstalled_packages->size(), 
+	   problem->all_packages->size(), problem->installed_packages->size(), problem->uninstalled_packages->size(),
 	   problem->all_virtual_packages->size());
 
   new_pb->properties = problem->properties;
@@ -125,16 +125,16 @@ CUDFproblem *compute_reduced_CUDF(CUDFproblem *problem) {
 
     if (verbosity > 0)
       PRINT_OUT("Final size: %" CUDFsizet"u packages (%" CUDFsizet"u installed, %" CUDFsizet"u uninstalled), %" CUDFsizet"u virtual packages\n",
-	     new_pb->all_packages->size(), new_pb->installed_packages->size(), new_pb->uninstalled_packages->size(), 
+	     new_pb->all_packages->size(), new_pb->installed_packages->size(), new_pb->uninstalled_packages->size(),
 	     new_pb->all_virtual_packages->size());
 
     // Recompute ranks
-    { 
+    {
       int rank = 0;
       for (CUDFVersionedPackageListIterator ipkg = new_pb->all_packages->begin(); ipkg != new_pb->all_packages->end(); ipkg++, rank++)
 	(*ipkg)->rank = rank;
       rank = 0;
-      for (CUDFVirtualPackageListIterator ivpkg = new_pb->all_virtual_packages->begin(); 
+      for (CUDFVirtualPackageListIterator ivpkg = new_pb->all_virtual_packages->begin();
 	   ivpkg != new_pb->all_virtual_packages->end(); ivpkg++, rank++)
 	(*ivpkg)->rank = rank;
     }

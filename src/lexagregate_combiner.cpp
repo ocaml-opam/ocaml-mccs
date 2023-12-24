@@ -42,15 +42,15 @@ void lexagregate_combiner::initialize(CUDFproblem *problem, abstract_solver *sol
 
 
 // Compute the number of required columns when the combiner is used as a criteria
-int lexagregate_combiner::set_variable_range(int first_free_var) { 
-  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++) 
+int lexagregate_combiner::set_variable_range(int first_free_var) {
+  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++)
     first_free_var = (*crit)->set_variable_range(first_free_var);
 
   return first_free_var;
 }
 
 // Add the combiner to the curent objective function
-int lexagregate_combiner::add_criteria_to_objective(CUDFcoefficient lambda) { 
+int lexagregate_combiner::add_criteria_to_objective(CUDFcoefficient lambda) {
   CUDFcoefficient lambda_comb = lambda*lambda_crit;
 
   for (CriteriaList::reverse_iterator crit = criteria->rbegin(); crit != criteria->rend(); ++crit) {
@@ -117,27 +117,27 @@ CUDFcoefficient lexagregate_combiner::lower_bound() {
 }
 
 // Does the combiner/criteria allows problem reduction
-bool lexagregate_combiner::can_reduce() { 
+bool lexagregate_combiner::can_reduce() {
   bool result = true;
 
-  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++) 
+  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++)
     result = result && (*crit)->can_reduce(lambda_crit);
   return result;
 }
 
 // Does the combiner/criteria allows problem reduction (taking into account lambda multiplier)
-bool lexagregate_combiner::can_reduce(CUDFcoefficient lambda) { 
+bool lexagregate_combiner::can_reduce(CUDFcoefficient lambda) {
   bool result = true;
   CUDFcoefficient l = lambda * lambda_crit;
 
-  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++) 
+  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++)
     result = result && (*crit)->can_reduce(l);
   return result;
 }
 
 
 // Initialize integer variables
-void lexagregate_combiner::initialize_intvars() { 
-  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++) 
+void lexagregate_combiner::initialize_intvars() {
+  for (CriteriaListIterator crit = criteria->begin(); crit != criteria->end(); crit++)
     (*crit)->initialize_intvars();
 }

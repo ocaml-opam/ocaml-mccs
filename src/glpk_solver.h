@@ -44,11 +44,11 @@ class glpk_solver: public abstract_solver, public scoeff_solver<double, 1, 1>  {
 
   // Init the objective function definitions
   int begin_objectives(void);
-  // Get current objective coefficient of package 
+  // Get current objective coefficient of package
   CUDFcoefficient get_obj_coeff(CUDFVersionedPackage *package);
   // Get current objective coefficient of a column
   CUDFcoefficient get_obj_coeff(int rank);
-  // Set current objective coefficient of package 
+  // Set current objective coefficient of package
   int set_obj_coeff(CUDFVersionedPackage *package, CUDFcoefficient value);
   // Set current objective coefficient of column
   int set_obj_coeff(int rank, CUDFcoefficient value);

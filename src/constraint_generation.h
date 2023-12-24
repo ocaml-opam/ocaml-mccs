@@ -5,7 +5,7 @@
 /* (c) Claude Michel I3S (UNSA-CNRS) 2009,2010,2011    */
 /*******************************************************/
 
-// 
+//
 
 #ifndef _CONSTRAINT_GENERATION_H_
 #define _CONSTRAINT_GENERATION_H_
@@ -46,9 +46,9 @@ extern bool is_in_provl(const CUDFVersionedPackage *pkg, CUDFProviderList *provl
 // check if pkg belongs to a list of removed packages
 extern bool is_in_remove(const CUDFVersionedPackage *pkg, CUDFVersionedPackageList *remove_set);
 
-// check if pkg, version belongs to a sublist of providers 
+// check if pkg, version belongs to a sublist of providers
 extern bool is_in_versioned_providers(const CUDFVersionedPackage *pkg, const CUDFVersion version,
-				      const CUDFVersionedProviderListIterator vpbegin, 
+				      const CUDFVersionedProviderListIterator vpbegin,
 				      const CUDFVersionedProviderListIterator vpend);
 
 

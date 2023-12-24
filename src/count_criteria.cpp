@@ -19,8 +19,8 @@ void count_criteria::check_property(CUDFproblem *problem) {
     PRINT_OUT("WARNING: cannot find \"%s\" property definition: criteria count not used.\n", property_name);
   else
     switch ((*prop).second->type_id) {
-    case pt_int: 
-    case pt_nat: 
+    case pt_int:
+    case pt_nat:
     case pt_posint:
       has_property = true;
       break;
@@ -62,12 +62,12 @@ void count_criteria::initialize(CUDFproblem *problem, abstract_solver *solver) {
 
   if (has_property) {
     CUDFPropertiesIterator prop =  problem->properties->find(string(property_name));
-    
+
     default_value = 0;
     if ((*prop).second->default_value != ((CUDFPropertyValue *)NULL))
       switch ((*prop).second->default_value->property->type_id) {
-      case pt_int: 
-      case pt_nat: 
+      case pt_int:
+      case pt_nat:
       case pt_posint:
 	default_value = lambda_crit * (*prop).second->default_value->intval;
 	break;
@@ -136,7 +136,7 @@ int count_criteria::add_criteria_to_constraint(CUDFcoefficient lambda) {
 	  got_property = true;
 	  break;
 	}
-      if ((! got_property) && (default_value != 0)) 
+      if ((! got_property) && (default_value != 0))
 	solver->set_constraint_coeff(*ipkg, lambda * default_value + solver->get_constraint_coeff(*ipkg));
     }
   }

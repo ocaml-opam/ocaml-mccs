@@ -9,7 +9,7 @@
 #ifndef __ABSTRACT_COMBINER_H
 #define __ABSTRACT_COMBINER_H
 
-#include "cudf.h" 
+#include "cudf.h"
 #include "abstract_criteria.h"
 
 // An anstract combiner

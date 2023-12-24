@@ -58,9 +58,9 @@ class CUDFVpkg {
   CUDFVirtualPackage *virtual_package;  // the package it operates on
   CUDFPackageOp op;                     // kind of operation
   CUDFVersion version;                  // version it operates on (e.g. 5 in p >= 5)
-  
+
   // constructor
-  CUDFVpkg(CUDFVirtualPackage *the_virtual_package, CUDFPackageOp the_op, CUDFVersion the_version) { 
+  CUDFVpkg(CUDFVirtualPackage *the_virtual_package, CUDFPackageOp the_op, CUDFVersion the_version) {
     virtual_package = the_virtual_package;
     op = the_op;
     version = the_version;
@@ -99,7 +99,7 @@ class CUDFVersionedPackage: public CUDFPackage {
 public:
 
   CUDFVersion version;                 // package version
-  CUDFVpkgFormula *depends;            // package dependencies 
+  CUDFVpkgFormula *depends;            // package dependencies
   CUDFVpkgList *conflicts;             // package conflicts
   CUDFVpkgList *provides;              // features provided by the package
   bool installed;                      // whether the package is installed in the initial configuration
@@ -179,7 +179,7 @@ typedef CUDFProperties::iterator  CUDFPropertiesIterator;
 
 // Types allowed for properties
 enum CUDFPropertyType { pt_none,
-                        pt_bool, pt_int, pt_nat, pt_posint, pt_enum, pt_string, 
+                        pt_bool, pt_int, pt_nat, pt_posint, pt_enum, pt_string,
 			pt_vpkg, pt_veqpkg, pt_vpkglist, pt_veqpkglist, pt_vpkgformula};
 
 
@@ -259,8 +259,8 @@ public:
 
 // current CUDF problem
 /* extern CUDFproblem *the_problem;
- * 
- * // list of all the versioned packages of the initial configuration  
+ *
+ * // list of all the versioned packages of the initial configuration
  * extern CUDFVersionedPackageList all_packages;
  * // list of all installed versioned packages in the initial configuration
  * extern CUDFVersionedPackageList installed_packages;
@@ -300,7 +300,7 @@ extern void print_properties(FILE *output, CUDFProperties *properties); // print
 
 // print out a versioned package as installed if install parameter is true, uninstalled otherwise
 extern void print_versioned_package_with_install(FILE *output, CUDFVersionedPackage *pkg, bool install, bool wasinstalled);
-// print out a versioned package 
+// print out a versioned package
 extern void print_versioned_package(FILE *output, CUDFVersionedPackage *pkg, bool wasinstalled);
 // print out a versioned package as installed
 extern void print_versioned_package_as_installed(FILE *output, CUDFVersionedPackage *pkg, bool wasinstalled);
