@@ -54,9 +54,9 @@ class lexagregate_combiner: public abstract_combiner, public abstract_criteria {
 
   // lexagregate combiner creation
   lexagregate_combiner(CriteriaList *criteria) { this->lambda_crit = 1; this->criteria = criteria; };
-  lexagregate_combiner(CriteriaList *criteria, CUDFcoefficient lambda_crit) { 
+  lexagregate_combiner(CriteriaList *criteria, CUDFcoefficient lambda_crit) {
     this->criteria = criteria;
-    this->lambda_crit = lambda_crit; 
+    this->lambda_crit = lambda_crit;
   };
 };
 

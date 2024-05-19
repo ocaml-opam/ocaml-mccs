@@ -26,7 +26,7 @@ class abstract_criteria {
   // Method called to add criteria related constraints
   virtual int add_constraints() { return 0; };
 
-  // Gives the range of the criteria objective 
+  // Gives the range of the criteria objective
   virtual CUDFcoefficient bound_range() { return 0; };
   // Gives the upper bound of the criteria objective
   virtual CUDFcoefficient upper_bound() { return 0; };

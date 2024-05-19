@@ -26,9 +26,9 @@ bool is_in_remove(const CUDFVersionedPackage *pkg, CUDFVersionedPackageList *rem
   return false;
 }
 
-// check if pkg, version belongs to a sublist of providers 
+// check if pkg, version belongs to a sublist of providers
 bool is_in_versioned_providers(const CUDFVersionedPackage *pkg, const CUDFVersion version,
-			       const CUDFVersionedProviderListIterator vpbegin, 
+			       const CUDFVersionedProviderListIterator vpbegin,
 			       const CUDFVersionedProviderListIterator vpend) {
   CUDFVersionedProviderListIterator ivp = vpbegin;
 
@@ -57,8 +57,8 @@ int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set
 
       CUDFVersionedPackageSetIterator iverpkg = vpackage->all_versions.begin();
       CUDFVersionedPackageSetIterator iverpkgend = vpackage->all_versions.end();
-      CUDFVersionedProviderListIterator iprov = vpackage->versioned_providers.begin(); 
-      CUDFVersionedProviderListIterator iprovend = vpackage->versioned_providers.end(); 
+      CUDFVersionedProviderListIterator iprov = vpackage->versioned_providers.begin();
+      CUDFVersionedProviderListIterator iprovend = vpackage->versioned_providers.end();
 
 
       if (vpackage->highest_installed != (CUDFVersionedPackage *)NULL)
@@ -86,7 +86,7 @@ int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set
       /*
       {
 	CUDFProviderList hverpkgs;
-	if ((iverpkg != vpackage->all_versions.end()) && 
+	if ((iverpkg != vpackage->all_versions.end()) &&
 	    ((*iverpkg)->version == highest_version) &&
 	    (! is_in_remove(*iverpkg, &remove_set)) &&
 	    (! is_in_versioned_providers(*iverpkg, (*iverpkg)->version, iprov, iprovend))) {
@@ -170,7 +170,7 @@ int preprocess_upgrade(CUDFproblem *problem, int &new_var, vector<an_upgrade_set
 
 // Generate MILP objective function(s) and constraints for a given solver
 // and a given criteria combination
-int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract_combiner &combiner) { 
+int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract_combiner &combiner) {
   int new_var = 0;
 
   // set of requested upgrades
@@ -209,7 +209,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 
   combiner.constraint_generation();
 
-  // Install 
+  // Install
   if (problem->install != (CUDFVpkgList *)NULL) {
     for (CUDFVpkgListIterator ipkgop = problem->install->begin(); ipkgop != problem->install->end(); ipkgop++) {
       CUDFVirtualPackage *vpackage = (*ipkgop)->virtual_package;
@@ -230,7 +230,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	    solver.set_constraint_coeff(*jpkg, +1);
 	  }
       // or install one of the providers with the right version
-      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 	   jpkg != vpackage->versioned_providers.end(); jpkg++)
 	if (comp(jpkg->first, (*ipkgop)->version))
 	  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
@@ -261,7 +261,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	  for (CUDFProviderListIterator jpkg = vpackage->providers.begin(); jpkg != vpackage->providers.end(); jpkg++)
 	    if (use_pkg(*jpkg) && (solver.get_constraint_coeff(*jpkg) == 0)) { has_pkg = true; solver.set_constraint_coeff(*jpkg, +1); }
 	// as well as all the versioned providers with the right version
-	for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 	     jpkg != vpackage->versioned_providers.end(); jpkg++)
 	  if (comp(jpkg->first, (*ipkgop)->version))
 	    for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
@@ -273,26 +273,26 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
       if (generate_desagregate_constraints) {
 	if (vpackage->all_versions.size() > 0) // Remove all the versions of the package
 	  for (CUDFVersionedPackageSetIterator ipkg = vpackage->all_versions.begin(); ipkg != vpackage->all_versions.end(); ipkg++)
-	    if (use_pkg(*ipkg) && (comp((*ipkg)->version, ((*ipkgop)->version)))) { 
-	      solver.new_constraint(); 
-	      solver.set_constraint_coeff(*ipkg, +1); 
+	    if (use_pkg(*ipkg) && (comp((*ipkg)->version, ((*ipkgop)->version)))) {
+	      solver.new_constraint();
+	      solver.set_constraint_coeff(*ipkg, +1);
 	      solver.add_constraint_eq(0);
 	    }
 	if (vpackage->providers.size() > 0) // as well as all the providers
 	  for (CUDFProviderListIterator jpkg = vpackage->providers.begin(); jpkg != vpackage->providers.end(); jpkg++)
-	    if (use_pkg(*jpkg)) { 
-	      solver.new_constraint(); 
-	      solver.set_constraint_coeff(*jpkg, +1); 
+	    if (use_pkg(*jpkg)) {
+	      solver.new_constraint();
+	      solver.set_constraint_coeff(*jpkg, +1);
 	      solver.add_constraint_eq(0);
 	    }
 	// as well as all the versioned providers with the right version
-	for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 	     jpkg != vpackage->versioned_providers.end(); jpkg++)
 	  if (comp(jpkg->first, (*ipkgop)->version))
 	    for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
-	      if (use_pkg(*kpkg)) { 
-		solver.new_constraint(); 
-		solver.set_constraint_coeff(*kpkg, +1); 
+	      if (use_pkg(*kpkg)) {
+		solver.new_constraint();
+		solver.set_constraint_coeff(*kpkg, +1);
 		solver.add_constraint_eq(0);
 	      }
       }
@@ -300,7 +300,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
   }
 
 
-  // Upgrade : There can be only one VERSION of (already_installed with higher version, + accepted by criteria and > higher version) installed, 
+  // Upgrade : There can be only one VERSION of (already_installed with higher version, + accepted by criteria and > higher version) installed,
   // all other removed
   // WARNING: Providers not handled here ...
   if (upgrades.size() > 0) {
@@ -384,8 +384,8 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 		  }
 		}
 	    }
-	    // as well as from all the providers 
-	    if ((! self_depend) && (vpackage->providers.size() > 0)) { 
+	    // as well as from all the providers
+	    if ((! self_depend) && (vpackage->providers.size() > 0)) {
 	      for (CUDFProviderListIterator jpkg = vpackage->providers.begin(); jpkg != vpackage->providers.end(); jpkg++)
 		if ((*jpkg) == (*ipkg)) { // Then, the dependency is always checked
 		  self_depend = true;
@@ -398,12 +398,12 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	    }
 	    // as well as from all the versioned providers with the right version
 	    if (! self_depend) {
-	      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 		   jpkg != vpackage->versioned_providers.end(); jpkg++)
 		if (self_depend)
 		  break;
 		else if (comp(jpkg->first, (*ordeps)->version)) {
-		  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++) 
+		  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
 		    if ((*kpkg) == (*ipkg)) { // Then, the dependency is always checked
 		      self_depend = true;
 		      has_coeff = false;
@@ -424,20 +424,20 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	  }
 	}
       }
-      
+
       // Conflicts
       if ((*ipkg)->conflicts != (CUDFVpkgList *)NULL) {
 	if (generate_agregate_constraints) {
 	  int nb_coeff = 0;
-	  
+
 	  solver.new_constraint();
-	
+
 	  for (CUDFVpkgListIterator ipkgop = (*ipkg)->conflicts->begin();  ipkgop != (*ipkg)->conflicts->end(); ipkgop++) {
 	    CUDFVirtualPackage *vpackage = (*ipkgop)->virtual_package;
 	    a_compptr comp = get_comparator((*ipkgop)->op);
 	    if (vpackage->all_versions.size() > 0) {
 	      // It conflicts with all the right versions of the package
-	      for (CUDFVersionedPackageSetIterator jpkg = vpackage->all_versions.begin(); jpkg != vpackage->all_versions.end(); jpkg++) 
+	      for (CUDFVersionedPackageSetIterator jpkg = vpackage->all_versions.begin(); jpkg != vpackage->all_versions.end(); jpkg++)
 		if (use_pkg(*jpkg) && ((*jpkg) != (*ipkg)) && (comp((*jpkg)->version, (*ipkgop)->version))&& (solver.get_constraint_coeff(*jpkg) == 0)) {
 		  solver.set_constraint_coeff(*jpkg, -1);
 		  nb_coeff++;
@@ -452,10 +452,10 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 		}
 	    }
 	    // as well as with all the versioned providers with the right version
-	    for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	    for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 		 jpkg != vpackage->versioned_providers.end(); jpkg++)
 	      if (comp(jpkg->first, (*ipkgop)->version))
-		for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++) 
+		for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
 		  if (use_pkg(*kpkg) && ((*kpkg) != (*ipkg)) && (solver.get_constraint_coeff(*kpkg) == 0)) {
 		    solver.set_constraint_coeff(*kpkg, -1);
 		    nb_coeff++;
@@ -473,7 +473,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	    a_compptr comp = get_comparator((*ipkgop)->op);
 	    if (vpackage->all_versions.size() > 0) {
 	      // It conflicts with all the right versions of the package
-	      for (CUDFVersionedPackageSetIterator jpkg = vpackage->all_versions.begin(); jpkg != vpackage->all_versions.end(); jpkg++) 
+	      for (CUDFVersionedPackageSetIterator jpkg = vpackage->all_versions.begin(); jpkg != vpackage->all_versions.end(); jpkg++)
 		if (use_pkg(*jpkg) && ((*jpkg) != (*ipkg)) && (comp((*jpkg)->version, (*ipkgop)->version))) {
 		  solver.new_constraint();
 		  solver.set_constraint_coeff(*jpkg, 1);
@@ -492,10 +492,10 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 		}
 	    }
 	    // as well as with all the versioned providers with the right version
-	    for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	    for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 		 jpkg != vpackage->versioned_providers.end(); jpkg++)
 	      if (comp(jpkg->first, (*ipkgop)->version))
-		for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++) 
+		for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
 		  if (use_pkg(*kpkg) && ((*kpkg) != (*ipkg))) {
 		    solver.new_constraint();
 		    solver.set_constraint_coeff(*kpkg, 1);
@@ -505,7 +505,7 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	  }
 	}
       }
-      
+
       // Keep (if and only if installed)
       if ((*ipkg)->installed)
 	switch((*ipkg)->keep) {
@@ -524,10 +524,10 @@ int generate_constraints(CUDFproblem *problem, abstract_solver &solver, abstract
 	      if (vpackage->providers.size() > 0)
 		for (CUDFProviderListIterator jpkg = vpackage->providers.begin(); jpkg != vpackage->providers.end(); jpkg++)
 		  if (use_pkg(*jpkg) && (solver.get_constraint_coeff(*jpkg) == 0)) { has_coeff = true;  solver.set_constraint_coeff(*jpkg, +1); }
-	      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin(); 
+	      for (CUDFVersionedProviderListIterator jpkg = vpackage->versioned_providers.begin();
 		   jpkg != vpackage->versioned_providers.end(); jpkg++)
 		if (comp(jpkg->first, (*ipkgop)->version))
-		  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++) 
+		  for (CUDFProviderListIterator kpkg = jpkg->second.begin(); kpkg != jpkg->second.end(); kpkg++)
 		    if (use_pkg(*kpkg) && (solver.get_constraint_coeff(*kpkg) == 0)) { has_coeff = true; solver.set_constraint_coeff(*kpkg, +1); }
 	      if (has_coeff)
 		solver.add_constraint_geq(+1);

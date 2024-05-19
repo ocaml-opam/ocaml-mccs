@@ -34,7 +34,7 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
     PRINT_ERR("error: cannot alloc name for CUDFVersionedPackage.\n");
     exit(-1);
   }
-  
+
   // Default initialization of variables
   versioned_name = (char *)NULL;
   version = 0;
@@ -46,7 +46,7 @@ CUDFVersionedPackage::CUDFVersionedPackage(const char *pkg_name, int my_rank) {
   provides = (CUDFVpkgList *)NULL;
 
   virtual_package = (CUDFVirtualPackage *)NULL;
-  
+
   rank = my_rank;
 
   in_reduced = true;
@@ -87,23 +87,23 @@ void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
     exit(-1);
   }
   sprintf((char *)versioned_name, "%s_%s", name, temp);
-    
+
   version = pkg_version;
 }
 
 // Virtual package constructor
 // requires virtual package name and virtual package rank
-CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {    
+CUDFVirtualPackage::CUDFVirtualPackage(const char *pkg_name, int my_rank) {
   if (!(name = strdup(pkg_name))) {
     PRINT_ERR("error: cannot alloc name for CUDFVirtualPackage.\n");
     exit(-1);
   }
   versioned_name = name;
-  
+
   highest_installed = (CUDFVersionedPackage *)NULL;
   highest_version = 0;
   highest_installed_provider_version = 0;
-  
+
   rank = my_rank;
 
   in_reduced = true;
@@ -120,7 +120,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype) {
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = true;
   default_value = (CUDFPropertyValue *)NULL;
@@ -135,7 +135,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, int tdefau
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = false;
 
@@ -175,7 +175,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, const char
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = false;
   default_value = new CUDFPropertyValue(this, tdefault); // unsure of that
@@ -188,7 +188,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums 
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = true;
 
@@ -204,7 +204,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFEnums 
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = true;
 
@@ -226,7 +226,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkg *
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = false;
   default_value = new CUDFPropertyValue(this, tdefault);
@@ -240,7 +240,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgLi
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = false;
   default_value = new CUDFPropertyValue(this, tdefault);
@@ -254,7 +254,7 @@ CUDFProperty::CUDFProperty(const char *tname, CUDFPropertyType ttype, CUDFVpkgFo
     PRINT_ERR("error: cannot alloc name for property %s.\n", tname);
     exit(-1);
   }
-    
+
   type_id = ttype;
   required = false;
   default_value = new CUDFPropertyValue(this, tdefault);
