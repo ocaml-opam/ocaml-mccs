@@ -23,8 +23,7 @@ let cxxflags =
   let flags =
     (if (Sys.win32 && Config.ccomp_type = "msvc")
      then ["\"/EHsc\""]
-     else ["-Wall -Wextra -Wno-unused-parameter"]) @
-    (ifc (Config.system = "macosx") ["-x"; "c++"]) @
+     else ["-Wall -Wextra -Wno-unused-parameter -x c++"]) @
     (ifc useGLPK ["-DUSEGLPK"]) @
     (ifc useCOIN ["-DUSECOIN"]) @
     (ifc useCLP  ["-DUSECLP"]) @
