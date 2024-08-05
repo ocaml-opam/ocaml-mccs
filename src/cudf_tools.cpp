@@ -81,12 +81,13 @@ CUDFVersionedPackage::~CUDFVersionedPackage() {
 void CUDFVersionedPackage::set_version(CUDFVersion pkg_version) {
   static char temp[50];
 
-  sprintf(temp, "%" CUDFint64"u", pkg_version);
-  if ((versioned_name = (const char *)malloc(strlen(name)+strlen(temp)+2)) == NULL) {
+  snprintf(temp, sizeof(temp), "%" CUDFint64"u", pkg_version);
+  size_t len = strlen(name)+strlen(temp)+2;
+  if ((versioned_name = (const char *)malloc(len)) == NULL) {
     PRINT_ERR("error: cannot alloc versioned_name for CUDFVersionedPackage.\n");
     exit(-1);
   }
-  sprintf((char *)versioned_name, "%s_%s", name, temp);
+  snprintf((char *)versioned_name, len, "%s_%s", name, temp);
 
   version = pkg_version;
 }

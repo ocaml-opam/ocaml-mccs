@@ -7,10 +7,15 @@
   (:include clibs.sexp))
  (wrapped false))
 
+(executable
+ (name context_flags)
+ (modules context_flags)
+ (libraries compiler-libs.common))
+
 (rule
- (targets clibs.sexp)
- (deps context_flags.ml)
+ (targets cflags.sexp)
+ (deps context_flags.exe)
  (action
   (with-stdout-to
    %{targets}
-   (run ocaml %{deps} clibs static))))
+   (run %{deps} clibs static))))
