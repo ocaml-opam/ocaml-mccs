@@ -23,7 +23,7 @@ let cxxflags =
   let flags =
     (if (Sys.win32 && Config.ccomp_type = "msvc")
      then ["\"/EHsc\""]
-     else ["-Wall -Wextra -Wno-unused-parameter -x c++"]) @
+     else ["-Wall -Wextra -Wno-unused-parameter"]) @
     (ifc useGLPK ["-DUSEGLPK"]) @
     (ifc useCOIN ["-DUSECOIN"]) @
     (ifc useCLP  ["-DUSECLP"]) @
