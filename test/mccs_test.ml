@@ -1,6 +1,6 @@
 (* usage: mccs_test CUDF_FILE [SOLVER [CRITERIA]] *)
 
-let (preamble, universe, request) as cudf =
+let (_preamble, _universe, _request) as cudf =
   match Cudf_parser.load_from_file Sys.argv.(1) with
   | Some a, b, Some c -> a, b, c
   | None, b, Some c -> Cudf.default_preamble, b, c
