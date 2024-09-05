@@ -17,7 +17,7 @@ homepage: "https://www.i3s.unice.fr/~cpjm/misc/"
 bug-reports: "https://github.com/ocaml-opam/ocaml-mccs/issues"
 depends: [
   "ocaml"
-  "dune" {>= "1.0"}
+  "dune" {>= "3.16"}
   "cudf" {>= "0.7"}
   "conf-c++" {build}
 ]
