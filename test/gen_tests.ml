@@ -47,12 +47,13 @@ let test name ?solver ?ignore ?(ref="") () =
   in
   Printf.printf "
 
-(alias
- (name runtest)
+(rule
+ (alias runtest)
  (action (system \"diff %s%%{dep:test-%s.result} %%{dep:test.%s.reference}\")))\n" ignore_eol name name
 
 let () =
-  print_endline "; This file is generated using `MCCS_BACKENDS=jbuilder build @settests --auto-promote`";
+  Printf.printf "; This file is generated using `MCCS_BACKENDS='%s' dune build @settests --auto-promote`"
+    (String.concat " " backends);
   let () =
     try
       let lp_solver = Sys.getenv "MCCS_LPSOLVER" |> Printf.sprintf "%S" in
