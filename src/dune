@@ -1,13 +1,15 @@
 (library
  (name mccs)
- (cxx_names changed_criteria constraint_generation count_criteria
+ (foreign_stubs
+  (language cxx)
+  (names changed_criteria constraint_generation count_criteria
    cudf_reductions cudf_tools glpk_solver lp_solver lexagregate_combiner
    new_criteria notuptodate_criteria removed_criteria mccscudf mccs_stubs)
+  (flags
+   :standard
+   (:include cxxflags.sexp)))
  (public_name mccs)
  (modules :standard \ context_flags)
- (cxx_flags
-  :standard
-  (:include cxxflags.sexp))
  (c_library_flags
   :standard
   (:include clibs.sexp))
@@ -20,16 +22,19 @@
   (select
    config.h
    from
-   (mccs.glpk.internal -> config_internal.h)
-   (mccs.glpk.shared -> config_external.h)
-   (mccs.glpk.static -> config_external.h)
-   (-> _))))
+   (mccs.glpk.internal -> config.internal.h)
+   (mccs.glpk.shared -> config.external.h)
+   (mccs.glpk.static -> config.external.h)
+   (_ -> config.empty.h))))
 
 (rule
-  (with-stdout-to config_internal.h (echo "#include \"glpk/glpk.h\"")))
+  (with-stdout-to config.internal.h (echo "#include \"glpk/glpk.h\"")))
 
 (rule
-  (with-stdout-to config_external.h (echo "#include <glpk.h>")))
+  (with-stdout-to config.external.h (echo "#include <glpk.h>")))
+
+(rule
+  (with-stdout-to config.empty.h (echo "")))
 
 (executable
  (name context_flags)
