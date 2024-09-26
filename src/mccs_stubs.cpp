@@ -84,6 +84,10 @@ public:
   }
 };
 
+value v_Eq, v_Geq, v_Gt, v_Leq, v_Lt, v_Neq;
+value v_Keep_feature, v_Keep_none, v_Keep_package, v_Keep_version;
+value v_Bool, v_Int, v_Nat, v_Posint, v_Enum, v_Pkgname, v_String, v_Ident, v_Vpkg, v_Veqpkg, v_Vpkglist, v_Veqpkglist, v_Vpkgformula, v_Typedecl;
+
 CUDFPackageOp ml2c_relop(value relop)
 {
   if (relop == caml_hash_variant("Eq")) return op_eq;
@@ -433,6 +437,8 @@ CUDFProperties * ml2c_propertydeflist(Virtual_packages * tbl, value ml_pdeflist)
   }
   return pdeflist;
 }
+
+value v_LP, v_GLPK, v_COIN_CLP, v_COIN_CBC, v_COIN_SYMPHONY;
 
 Solver ml2c_solver(value ml_solver)
 {
