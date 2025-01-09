@@ -1,5 +1,5 @@
 opam-version: "2.0"
-version: "1.1+18"
+version: "1.1+19"
 synopsis: """\
 MCCS (which stands for Multi Criteria CUDF Solver) is a CUDF problem solver
 developed at UNS during the European MANCOOSI project"""
@@ -16,7 +16,7 @@ license: [
 homepage: "https://www.i3s.unice.fr/~cpjm/misc/"
 bug-reports: "https://github.com/ocaml-opam/ocaml-mccs/issues"
 depends: [
-  "ocaml"
+  "ocaml" {>= "4.02"}
   "dune" {>= "1.0"}
   "cudf" {>= "0.7"}
   "conf-c++" {build}

@@ -1,3 +1,8 @@
+1.1+19 (2025/01/09)
+-------------------
+
+* Add support for OCaml 5.3 when using certain C++ compilers (e.g. macOS default C++ compiler) (#56 @kit-ty-kate)
+
 1.1+18 (2024/08/21)
 -------------------
 
