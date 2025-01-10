@@ -18,7 +18,7 @@
    %{targets}
    (run ocaml gen_tests.ml))))
 
-(alias
- (name settests)
+(rule
+ (alias settests)
  (action
   (diff dune.inc dune.inc.gen)))
